@@ -1,0 +1,9 @@
+{
+  "appId": "com.operaviva.app",
+  "appName": "OperaViva",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

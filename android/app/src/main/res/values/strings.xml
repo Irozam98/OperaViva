@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ArtVault Bottega</string>
+    <string name="title_activity_main">ArtVault Bottega</string>
+    <string name="package_name">com.artvault.bottega</string>
+    <string name="custom_url_scheme">com.artvault.bottega</string>
+</resources>

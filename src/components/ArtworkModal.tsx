@@ -1,0 +1,622 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { X, Upload, Camera, Trash2, Check, Sparkles, Crop, Sliders } from 'lucide-react';
+import { Artwork, ArtworkStatus, StudioProfile } from '../types/artwork';
+import { ImageEditorModal } from './ImageEditorModal';
+
+interface ArtworkModalProps {
+  artworkToEdit?: Artwork | null;
+  studioProfile: StudioProfile;
+  existingArtworks: Artwork[];
+  onSave: (artwork: Artwork) => void;
+  onClose: () => void;
+}
+
+const COMMON_TECHNIQUES = [
+  'Olio su tela',
+  'Acrilico su tela',
+  'Acquerello su carta',
+  'Tecnica mista e foglia d\'oro',
+  'Olio su tavola',
+  'Inchiostro di china',
+  'Pastello a cera',
+  'Scultura in bronzo/marmo'
+];
+
+const COMMON_LOCATIONS = [
+  'Bottega - Parete Principale',
+  'Bottega - Cavalletto',
+  'Bottega - Cassettiera Disegni',
+  'Bottega - Magazzino Archivi',
+  'Galleria d\'Arte',
+  'In Mostra Personale',
+  'Studio Privato'
+];
+
+export const ArtworkModal: React.FC<ArtworkModalProps> = ({
+  artworkToEdit,
+  studioProfile,
+  existingArtworks,
+  onSave,
+  onClose
+}) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Genera prossimo codice catalogo progressivo se nuova opera
+  const generateNextCode = (): string => {
+    const prefix = studioProfile.catalogPrefix || 'ART-';
+    const numbers = existingArtworks
+      .map(a => {
+        const match = a.code?.replace(prefix, '');
+        return match ? parseInt(match, 10) : 0;
+      })
+      .filter(n => !isNaN(n));
+    const maxNum = numbers.length > 0 ? Math.max(...numbers) : 0;
+    return `${prefix}${String(maxNum + 1).padStart(3, '0')}`;
+  };
+
+  const [formData, setFormData] = useState<Partial<Artwork>>(() => {
+    if (artworkToEdit) {
+      return { ...artworkToEdit };
+    }
+    return {
+      id: `art-${Date.now()}`,
+      code: generateNextCode(),
+      title: '',
+      artist: studioProfile.artistName || '',
+      year: new Date().getFullYear(),
+      technique: 'Olio su tela',
+      support: 'Telaio in lino',
+      dimensions: { height: 80, width: 60, depth: 3 },
+      framed: false,
+      frameDetails: '',
+      price: 1000,
+      minPrice: 850,
+      currency: 'EUR',
+      status: 'bottega' as ArtworkStatus,
+      location: 'Bottega - Cavalletto',
+      locationNotes: '',
+      notes: '',
+      certificateNumber: `CERT-${new Date().getFullYear()}-${String(existingArtworks.length + 1).padStart(3, '0')}`,
+      images: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+  });
+
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
+
+  // Funzione per comprimere le foto caricate per ottimizzare performance & database
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (readerEvent) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 1600; // Ottima risoluzione per cataloghi e stampe
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(readerEvent.target?.result as string);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.85));
+        };
+        img.onerror = () => reject(new Error('Errore nel caricamento immagine'));
+        img.src = readerEvent.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Errore lettura file'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsProcessingImage(true);
+    try {
+      const newImages: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const compressedBase64 = await compressImage(files[i]);
+        newImages.push(compressedBase64);
+      }
+
+      setFormData(prev => ({
+        ...prev,
+        images: [...(prev.images || []), ...newImages]
+      }));
+    } catch (err) {
+      console.error('Errore compressione immagini:', err);
+      alert('Si è verificato un errore durante il caricamento della foto.');
+    } finally {
+      setIsProcessingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setFormData(prev => ({
+      ...prev,
+      images: (prev.images || []).filter((_, idx) => idx !== indexToRemove)
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title?.trim()) {
+      alert('Inserisci il titolo dell\'opera');
+      return;
+    }
+
+    const completedArtwork: Artwork = {
+      id: formData.id || `art-${Date.now()}`,
+      code: formData.code || generateNextCode(),
+      title: formData.title.trim(),
+      artist: formData.artist?.trim() || studioProfile.artistName || 'Artista',
+      year: Number(formData.year) || new Date().getFullYear(),
+      technique: formData.technique || 'Tecnica mista',
+      support: formData.support || '',
+      dimensions: {
+        height: Number(formData.dimensions?.height) || 0,
+        width: Number(formData.dimensions?.width) || 0,
+        depth: formData.dimensions?.depth ? Number(formData.dimensions.depth) : undefined
+      },
+      framed: !!formData.framed,
+      frameDetails: formData.frameDetails || '',
+      price: Number(formData.price) || 0,
+      minPrice: formData.minPrice ? Number(formData.minPrice) : undefined,
+      currency: formData.currency || 'EUR',
+      status: (formData.status as ArtworkStatus) || 'bottega',
+      location: formData.location?.trim() || 'In Bottega',
+      locationNotes: formData.locationNotes?.trim() || '',
+      notes: formData.notes?.trim() || '',
+      certificateNumber: formData.certificateNumber?.trim() || '',
+      buyerName: formData.buyerName?.trim() || '',
+      buyerContact: formData.buyerContact?.trim() || '',
+      soldDate: formData.soldDate || undefined,
+      images: formData.images || [],
+      createdAt: formData.createdAt || new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    onSave(completedArtwork);
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-card modal-card-lg" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <Sparkles size={20} color="#d4af37" />
+            <h2 className="modal-title">
+              {artworkToEdit ? 'Modifica Scheda Opera' : 'Registra Nuova Opera a Catalogo'}
+            </h2>
+          </div>
+          <button className="btn-icon" onClick={onClose}>
+            <X size={20} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+          <div className="modal-body">
+            
+            {/* Foto dell'opera */}
+            <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+              <label className="form-label">
+                <Camera size={16} color="#d4af37" />
+                Fotografie dell'Opera (Foto principale, dettagli pennellata, retro/firma)
+              </label>
+
+              <div 
+                className="image-upload-zone"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload size={32} color="#d4af37" />
+                <div>
+                  <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.95rem' }}>
+                    {isProcessingImage ? 'Elaborazione immagine in corso...' : 'Clicca per caricare le foto o scatta dal dispositivo'}
+                  </div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '3px' }}>
+                    Formati supportati: JPG, PNG, WEBP (Ottimizzazione automatica risoluzione)
+                  </div>
+                </div>
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  accept="image/*" 
+                  multiple 
+                  style={{ display: 'none' }}
+                  onChange={handleImageUpload} 
+                />
+              </div>
+
+              {formData.images && formData.images.length > 0 && (
+                <div className="image-preview-strip">
+                  {formData.images.map((imgUrl, idx) => (
+                    <div key={idx} className="image-preview-thumb" style={{ position: 'relative' }}>
+                      <img src={imgUrl} alt={`Foto ${idx + 1}`} />
+                      {idx === 0 && (
+                        <div style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          background: 'rgba(212,175,55,0.9)',
+                          color: '#000',
+                          fontSize: '9px',
+                          fontWeight: 'bold',
+                          textAlign: 'center',
+                          padding: '1px'
+                        }}>
+                          PRINCIPALE
+                        </div>
+                      )}
+                      
+                      {/* Tasto Editor/Ritaglia */}
+                      <button
+                        type="button"
+                        onClick={() => setEditingImageIndex(idx)}
+                        title="Ritaglia, raddrizza o regola colore"
+                        style={{
+                          position: 'absolute',
+                          bottom: idx === 0 ? '16px' : '3px',
+                          left: '3px',
+                          background: 'rgba(20,24,35,0.85)',
+                          color: 'var(--gold-300)',
+                          border: '1px solid var(--border-gold)',
+                          borderRadius: '4px',
+                          padding: '2px 4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <Crop size={12} />
+                      </button>
+
+                      <button 
+                        type="button" 
+                        className="image-preview-remove"
+                        onClick={() => handleRemoveImage(idx)}
+                        title="Rimuovi foto"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Dati Principali */}
+            <div className="form-grid">
+              
+              {/* Codice Catalogo */}
+              <div className="col-4 form-group">
+                <label className="form-label">Codice Inventario *</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={formData.code || ''}
+                  onChange={e => setFormData({ ...formData, code: e.target.value })}
+                  placeholder="es. ART-001"
+                  required
+                />
+              </div>
+
+              {/* Titolo Opera */}
+              <div className="col-8 form-group">
+                <label className="form-label">Titolo Quadro / Opera *</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={formData.title || ''}
+                  onChange={e => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="es. Alba sulla laguna"
+                  required
+                />
+              </div>
+
+              {/* Artista */}
+              <div className="col-6 form-group">
+                <label className="form-label">Artista / Autore</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={formData.artist || ''}
+                  onChange={e => setFormData({ ...formData, artist: e.target.value })}
+                  placeholder="Nome dell'artista"
+                />
+              </div>
+
+              {/* Anno */}
+              <div className="col-3 form-group">
+                <label className="form-label">Anno</label>
+                <input 
+                  type="number" 
+                  className="form-input" 
+                  value={formData.year || new Date().getFullYear()}
+                  onChange={e => setFormData({ ...formData, year: parseInt(e.target.value, 10) })}
+                />
+              </div>
+
+              {/* Certificato N. */}
+              <div className="col-3 form-group">
+                <label className="form-label">N. Certificato / Archivio</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={formData.certificateNumber || ''}
+                  onChange={e => setFormData({ ...formData, certificateNumber: e.target.value })}
+                  placeholder="es. CERT-2026-001"
+                />
+              </div>
+
+              {/* Tecnica */}
+              <div className="col-6 form-group">
+                <label className="form-label">Tecnica Esecutiva</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  list="technique-list"
+                  value={formData.technique || ''}
+                  onChange={e => setFormData({ ...formData, technique: e.target.value })}
+                  placeholder="es. Olio su tela"
+                />
+                <datalist id="technique-list">
+                  {COMMON_TECHNIQUES.map((t, idx) => (
+                    <option key={idx} value={t} />
+                  ))}
+                </datalist>
+              </div>
+
+              {/* Supporto */}
+              <div className="col-6 form-group">
+                <label className="form-label">Supporto / Materiale</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={formData.support || ''}
+                  onChange={e => setFormData({ ...formData, support: e.target.value })}
+                  placeholder="es. Telaio in lino, Tavola in pioppo, Carta cotone 300g"
+                />
+              </div>
+
+              {/* Dimensioni (Altezza, Larghezza, Profondità) */}
+              <div className="col-4 form-group">
+                <label className="form-label">Altezza (cm) *</label>
+                <input 
+                  type="number" 
+                  step="0.5"
+                  className="form-input" 
+                  value={formData.dimensions?.height || ''}
+                  onChange={e => setFormData({ 
+                    ...formData, 
+                    dimensions: { ...formData.dimensions, height: parseFloat(e.target.value) || 0, width: formData.dimensions?.width || 0 } 
+                  })}
+                  placeholder="es. 100"
+                  required
+                />
+              </div>
+
+              <div className="col-4 form-group">
+                <label className="form-label">Larghezza (cm) *</label>
+                <input 
+                  type="number" 
+                  step="0.5"
+                  className="form-input" 
+                  value={formData.dimensions?.width || ''}
+                  onChange={e => setFormData({ 
+                    ...formData, 
+                    dimensions: { ...formData.dimensions, width: parseFloat(e.target.value) || 0, height: formData.dimensions?.height || 0 } 
+                  })}
+                  placeholder="es. 80"
+                  required
+                />
+              </div>
+
+              <div className="col-4 form-group">
+                <label className="form-label">Profondità / Spessore (cm)</label>
+                <input 
+                  type="number" 
+                  step="0.5"
+                  className="form-input" 
+                  value={formData.dimensions?.depth || ''}
+                  onChange={e => setFormData({ 
+                    ...formData, 
+                    dimensions: { ...formData.dimensions, depth: parseFloat(e.target.value) || undefined, height: formData.dimensions?.height || 0, width: formData.dimensions?.width || 0 } 
+                  })}
+                  placeholder="es. 3.5 (opzionale)"
+                />
+              </div>
+
+              {/* Cornice */}
+              <div className="col-4 form-group" style={{ justifyContent: 'center' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', cursor: 'pointer', marginTop: '1.2rem' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={!!formData.framed}
+                    onChange={e => setFormData({ ...formData, framed: e.target.checked })}
+                    style={{ width: '18px', height: '18px', accentColor: 'var(--gold-400)' }}
+                  />
+                  <span style={{ fontSize: '0.9rem', color: '#fff' }}>Opera con cornice</span>
+                </label>
+              </div>
+
+              <div className="col-8 form-group">
+                <label className="form-label">Descrizione Cornice (se presente)</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={formData.frameDetails || ''}
+                  onChange={e => setFormData({ ...formData, frameDetails: e.target.value })}
+                  placeholder="es. Cornice a cassetta dorata, pass-partout museale"
+                  disabled={!formData.framed}
+                />
+              </div>
+
+              {/* Prezzo Listino & Prezzo Riserva */}
+              <div className="col-6 form-group">
+                <label className="form-label">Prezzo di Listino (€) *</label>
+                <input 
+                  type="number" 
+                  step="10"
+                  className="form-input" 
+                  value={formData.price ?? ''}
+                  onChange={e => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
+                  placeholder="es. 1500"
+                  required
+                />
+              </div>
+
+              <div className="col-6 form-group">
+                <label className="form-label">Prezzo Minimo Riservato (€)</label>
+                <input 
+                  type="number" 
+                  step="10"
+                  className="form-input" 
+                  value={formData.minPrice ?? ''}
+                  onChange={e => setFormData({ ...formData, minPrice: parseFloat(e.target.value) || undefined })}
+                  placeholder="Trattativa confidenziale (es. 1200)"
+                />
+              </div>
+
+              {/* DOV'È PRESENTE: Stato & Collocazione */}
+              <div className="col-4 form-group">
+                <label className="form-label">Stato dell'Opera</label>
+                <select 
+                  className="form-select"
+                  value={formData.status || 'bottega'}
+                  onChange={e => setFormData({ ...formData, status: e.target.value as ArtworkStatus })}
+                >
+                  <option value="bottega">In Bottega / Studio</option>
+                  <option value="mostra">In Mostra / Galleria</option>
+                  <option value="venduto">Venduto</option>
+                  <option value="prestito">In Prestito</option>
+                  <option value="in_corso">In Lavorazione</option>
+                </select>
+              </div>
+
+              <div className="col-8 form-group">
+                <label className="form-label">Dov'è presente (Collocazione esatta) *</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  list="locations-list"
+                  value={formData.location || ''}
+                  onChange={e => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="es. Bottega - Parete Nord, Cavalletto 2, Galleria Borghese"
+                  required
+                />
+                <datalist id="locations-list">
+                  {COMMON_LOCATIONS.map((loc, idx) => (
+                    <option key={idx} value={loc} />
+                  ))}
+                </datalist>
+              </div>
+
+              <div className="col-12 form-group">
+                <label className="form-label">Dettagli Collocazione / Note Logistiche</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={formData.locationNotes || ''}
+                  onChange={e => setFormData({ ...formData, locationNotes: e.target.value })}
+                  placeholder="es. Esposto nella sala 2 fino al 10 novembre; cassa di trasporto n. 4"
+                />
+              </div>
+
+              {/* Se venduto, campi acquirente */}
+              {formData.status === 'venduto' && (
+                <>
+                  <div className="col-6 form-group">
+                    <label className="form-label">Nome Acquirente / Galleria</label>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      value={formData.buyerName || ''}
+                      onChange={e => setFormData({ ...formData, buyerName: e.target.value })}
+                      placeholder="es. Collezionista Rossi / Galleria"
+                    />
+                  </div>
+
+                  <div className="col-3 form-group">
+                    <label className="form-label">Contatto Acquirente</label>
+                    <input 
+                      type="text" 
+                      className="form-input" 
+                      value={formData.buyerContact || ''}
+                      onChange={e => setFormData({ ...formData, buyerContact: e.target.value })}
+                      placeholder="Email o Telefono"
+                    />
+                  </div>
+
+                  <div className="col-3 form-group">
+                    <label className="form-label">Data Vendita</label>
+                    <input 
+                      type="date" 
+                      className="form-input" 
+                      value={formData.soldDate || ''}
+                      onChange={e => setFormData({ ...formData, soldDate: e.target.value })}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Note e descrizione artistica */}
+              <div className="col-12 form-group">
+                <label className="form-label">Note Critiche & Descrizione Artistica</label>
+                <textarea 
+                  className="form-textarea" 
+                  value={formData.notes || ''}
+                  onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                  placeholder="Descrizione del soggetto, ispirazione, significato dell'opera..."
+                />
+              </div>
+
+            </div>
+          </div>
+
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" onClick={onClose}>
+              Annulla
+            </button>
+            <button type="submit" className="btn btn-primary" id="btn-save-artwork">
+              <Check size={18} />
+              <span>{artworkToEdit ? 'Aggiorna Scheda Opera' : 'Salva nel Catalogo'}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {editingImageIndex !== null && formData.images && formData.images[editingImageIndex] && (
+        <ImageEditorModal
+          imageUrl={formData.images[editingImageIndex]}
+          onSave={(newImg) => {
+            const updated = [...(formData.images || [])];
+            updated[editingImageIndex] = newImg;
+            setFormData({ ...formData, images: updated });
+            setEditingImageIndex(null);
+          }}
+          onClose={() => setEditingImageIndex(null)}
+        />
+      )}
+    </div>
+  );
+};
