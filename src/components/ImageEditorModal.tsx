@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  X, RotateCw, RotateCcw, FlipHorizontal, FlipVertical, Crop, Sliders, Check, 
-  RotateCcw as ResetIcon, Sparkles, Sun, Contrast, Palette, Frame, ShieldCheck, 
-  Maximize2, Eye, Grid
+  X, RotateCw, RotateCcw, FlipHorizontal, FlipVertical, Sliders, Check, 
+  RotateCcw as ResetIcon, Sparkles, Sun, Contrast, Palette, Frame, 
+  Grid
 } from 'lucide-react';
 
 interface ImageEditorModalProps {

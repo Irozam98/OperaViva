@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Filter, Plus, SlidersHorizontal, ImageOff, ArrowUpDown, MapPin, Tag } from 'lucide-react';
+import { Search, Plus, ImageOff } from 'lucide-react';
 import { Artwork, ArtworkStatus, FilterState, StudioProfile } from './types/artwork';
-import { db, getAllArtworks, getStudioProfile, saveArtwork, deleteArtwork, saveStudioProfile, initializeDatabase } from './services/db';
+import { getAllArtworks, getStudioProfile, saveArtwork, deleteArtwork, saveStudioProfile, initializeDatabase } from './services/db';
 import { DEFAULT_STUDIO_PROFILE } from './services/sampleData';
 import { Header } from './components/Header';
 import { ArtworkCard } from './components/ArtworkCard';

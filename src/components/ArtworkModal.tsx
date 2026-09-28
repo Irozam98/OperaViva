@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { X, Upload, Camera, Trash2, Check, Sparkles, Crop, Sliders } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { X, Upload, Camera, Check, Sparkles, Crop } from 'lucide-react';
 import { Artwork, ArtworkStatus, StudioProfile } from '../types/artwork';
 import { ImageEditorModal } from './ImageEditorModal';
 
