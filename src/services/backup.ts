@@ -33,8 +33,13 @@ export async function exportCatalogBackup(): Promise<void> {
   link.download = filename;
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  
+  setTimeout(() => {
+    try {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (_) {}
+  }, 10000);
 }
 
 // Importa catalogo da file (.artvault o .json)
@@ -73,7 +78,7 @@ export async function importCatalogBackup(file: File, mode: 'merge' | 'replace')
 }
 
 // Esporta in formato CSV (compatibile con Microsoft Excel e LibreOffice Calc)
-export async function exportCatalogToCSV(): Promise<void> {
+export async function exportCatalogToCSV(): Promise<{ filename: string; count: number; csvContent: string }> {
   const artworks = await getAllArtworks();
   
   const headers = [
@@ -126,12 +131,20 @@ export async function exportCatalogToCSV(): Promise<void> {
   
   const now = new Date();
   const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  
+  const filename = `Inventario_Opere_${dateStr}.csv`;
+
   const link = document.createElement('a');
   link.href = url;
-  link.download = `Inventario_Opere_${dateStr}.csv`;
+  link.download = filename;
   document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  
+  setTimeout(() => {
+    try {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (_) {}
+  }, 10000);
+
+  return { filename, count: artworks.length, csvContent };
 }

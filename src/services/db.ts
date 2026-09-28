@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie';
 import { Artwork, StudioProfile } from '../types/artwork';
-import { DEFAULT_STUDIO_PROFILE, INITIAL_ARTWORKS } from './sampleData';
+import { DEFAULT_STUDIO_PROFILE, SAMPLE_ARTWORKS } from './sampleData';
 
 export class ArtVaultDatabase extends Dexie {
   artworks!: Table<Artwork, string>;
@@ -17,12 +17,16 @@ export class ArtVaultDatabase extends Dexie {
 
 export const db = new ArtVaultDatabase();
 
-// Inizializza le impostazioni base se non ancora presenti
+// Inizializza le impostazioni base e popola le 10 opere di prova richieste
 export async function initializeDatabase(): Promise<void> {
   try {
     const profile = await db.settings.get('studioProfile');
     if (!profile) {
       await db.settings.put({ key: 'studioProfile', value: DEFAULT_STUDIO_PROFILE });
+    }
+    const count = await db.artworks.count();
+    if (count < 10) {
+      await db.artworks.bulkPut(SAMPLE_ARTWORKS);
     }
   } catch (error) {
     console.error('Errore durante inizializzazione database:', error);
@@ -61,11 +65,9 @@ export async function saveStudioProfile(profile: StudioProfile): Promise<void> {
   await db.settings.put({ key: 'studioProfile', value: profile });
 }
 
-// Reimposta o svuota i dati
-export async function resetDatabaseWithSamples(): Promise<void> {
+export async function populateSampleArtworks(): Promise<void> {
   await db.artworks.clear();
-  await db.artworks.bulkAdd(INITIAL_ARTWORKS);
-  await db.settings.put({ key: 'studioProfile', value: DEFAULT_STUDIO_PROFILE });
+  await db.artworks.bulkPut(SAMPLE_ARTWORKS);
 }
 
 export async function clearAllArtworks(): Promise<void> {

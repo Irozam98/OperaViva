@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { X, Download, Upload, FileSpreadsheet, RotateCcw, Trash2, CheckCircle2, ShieldCheck } from 'lucide-react';
+import { X, Download, Upload, FileSpreadsheet, Trash2, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { exportCatalogBackup, importCatalogBackup, exportCatalogToCSV } from '../services/backup';
-import { resetDatabaseWithSamples, clearAllArtworks } from '../services/db';
+import { clearAllArtworks } from '../services/db';
 
 interface BackupModalProps {
   onClose: () => void;
@@ -13,6 +13,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
+  const [csvStatus, setCsvStatus] = useState<string | null>(null);
 
   const handleExport = async () => {
     try {
@@ -25,7 +26,11 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
 
   const handleExportCSV = async () => {
     try {
-      await exportCatalogToCSV();
+      const res = await exportCatalogToCSV();
+      setCsvStatus(`File "${res.filename}" scaricato! Trovi il file nella cartella Download del PC.`);
+      setTimeout(() => {
+        setCsvStatus(null);
+      }, 7000);
     } catch (e) {
       console.error(e);
       alert('Errore durante l\'esportazione del file CSV');
@@ -59,14 +64,6 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
     }
   };
 
-  const handleResetSamples = async () => {
-    if (confirm('Vuoi ripristinare le opere dimostrative di esempio? Tutte le modifiche attuali verranno sovrascritte.')) {
-      await resetDatabaseWithSamples();
-      onDataChanged();
-      alert('Dati di esempio ripristinati con successo!');
-      onClose();
-    }
-  };
 
   const handleClearAll = async () => {
     if (confirm('ATTENZIONE: Sei sicuro di voler cancellare TUTTE le opere dal catalogo?\nAssicurati di aver scaricato un backup prima di procedere!')) {
@@ -219,32 +216,52 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
             borderRadius: 'var(--radius-md)',
             padding: '1rem 1.25rem',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem'
+            flexDirection: 'column',
+            gap: '0.75rem'
           }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontWeight: 600, fontSize: '0.95rem' }}>
-                <FileSpreadsheet size={18} />
-                <span>Esporta Foglio Excel / CSV</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              flexWrap: 'wrap'
+            }}>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontWeight: 600, fontSize: '0.95rem' }}>
+                  <FileSpreadsheet size={18} />
+                  <span>Esporta Foglio Excel / CSV</span>
+                </div>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                  Tabella completa con prezzi, dimensioni, collocazione e note, per contabilità o elenchi mostre.
+                </div>
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                Tabella completa con prezzi, dimensioni, collocazione e note, per contabilità o elenchi mostre.
-              </div>
+
+              <button className="btn btn-secondary btn-sm" onClick={handleExportCSV} id="btn-export-csv">
+                <FileSpreadsheet size={15} />
+                <span>Scarica CSV</span>
+              </button>
             </div>
 
-            <button className="btn btn-secondary btn-sm" onClick={handleExportCSV}>
-              <span>Scarica CSV</span>
-            </button>
+            {csvStatus && (
+              <div style={{
+                background: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid #10b981',
+                color: '#10b981',
+                padding: '0.6rem 0.85rem',
+                borderRadius: 'var(--radius-sm)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontSize: '0.85rem'
+              }}>
+                <CheckCircle2 size={16} />
+                <span>{csvStatus}</span>
+              </div>
+            )}
           </div>
 
-          {/* Gestione Dati Dimostrativi */}
-          <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <button className="btn-secondary btn-sm" onClick={handleResetSamples} style={{ fontSize: '0.82rem', borderColor: 'var(--border-gold)' }}>
-              <RotateCcw size={14} color="#d4af37" />
-              <span>Carica Opere Dimostrative (Demo)</span>
-            </button>
-
+          {/* Gestione Catalogo */}
+          <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <button className="btn-danger btn-sm" onClick={handleClearAll} style={{ fontSize: '0.8rem' }}>
               <Trash2 size={14} />
               <span>Svuota Catalogo</span>
