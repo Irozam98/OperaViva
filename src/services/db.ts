@@ -17,21 +17,9 @@ export class ArtVaultDatabase extends Dexie {
 
 export const db = new ArtVaultDatabase();
 
-// Inizializza i dati se il database è vuoto o aggiorna alla demo artesokke.com
+// Inizializza le impostazioni base se non ancora presenti
 export async function initializeDatabase(): Promise<void> {
   try {
-    const firstArt = await db.artworks.toCollection().first();
-    const count = await db.artworks.count();
-    
-    // Se vuoto o se contiene ancora i vecchi dati fittizi 'art-1'
-    if (count === 0 || (firstArt && firstArt.id === 'art-1')) {
-      console.log('Inizializzazione catalogo con opere da artesokke.com...');
-      await db.artworks.clear();
-      await db.artworks.bulkAdd(INITIAL_ARTWORKS);
-      await db.settings.put({ key: 'studioProfile', value: DEFAULT_STUDIO_PROFILE });
-      return;
-    }
-
     const profile = await db.settings.get('studioProfile');
     if (!profile) {
       await db.settings.put({ key: 'studioProfile', value: DEFAULT_STUDIO_PROFILE });

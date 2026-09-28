@@ -27,7 +27,7 @@ dist-ssr
 release/
 *.exe
 *.apk
-OperaViva_Dati/
+**/OperaViva_Dati/
 android/app/build/
 android/.gradle/
 .gradle/

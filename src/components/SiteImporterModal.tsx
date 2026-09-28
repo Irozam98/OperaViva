@@ -226,7 +226,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                       type="url"
                       className="form-input"
                       style={{ flex: '1 1 280px', fontSize: '0.9rem' }}
-                      placeholder="es. https://artesokke.com oppure https://miosito.it/galleria/"
+                      placeholder="es. https://miosito.it oppure https://miosito.it/galleria/"
                       value={siteUrl}
                       onChange={e => setSiteUrl(e.target.value)}
                       disabled={isScanning}
@@ -249,7 +249,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                   </div>
 
                   <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                    Esempio: <a href="#" onClick={(e) => { e.preventDefault(); setSiteUrl('https://artesokke.com'); }} style={{ color: 'var(--gold-300)', textDecoration: 'underline' }}>https://artesokke.com</a>
+                    Inserisci l'indirizzo del tuo sito web, blog o galleria online per importarne automaticamente le opere.
                   </div>
                 </div>
               )}

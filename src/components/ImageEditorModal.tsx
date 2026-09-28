@@ -49,7 +49,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
 
   // Watermark / Firma Digitale
   const [useWatermark, setUseWatermark] = useState<boolean>(false);
-  const [watermarkText, setWatermarkText] = useState<string>('artesokke.com');
+  const [watermarkText, setWatermarkText] = useState<string>("© Archivio d'Arte");
   const [watermarkOpacity, setWatermarkOpacity] = useState<number>(60);
 
   // Carica immagine
@@ -825,7 +825,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     className="form-input" 
                     value={watermarkText}
                     onChange={e => setWatermarkText(e.target.value)}
-                    placeholder="es. © Giuseppe Sparla - artesokke.com"
+                    placeholder="es. © Nome Artista / Bottega"
                     disabled={!useWatermark}
                   />
                 </div>

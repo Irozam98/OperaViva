@@ -242,7 +242,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
           <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <button className="btn-secondary btn-sm" onClick={handleResetSamples} style={{ fontSize: '0.82rem', borderColor: 'var(--border-gold)' }}>
               <RotateCcw size={14} color="#d4af37" />
-              <span>Carica Opere da artesokke.com</span>
+              <span>Carica Opere Dimostrative (Demo)</span>
             </button>
 
             <button className="btn-danger btn-sm" onClick={handleClearAll} style={{ fontSize: '0.8rem' }}>

@@ -13,9 +13,13 @@ VANTAGGI DELLA VERSIONE PORTABILE:
 - Non sporca il registro di Windows né richiede permessi di amministratore per l'installazione.
 
 COME UTILIZZARE:
-1. Fai doppio clic direttamente sull'icona della tavolozza d'artista "OperaViva_Portable.exe".
-2. L'archivio d'arte si apre immediatamente con tutte le funzioni attive!
-3. I tuoi dati e le tue foto rimangono sempre salvati automaticamente.
+1. Fai doppio clic su "OperaViva_Portable.exe".
+2. L'archivio d'arte si apre immediatamente: pronto per registrare le tue opere!
+3. I tuoi dati e le tue foto rimangono sempre salvati automaticamente nella cartella "OperaViva_Dati" generata accanto all'eseguibile.
+
+COME SPOSTARE L'ARCHIVIO TRA COMPUTER:
+- Metodo A (Chiavetta USB): Copia l'intera cartella contenente "OperaViva_Portable.exe" e "OperaViva_Dati". Su qualsiasi PC manterrai l'intero catalogo.
+- Metodo B (Backup Integrato): Dall'app clicca su "Archivio & Backup" -> "Scarica Backup (.zip)". Sul nuovo PC o portatile clicca "Ripristina da Backup (.zip)".
 
 REQUISITI DI SISTEMA:
 - Windows 10 o Windows 11 (64-bit)

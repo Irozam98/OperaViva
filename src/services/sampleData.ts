@@ -1,15 +1,15 @@
-﻿import { Artwork, StudioProfile } from '../types/artwork';
+import { Artwork, StudioProfile } from '../types/artwork';
 
 export const DEFAULT_STUDIO_PROFILE: StudioProfile = {
-  studioName: "Atelier d'Arte Sokke",
-  artistName: "Giuseppe Sparla & Sandra Niviano",
-  city: "Castellammare di Stabia (NA)",
-  address: "Bottega d'Arte & Restauro",
-  email: "info@artesokke.com",
-  phone: "+39 081 1234567",
-  website: "www.artesokke.com",
+  studioName: "Il Mio Atelier",
+  artistName: "",
+  city: "",
+  address: "",
+  email: "",
+  phone: "",
+  website: "",
   currency: "€",
-  catalogPrefix: "SOKKE-"
+  catalogPrefix: "OPV-"
 };
 
 export const INITIAL_ARTWORKS: Artwork[] = [
