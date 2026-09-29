@@ -54,6 +54,11 @@ export async function deleteArtwork(id: string): Promise<void> {
   await db.artworks.delete(id);
 }
 
+// Elimina più opere contemporaneamente
+export async function deleteArtworks(ids: string[]): Promise<void> {
+  await db.artworks.bulkDelete(ids);
+}
+
 // Ottieni profilo bottega
 export async function getStudioProfile(): Promise<StudioProfile> {
   const item = await db.settings.get('studioProfile');

@@ -56,8 +56,7 @@ Progettato con una filosofia **100% Locale e Offline**, OperaViva garantisce che
 - **Zero Cloud, Zero Abbonamenti**: I dati risiedono esclusivamente sul dispositivo dell'utente.
 - **Backup Unificato (.zip)**: Esporta con un clic l'intero archivio (database, storico e fotografie originali ad alta risoluzione compresse) in un singolo archivio ZIP.
 - **Ripristino & Unione**: Importa il backup su qualsiasi altro computer scegliendo tra sostituzione completa o fusione delle collezioni.
-- **Esportazione Fogli di Calcolo (.csv)**: Genera tabelle complete per commercialisti, assicuratori o elenchi mostre.
-- **Importatore da Portfolio Web / Cartella**: Estrae automaticamente titoli e fotografie da cartelle del computer o dal proprio sito web personale.
+- **Importatore da Cartella Locale**: Catalogazione automatica e veloce 100% offline da cartelle o file d'immagini. Riconosce la convenzione *"Titolo - Tecnica - Dimensioni"* nei nomi dei file (es. `Tramonto - Olio su tela - 80x60.jpg`).
 
 ---
 

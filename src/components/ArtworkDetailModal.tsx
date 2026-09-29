@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Printer, Edit3, Trash2, MapPin, Calendar, Maximize2, Layers, Award, Tag, CheckCircle2, Crop, Sliders } from 'lucide-react';
+import { X, Printer, Edit3, Trash2, MapPin, Crop } from 'lucide-react';
 import { Artwork, ArtworkStatus } from '../types/artwork';
 import { ImageEditorModal } from './ImageEditorModal';
 

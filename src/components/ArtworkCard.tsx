@@ -1,10 +1,13 @@
 import React from 'react';
-import { MapPin, Maximize2, Calendar, Layers } from 'lucide-react';
+import { MapPin, Check } from 'lucide-react';
 import { Artwork, ArtworkStatus } from '../types/artwork';
 
 interface ArtworkCardProps {
   artwork: Artwork;
   onSelect: (artwork: Artwork) => void;
+  isSelected?: boolean;
+  isSelectionMode?: boolean;
+  onToggleSelect?: (artworkId: string) => void;
 }
 
 const statusLabels: Record<ArtworkStatus, { label: string; className: string }> = {
@@ -15,7 +18,13 @@ const statusLabels: Record<ArtworkStatus, { label: string; className: string }> 
   in_corso: { label: 'In Lavorazione', className: 'badge-in_corso' }
 };
 
-export const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, onSelect }) => {
+export const ArtworkCard: React.FC<ArtworkCardProps> = ({ 
+  artwork, 
+  onSelect,
+  isSelected = false,
+  isSelectionMode = false,
+  onToggleSelect
+}) => {
   const statusInfo = statusLabels[artwork.status] || { label: artwork.status, className: 'badge-bottega' };
   
   const formattedPrice = new Intl.NumberFormat('it-IT', {
@@ -34,11 +43,29 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, onSelect }) =
 
   return (
     <div 
-      className="art-card" 
-      onClick={() => onSelect(artwork)}
+      className={`art-card ${isSelected ? 'art-card-selected' : ''}`} 
+      onClick={() => {
+        if (isSelectionMode && onToggleSelect) {
+          onToggleSelect(artwork.id);
+        } else {
+          onSelect(artwork);
+        }
+      }}
       id={`card-${artwork.id}`}
     >
       <div className="art-card-image-wrap">
+        {/* Checkbox di Selezione Multipla */}
+        <div 
+          className={`art-card-select-checkbox ${isSelected ? 'selected' : ''} ${isSelectionMode ? 'active-mode' : ''}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleSelect?.(artwork.id);
+          }}
+          title={isSelected ? "Deseleziona quest'opera" : "Seleziona per eliminazione multipla"}
+        >
+          {isSelected && <Check size={14} strokeWidth={3} />}
+        </div>
+
         <img 
           src={mainImage} 
           alt={artwork.title} 
@@ -46,7 +73,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({ artwork, onSelect }) =
           loading="lazy" 
         />
         
-        <div className="art-card-code-tag">
+        <div className="art-card-code-tag" style={{ left: '2.65rem' }}>
           {artwork.code || 'Senza Codice'}
         </div>
 

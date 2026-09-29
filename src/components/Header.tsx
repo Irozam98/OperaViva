@@ -40,21 +40,34 @@ export const Header: React.FC<HeaderProps> = ({
     <>
       <header className="header-bar">
         <div className="header-content">
-          <div className="logo-section" onClick={onOpenProfileModal} title="Clicca per modificare i dati della bottega o dell'artista">
-            <div className="logo-icon-wrapper">
-              <Palette size={22} color="#c5a059" />
+          <div className="header-brand-wrap">
+            <div className="logo-section" onClick={onOpenProfileModal} title="Clicca per modificare i dati della bottega o dell'artista">
+              <div className="logo-icon-wrapper">
+                <Palette size={22} color="#c5a059" />
+              </div>
+              <div className="logo-text">
+                <h1>OPERAVIVA</h1>
+                <p>
+                  {[studioProfile.studioName, studioProfile.artistName].filter(Boolean).join(' • ') || "ARCHIVIO PERSONALE D'ARTE"}
+                </p>
+              </div>
             </div>
-            <div className="logo-text">
-              <h1>OPERAVIVA</h1>
-              <p>
-                {[studioProfile.studioName, studioProfile.artistName].filter(Boolean).join(' • ') || "ARCHIVIO PERSONALE D'ARTE"}
-              </p>
-            </div>
+
+            {/* Pulsante Impostazioni dedicato per mobile in alto a destra */}
+            <button 
+              className="btn-icon header-settings-btn mobile-only-btn"
+              onClick={onOpenProfileModal}
+              id="btn-profile-mobile"
+              title="Impostazioni Bottega & Artista"
+              aria-label="Impostazioni Bottega & Artista"
+            >
+              <Settings size={18} />
+            </button>
           </div>
 
-          <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+          <div className="header-actions">
             <button 
-              className="btn btn-primary"
+              className="btn btn-primary btn-add-main"
               onClick={onOpenNewArtworkModal}
               id="btn-add-artwork"
               title="Aggiungi una nuova opera all'inventario"
@@ -64,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button 
-              className="btn btn-secondary btn-sm"
+              className="btn btn-secondary header-btn-secondary"
               onClick={onOpenStatsModal}
               id="btn-stats"
               title="Riepilogo statistiche bottega e valore economico"
@@ -74,7 +87,7 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button 
-              className="btn btn-secondary btn-sm"
+              className="btn btn-secondary header-btn-secondary"
               onClick={onOpenBackupModal}
               id="btn-backup"
               title="Esporta o importa catalogo completo con foto (.artvault / CSV)"
@@ -83,11 +96,13 @@ export const Header: React.FC<HeaderProps> = ({
               <span>Archivio & Backup</span>
             </button>
 
+            {/* Pulsante Impostazioni visibile su desktop */}
             <button 
-              className="btn-icon"
+              className="btn-icon header-settings-btn desktop-only-btn"
               onClick={onOpenProfileModal}
               id="btn-profile"
               title="Impostazioni Bottega & Artista"
+              aria-label="Impostazioni Bottega & Artista"
             >
               <Settings size={17} />
             </button>

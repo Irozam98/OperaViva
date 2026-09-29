@@ -38,7 +38,7 @@ export async function exportCatalogBackup(): Promise<void> {
     try {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (_) {}
+    } catch {}
   }, 10000);
 }
 
@@ -143,7 +143,7 @@ export async function exportCatalogToCSV(): Promise<{ filename: string; count: n
     try {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (_) {}
+    } catch {}
   }, 10000);
 
   return { filename, count: artworks.length, csvContent };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Printer, Check } from 'lucide-react';
+import { X, Printer } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
 
 interface CertificatePrintViewProps {

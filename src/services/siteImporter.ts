@@ -36,6 +36,76 @@ function cleanFileNameToTitle(fileName: string): string {
   return name.replace(/\b\w/g, char => char.toUpperCase());
 }
 
+export interface ParsedArtworkInfo {
+  title: string;
+  technique: string;
+  support: string;
+  dimensions: { height: number; width: number; depth?: number };
+  year?: number;
+}
+
+/**
+ * Analizza il nome del file per estrarre la struttura standard:
+ * "titolo - tecnica - dimensione" (es. "Alba sul Mare - Olio su tela - 80x60.jpg")
+ */
+export function parseArtworkFileName(fileName: string): ParsedArtworkInfo {
+  // Rimuovi estensione
+  let clean = fileName.replace(/\.[^/.]+$/, "");
+  clean = clean.replace(/_[a-z0-9]{6,12}$/i, "");
+
+  // Dividi per trattini o underscore
+  const rawParts = clean.split(/\s*[-–—]\s*/).map(p => p.trim()).filter(Boolean);
+
+  let title = '';
+  let technique = 'Olio su tela';
+  let support = 'Telaio in legno e tela';
+  let dimensions = { height: 80, width: 60 };
+  let year: number | undefined = detectYear(clean);
+
+  if (rawParts.length >= 3) {
+    // Formato completo: Titolo - Tecnica - Dimensione
+    title = rawParts[0];
+
+    const techParsed = detectTechnique(rawParts[1]);
+    technique = rawParts[1].length > 2 ? rawParts[1] : techParsed.technique;
+    support = techParsed.support;
+
+    dimensions = detectDimensions(rawParts[2]);
+
+    if (rawParts.length >= 4) {
+      const possibleYear = detectYear(rawParts[3]);
+      if (possibleYear) year = possibleYear;
+    }
+  } else if (rawParts.length === 2) {
+    title = rawParts[0];
+    const part1 = rawParts[1];
+
+    const dimRegex = /(\d{2,3})\s*(?:x|×|X|\*)\s*(\d{2,3})/i;
+    if (dimRegex.test(part1)) {
+      dimensions = detectDimensions(part1);
+    } else {
+      const techParsed = detectTechnique(part1);
+      technique = part1.length > 2 ? part1 : techParsed.technique;
+      support = techParsed.support;
+    }
+  } else {
+    title = cleanFileNameToTitle(fileName);
+    const techParsed = detectTechnique(clean);
+    technique = techParsed.technique;
+    support = techParsed.support;
+    dimensions = detectDimensions(clean);
+  }
+
+  // Pulizia finale titolo
+  title = title.replace(/[_-]+/g, " ").trim();
+  if (title.toLowerCase() === title) {
+    title = title.replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  return { title, technique, support, dimensions, year };
+}
+
+
 // Regex per individuare tecniche artistiche comuni nel testo
 function detectTechnique(text: string): { technique: string; support: string } {
   const lower = text.toLowerCase();
@@ -109,21 +179,55 @@ function detectPrice(text: string): number | undefined {
   return undefined;
 }
 
-// Converte un file immagine in Data URL base64 comprimendo leggermente per evitare memory leak
+// Converte un file immagine in Data URL base64 comprimendo con Canvas per ottimizzare memoria e database
 async function readFileAsDataURL(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
+    reader.onload = (e) => {
+      const rawData = e.target?.result as string;
+      // Per file piccoli o SVG, restituisci direttamente il base64
+      if (file.type === 'image/svg+xml' || file.size < 80000) {
+        resolve(rawData);
+        return;
+      }
+      const img = new window.Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        const maxDim = 1600;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(rawData);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.88));
+      };
+      img.onerror = () => resolve(rawData);
+      img.src = rawData;
+    };
+    reader.onerror = () => resolve('');
     reader.readAsDataURL(file);
   });
 }
 
 /**
- * Scansiona una lista di File provenienti da una cartella locale selezionata dall'utente (input webkitdirectory)
+ * Scansiona una lista di File provenienti da selezione o cartella locale
  */
 export async function scanFolderFiles(files: File[], defaultArtistName = 'Artista Bottega'): Promise<ScannedArtworkCandidate[]> {
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.jfif', '.avif', '.bmp', '.gif', '.tiff'];
   const htmlExtensions = ['.html', '.htm'];
   
   // Separa immagini e file HTML
@@ -133,25 +237,14 @@ export async function scanFolderFiles(files: File[], defaultArtistName = 'Artist
   for (const file of files) {
     const lowerName = file.name.toLowerCase();
     
-    // Ignora file di sistema, loghi, icone e thumbnails
-    if (
-      lowerName.includes('favicon') ||
-      lowerName.includes('logo') ||
-      lowerName.includes('icon') ||
-      lowerName.includes('avatar') ||
-      lowerName.includes('social') ||
-      lowerName.includes('wp-admin') ||
-      lowerName.includes('wp-includes') ||
-      lowerName.startsWith('.')
-    ) {
+    // Ignora file di sistema (es. .DS_Store, Thumbs.db o file nascosti)
+    if (lowerName.startsWith('.') || lowerName === 'thumbs.db' || lowerName === 'desktop.ini') {
       continue;
     }
 
-    if (imageExtensions.some(ext => lowerName.endsWith(ext))) {
-      // Ignora immagini minuscole tipo pixel di tracciamento
-      if (file.size > 15000) { // maggiore di 15KB
-        imageFiles.push(file);
-      }
+    const isImage = file.type.startsWith('image/') || imageExtensions.some(ext => lowerName.endsWith(ext));
+    if (isImage) {
+      imageFiles.push(file);
     } else if (htmlExtensions.some(ext => lowerName.endsWith(ext))) {
       htmlFiles.push(file);
     }
@@ -212,20 +305,25 @@ export async function scanFolderFiles(files: File[], defaultArtistName = 'Artist
   for (const imgFile of imageFiles) {
     const lowerName = imgFile.name.toLowerCase();
     const meta = imageMetadataMap.get(lowerName) || {};
+    const parsed = parseArtworkFileName(imgFile.name);
 
-    // Titolo
+    // Titolo: prioritizza testo HTML se valido, altrimenti usa il titolo estratto dal nome file
     const title = meta.title && meta.title.length > 2 && meta.title.length < 80
       ? meta.title
-      : cleanFileNameToTitle(imgFile.name);
+      : parsed.title;
 
     // Tecnica & Supporto
-    const { technique, support } = detectTechnique(meta.tech || imgFile.name);
+    const { technique, support } = meta.tech 
+      ? detectTechnique(meta.tech) 
+      : { technique: parsed.technique, support: parsed.support };
 
     // Dimensioni
-    const dimensions = detectDimensions(meta.dimensions || imgFile.name);
+    const dimensions = meta.dimensions 
+      ? detectDimensions(meta.dimensions) 
+      : parsed.dimensions;
 
     // Anno
-    const year = meta.year || detectYear(imgFile.name) || new Date().getFullYear();
+    const year = meta.year || parsed.year || new Date().getFullYear();
 
     // Prezzo
     const price = meta.price || undefined;
@@ -247,7 +345,7 @@ export async function scanFolderFiles(files: File[], defaultArtistName = 'Artist
       currency: 'EUR',
       status: 'bottega',
       location: 'Bottega - In inventario',
-      notes: meta.notes || `Importato automaticamente da cartella web (${imgFile.name})`,
+      notes: meta.notes || `Importato automaticamente da cartella locale (${imgFile.name})`,
       imageBlobUrl: dataUrl,
       originalFileName: imgFile.name,
       selected: true
@@ -300,7 +398,7 @@ export async function scanUrlForArtworks(
     const res = await fetch(targetUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     htmlText = await res.text();
-  } catch (err) {
+  } catch {
     onProgress?.(`Bypass restrizioni CORS tramite proxy in corso...`);
     const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
     const res = await fetch(proxyUrl);

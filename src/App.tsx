@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Plus, ImageOff } from 'lucide-react';
+import { Search, Plus, ImageOff, Trash2, CheckSquare, Square, X, MapPin, Palette, ArrowUpDown, ChevronDown } from 'lucide-react';
 import { Artwork, ArtworkStatus, FilterState, StudioProfile } from './types/artwork';
-import { getAllArtworks, getStudioProfile, saveArtwork, deleteArtwork, saveStudioProfile, initializeDatabase } from './services/db';
+import { getAllArtworks, getStudioProfile, saveArtwork, deleteArtwork, deleteArtworks, saveStudioProfile, initializeDatabase } from './services/db';
 import { DEFAULT_STUDIO_PROFILE } from './services/sampleData';
 import { Header } from './components/Header';
 import { ArtworkCard } from './components/ArtworkCard';
@@ -27,6 +27,9 @@ export function App() {
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isSiteImporterOpen, setIsSiteImporterOpen] = useState(false);
+
+  // Multi-Selezione Opere per Eliminazione di Gruppo
+  const [selectedArtworkIds, setSelectedArtworkIds] = useState<string[]>([]);
 
   // Filtri & Ricerca
   const [filters, setFilters] = useState<FilterState>({
@@ -55,7 +58,24 @@ export function App() {
   };
 
   useEffect(() => {
-    loadData();
+    let active = true;
+    initializeDatabase()
+      .then(() => Promise.all([getAllArtworks(), getStudioProfile()]))
+      .then(([list, profile]) => {
+        if (active) {
+          setArtworks(list);
+          setStudioProfile(profile);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.error('Errore inizializzazione:', err);
+        if (active) setIsLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Lista univoca di tutte le collocazioni esistenti per il filtro
@@ -147,11 +167,51 @@ export function App() {
     }
   };
 
-  // Eliminazione opera
+  // Eliminazione singola opera
   const handleDeleteArtwork = async (id: string) => {
     await deleteArtwork(id);
     await loadData();
     setSelectedArtwork(null);
+    setSelectedArtworkIds(prev => prev.filter(item => item !== id));
+  };
+
+  // Gestione Selezione Multipla
+  const handleToggleSelectArtwork = (id: string) => {
+    setSelectedArtworkIds(prev => 
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAllVisible = () => {
+    setSelectedArtworkIds(filteredArtworks.map(a => a.id));
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedArtworkIds([]);
+  };
+
+  // Eliminazione Multipla di Gruppo
+  const handleConfirmBulkDelete = async () => {
+    const count = selectedArtworkIds.length;
+    if (count === 0) return;
+
+    const confirmMsg = count === 1
+      ? "Sei sicuro di voler eliminare definitivamente l'opera selezionata?\n\nQuesta azione non può essere annullata."
+      : `ATTENZIONE: Sei sicuro di voler eliminare definitivamente le ${count} opere selezionate?\n\nQuesta azione non può essere annullata.`;
+
+    if (!window.confirm(confirmMsg)) return;
+
+    try {
+      await deleteArtworks(selectedArtworkIds);
+      await loadData();
+      if (selectedArtwork && selectedArtworkIds.includes(selectedArtwork.id)) {
+        setSelectedArtwork(null);
+      }
+      setSelectedArtworkIds([]);
+    } catch (err: any) {
+      console.error('Errore durante eliminazione di gruppo:', err);
+      alert(`Errore durante l'eliminazione: ${err.message || 'Errore database'}`);
+    }
   };
 
   // Aggiornamento rapido dello stato
@@ -238,48 +298,60 @@ export function App() {
               />
             </div>
 
-            {/* Raggruppamento Filtri Dropdown Responsive */}
+            {/* Raggruppamento Filtri Dropdown con Icone e Design Atelier */}
             <div className="filter-dropdowns-group">
-              <select 
-                className="filter-dropdown-select"
-                value={filters.location}
-                onChange={e => setFilters({ ...filters, location: e.target.value })}
-                id="filter-location"
-                title="Filtra per collocazione"
-              >
-                <option value="">Tutte le Collocazioni</option>
-                {uniqueLocations.map((loc, idx) => (
-                  <option key={idx} value={loc}>{loc}</option>
-                ))}
-              </select>
+              {/* Filtro Collocazione */}
+              <div className={`filter-select-box ${filters.location ? 'has-value' : ''}`} title="Filtra per collocazione">
+                <MapPin size={15} className="select-lead-icon" />
+                <select 
+                  className="filter-select-input"
+                  value={filters.location}
+                  onChange={e => setFilters({ ...filters, location: e.target.value })}
+                  id="filter-location"
+                >
+                  <option value="">Tutte le Collocazioni</option>
+                  {uniqueLocations.map((loc, idx) => (
+                    <option key={idx} value={loc}>{loc}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="select-chevron-icon" />
+              </div>
 
-              <select 
-                className="filter-dropdown-select"
-                value={filters.technique}
-                onChange={e => setFilters({ ...filters, technique: e.target.value })}
-                id="filter-technique"
-                title="Filtra per tecnica pittorica"
-              >
-                <option value="">Tutte le Tecniche</option>
-                {uniqueTechniques.map((tech, idx) => (
-                  <option key={idx} value={tech}>{tech}</option>
-                ))}
-              </select>
+              {/* Filtro Tecnica */}
+              <div className={`filter-select-box ${filters.technique ? 'has-value' : ''}`} title="Filtra per tecnica">
+                <Palette size={15} className="select-lead-icon" />
+                <select 
+                  className="filter-select-input"
+                  value={filters.technique}
+                  onChange={e => setFilters({ ...filters, technique: e.target.value })}
+                  id="filter-technique"
+                >
+                  <option value="">Tutte le Tecniche</option>
+                  {uniqueTechniques.map((tech, idx) => (
+                    <option key={idx} value={tech}>{tech}</option>
+                  ))}
+                </select>
+                <ChevronDown size={14} className="select-chevron-icon" />
+              </div>
 
-              <select 
-                className="filter-dropdown-select"
-                value={filters.sortBy}
-                onChange={e => setFilters({ ...filters, sortBy: e.target.value as any })}
-                id="filter-sort"
-                title="Ordinamento catalogo"
-              >
-                <option value="date_desc">Più recenti inseriti</option>
-                <option value="date_asc">Meno recenti inseriti</option>
-                <option value="price_desc">Prezzo: dal più alto</option>
-                <option value="price_asc">Prezzo: dal più basso</option>
-                <option value="title_asc">Titolo (A - Z)</option>
-                <option value="year_desc">Anno di realizzazione</option>
-              </select>
+              {/* Ordinamento */}
+              <div className={`filter-select-box ${filters.sortBy !== 'date_desc' ? 'has-value' : ''}`} title="Ordina opere">
+                <ArrowUpDown size={15} className="select-lead-icon" />
+                <select 
+                  className="filter-select-input"
+                  value={filters.sortBy}
+                  onChange={e => setFilters({ ...filters, sortBy: e.target.value as any })}
+                  id="filter-sort"
+                >
+                  <option value="date_desc">Più recenti inseriti</option>
+                  <option value="date_asc">Meno recenti inseriti</option>
+                  <option value="price_desc">Prezzo: dal più alto</option>
+                  <option value="price_asc">Prezzo: dal più basso</option>
+                  <option value="title_asc">Titolo (A - Z)</option>
+                  <option value="year_desc">Anno di realizzazione</option>
+                </select>
+                <ChevronDown size={14} className="select-chevron-icon" />
+              </div>
             </div>
 
           </div>
@@ -346,13 +418,48 @@ export function App() {
                   sortBy: 'date_desc',
                   onlyFramed: false
                 })}
-                style={{ marginLeft: 'auto', fontSize: '0.8rem', color: 'var(--gold-400)' }}
+                style={{ fontSize: '0.8rem', color: 'var(--gold-400)' }}
               >
                 Azzera filtri
               </button>
             )}
           </div>
         </div>
+
+        {/* Barra di Stato Catalogo & Selezione Multipla (Visibile sempre, fissa su Mobile & Desktop) */}
+        {!isLoading && filteredArtworks.length > 0 && (
+          <div className="catalog-meta-bar">
+            <div className="catalog-count-info">
+              <span>Opere nel catalogo: <strong>{filteredArtworks.length}</strong></span>
+              {selectedArtworkIds.length > 0 && (
+                <span className="selected-tag">{selectedArtworkIds.length} selezionate</span>
+              )}
+            </div>
+
+            <div className="catalog-actions-right">
+              <button 
+                type="button"
+                className={`btn ${selectedArtworkIds.length > 0 ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+                onClick={() => {
+                  if (selectedArtworkIds.length > 0) {
+                    handleDeselectAll();
+                  } else {
+                    handleSelectAllVisible();
+                  }
+                }}
+                id="btn-multi-select"
+                title="Seleziona o deseleziona tutte le opere"
+              >
+                <CheckSquare size={16} />
+                <span>
+                  {selectedArtworkIds.length > 0 
+                    ? `Deseleziona Tutte (${selectedArtworkIds.length})` 
+                    : 'Selezione Multipla'}
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Griglia Opere */}
         {isLoading ? (
@@ -366,6 +473,9 @@ export function App() {
                 key={artwork.id}
                 artwork={artwork}
                 onSelect={(art) => setSelectedArtwork(art)}
+                isSelected={selectedArtworkIds.includes(artwork.id)}
+                isSelectionMode={selectedArtworkIds.length > 0}
+                onToggleSelect={handleToggleSelectArtwork}
               />
             ))}
           </div>
@@ -390,6 +500,72 @@ export function App() {
               <Plus size={18} />
               <span>Registra la tua prima opera</span>
             </button>
+          </div>
+        )}
+
+        {/* Floating Batch Action Bar per Multi-Selezione & Multi-Eliminazione */}
+        {selectedArtworkIds.length > 0 && (
+          <div className="batch-action-bar">
+            <div className="batch-info">
+              <span className="batch-count-badge">
+                {selectedArtworkIds.length}
+              </span>
+              <span className="batch-label">
+                {selectedArtworkIds.length === 1 ? 'opera selezionata' : 'opere selezionate'}
+              </span>
+            </div>
+
+            <div className="batch-buttons">
+              {/* Seleziona tutte le visibili / Deseleziona */}
+              {selectedArtworkIds.length < filteredArtworks.length ? (
+                <button 
+                  type="button" 
+                  className="btn btn-secondary btn-sm"
+                  onClick={handleSelectAllVisible}
+                  title="Seleziona tutte le opere attualmente visibili"
+                >
+                  <CheckSquare size={15} />
+                  <span>Tutte ({filteredArtworks.length})</span>
+                </button>
+              ) : (
+                <button 
+                  type="button" 
+                  className="btn btn-secondary btn-sm"
+                  onClick={handleDeselectAll}
+                >
+                  <Square size={15} />
+                  <span>Deseleziona</span>
+                </button>
+              )}
+
+              {/* Pulsante Eliminazione Multipla */}
+              <button 
+                type="button" 
+                className="btn btn-sm"
+                onClick={handleConfirmBulkDelete}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.22)',
+                  border: '1px solid #ef4444',
+                  color: '#fca5a5',
+                  fontWeight: 600
+                }}
+                title="Elimina definitivamente le opere selezionate"
+              >
+                <Trash2 size={15} />
+                <span>Elimina Selezionate ({selectedArtworkIds.length})</span>
+              </button>
+
+              {/* Annulla Selezione */}
+              <button 
+                type="button" 
+                className="btn-icon"
+                onClick={handleDeselectAll}
+                title="Chiudi selezione"
+                style={{ marginLeft: '0.35rem' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
         )}
 

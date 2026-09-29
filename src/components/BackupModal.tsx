@@ -89,7 +89,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
 
         <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
           
-          {/* Sezione Importazione Opere (Sito Web / Cartella) */}
+          {/* Sezione Importazione Opere (Cartella Locale) */}
           <div style={{
             background: 'var(--bg-secondary)',
             border: '1px solid var(--border-subtle)',
@@ -103,10 +103,10 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
           }}>
             <div>
               <h4 style={{ color: 'var(--text-primary)', fontSize: '0.92rem', marginBottom: '0.2rem' }}>
-                Importa da Sito Web o Cartella
+                Importa da Cartella Locale
               </h4>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', margin: 0 }}>
-                Catalogazione automatica da un link internet o da una cartella locale di foto.
+                Catalogazione automatica e offline da una cartella o gruppo di foto sul computer.
               </p>
             </div>
             <button 
@@ -117,7 +117,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
                 onOpenSiteImporter();
               }}
             >
-              <span>Apri Importatore</span>
+              <span>Apri Importatore Locale</span>
             </button>
           </div>
 

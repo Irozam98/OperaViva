@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { X, Globe, Check, CheckSquare, Square, Trash2, ArrowRight, Loader2 } from 'lucide-react';
-import { ScannedArtworkCandidate, scanFolderFiles, scanUrlForArtworks, convertCandidatesToArtworks } from '../services/siteImporter';
+import { X, FolderOpen, FolderDown, Image as ImageIcon, Check, CheckSquare, Square, Loader2, Info } from 'lucide-react';
+import { ScannedArtworkCandidate, scanFolderFiles, convertCandidatesToArtworks } from '../services/siteImporter';
 import { StudioProfile } from '../types/artwork';
 import { db } from '../services/db';
 
@@ -16,68 +16,76 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
   onSuccess
 }) => {
   const folderInputRef = useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState<'url' | 'folder'>('url');
+  const imagesInputRef = useRef<HTMLInputElement>(null);
   
-  // URL mode state
-  const [siteUrl, setSiteUrl] = useState('');
-  
+  // Drag & drop state
+  const [isDragging, setIsDragging] = useState(false);
+
   // Parsing / Candidates state
   const [isScanning, setIsScanning] = useState(false);
   const [candidates, setCandidates] = useState<ScannedArtworkCandidate[]>([]);
   const [importStatusMessage, setImportStatusMessage] = useState<string | null>(null);
 
-  // Gestione scansione da URL sito internet
-  const handleUrlScan = async () => {
-    if (!siteUrl.trim()) return;
+  // Processa i file passati (da selezione cartella, file multipli o drag & drop)
+  const processFiles = async (filesList: FileList | File[]) => {
+    const filesArray = Array.from(filesList);
+    if (filesArray.length === 0) return;
 
     setIsScanning(true);
-    setImportStatusMessage(`Collegamento a ${siteUrl}...`);
+    setImportStatusMessage(`Scansione di ${filesArray.length} file in corso...`);
 
     try {
       const artistName = studioProfile.artistName || "Artista Bottega";
-      const scanned = await scanUrlForArtworks(siteUrl, artistName, (msg) => {
-        setImportStatusMessage(msg);
-      });
+      const scanned = await scanFolderFiles(filesArray, artistName);
 
       if (scanned.length === 0) {
-        alert("Nessuna opera rilevata sul sito indicato. Verifica l'URL o prova con il link diretto alla galleria delle opere.");
+        alert("Nessuna immagine d'opera d'arte rilevata tra i file selezionati. Assicurati di selezionare file immagine (JPG, PNG, WEBP, JFIF).");
       } else {
         setCandidates(scanned);
       }
     } catch (err: any) {
-      console.error(err);
-      alert(`Errore scansione sito web: ${err.message || 'Impossibile connettersi al sito web'}`);
+      console.error('Errore durante la scansione:', err);
+      alert(`Errore durante la scansione: ${err.message || 'Errore sconosciuto'}`);
     } finally {
       setIsScanning(false);
       setImportStatusMessage(null);
     }
   };
 
-  // Gestione selezione cartella locale
-  const handleFolderChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
-    if (!fileList || fileList.length === 0) return;
+  // Gestione selezione cartella
+  const handleFolderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
+    }
+  };
 
-    setIsScanning(true);
-    setImportStatusMessage(`Scansione di ${fileList.length} file nella cartella...`);
+  // Gestione selezione immagini singole / multiple
+  const handleImagesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      processFiles(e.target.files);
+    }
+  };
 
-    try {
-      const filesArray = Array.from(fileList);
-      const artistName = studioProfile.artistName || "Artista Bottega";
-      const scanned = await scanFolderFiles(filesArray, artistName);
+  // Gestione Drag & Drop
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
 
-      if (scanned.length === 0) {
-        alert("Nessuna immagine d'opera d'arte valida rilevata nella cartella selezionata. Assicurati che contenga file JPG, PNG o WEBP.");
-      } else {
-        setCandidates(scanned);
-      }
-    } catch (err: any) {
-      console.error(err);
-      alert(`Errore durante la scansione della cartella: ${err.message || 'Errore sconosciuto'}`);
-    } finally {
-      setIsScanning(false);
-      setImportStatusMessage(null);
-      if (folderInputRef.current) folderInputRef.current.value = '';
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processFiles(e.dataTransfer.files);
     }
   };
 
@@ -128,14 +136,14 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
         await db.artworks.clear();
       }
 
-      // Inserisci in blocco
-      await db.artworks.bulkAdd(artworksToSave);
+      // Inserisci o aggiorna in blocco in Dexie
+      await db.artworks.bulkPut(artworksToSave);
 
       alert(`Successo! Importate ${artworksToSave.length} opere nel tuo inventario OperaViva.`);
       onSuccess();
       onClose();
     } catch (err: any) {
-      console.error(err);
+      console.error('Errore durante il salvataggio:', err);
       alert(`Errore durante il salvataggio: ${err.message || 'Errore database'}`);
     } finally {
       setIsScanning(false);
@@ -154,8 +162,8 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
       >
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <Globe size={19} color="#c5a059" />
-            <h2 className="modal-title">Importazione Opere</h2>
+            <FolderOpen size={20} color="#c5a059" />
+            <h2 className="modal-title">Importa da Cartella Locale</h2>
           </div>
           <button className="btn-icon" onClick={onClose} title="Chiudi">
             <X size={20} />
@@ -166,136 +174,160 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
 
           {/* FASE 1: NESSUNA SCANSIONE ANCORA EFFETTUATA */}
           {candidates.length === 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
               
-              {/* Spiegazione Automazione */}
+              {/* Spiegazione 100% Locale e Offline */}
               <div style={{
-                background: 'rgba(255, 255, 255, 0.02)',
+                background: 'rgba(197, 160, 89, 0.05)',
                 border: '1px solid var(--border-subtle)',
                 borderRadius: 'var(--radius-md)',
                 padding: '0.9rem 1.15rem',
-                fontSize: '0.85rem',
+                fontSize: '0.86rem',
                 color: 'var(--text-secondary)',
-                lineHeight: 1.5
+                lineHeight: 1.55
               }}>
-                Catalogazione automatica da un <strong>sito web online</strong> o da una <strong>cartella locale</strong> del computer. Riconoscimento di immagini, titoli, tecniche e misure con salvataggio offline.
+                Catalogazione rapida <strong>100% locale e offline</strong> direttamente dal tuo computer.
+                Clicca sull'area sottostante per selezionare una o più foto (o un'intera cartella).
+                OperaViva estrarrà le immagini, ricaverà titoli e proporzioni e le predisporrà per il catalogo.
               </div>
 
-              {/* Selettore Schede Pulito e Tipografico */}
-              <div style={{ 
-                display: 'flex', 
-                gap: '0.5rem', 
-                borderBottom: '1px solid var(--border-subtle)', 
-                paddingBottom: '0.75rem'
+              {/* Box Guida Convenzione Nomi File: titolo - tecnica - dimensione */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid var(--border-gold)',
+                borderRadius: 'var(--radius-md)',
+                padding: '0.9rem 1.15rem',
+                fontSize: '0.82rem',
+                lineHeight: 1.5,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.45rem'
               }}>
-                <button 
-                  type="button"
-                  className={`btn ${activeTab === 'url' ? 'btn-primary' : 'btn-secondary'}`}
-                  onClick={() => setActiveTab('url')}
-                  style={{ flex: 1, justifyContent: 'center', fontSize: '0.88rem' }}
-                >
-                  <span>Sito Web (URL)</span>
-                </button>
-                <button 
-                  type="button"
-                  className={`btn ${activeTab === 'folder' ? 'btn-primary' : 'btn-secondary'}`}
-                  onClick={() => setActiveTab('folder')}
-                  style={{ flex: 1, justifyContent: 'center', fontSize: '0.88rem' }}
-                >
-                  <span>Cartella Locale</span>
-                </button>
-              </div>
-
-              {/* TAB 1: IMPORTAZIONE DIRETTA DA SITO INTERNET (URL) */}
-              {activeTab === 'url' && (
-                <div style={{
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: '1.25rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.85rem'
-                }}>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                    Indirizzo del sito web o galleria online:
-                  </label>
-
-                  <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                    <input 
-                      type="url"
-                      className="form-input"
-                      style={{ flex: '1 1 280px', fontSize: '0.9rem' }}
-                      placeholder="es. https://miosito.it oppure https://miosito.it/galleria/"
-                      value={siteUrl}
-                      onChange={e => setSiteUrl(e.target.value)}
-                      disabled={isScanning}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          handleUrlScan();
-                        }
-                      }}
-                    />
-                    <button 
-                      type="button"
-                      className="btn btn-primary"
-                      onClick={handleUrlScan}
-                      disabled={isScanning || !siteUrl.trim()}
-                      style={{ whiteSpace: 'nowrap' }}
-                    >
-                      <span>{isScanning ? 'Scansione in corso...' : 'Scansiona Sito'}</span>
-                    </button>
-                  </div>
-
-                  <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
-                    Inserisci l'indirizzo del tuo sito web, blog o galleria online per importarne automaticamente le opere.
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--gold-400)', fontWeight: 600 }}>
+                  <Info size={16} />
+                  <span>Regola per la compilazione automatica dei dati nel catalogo</span>
                 </div>
-              )}
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
+                  Per permettere all'importatore di valorizzare automaticamente tutti i campi, nomina i file separando gli elementi con un trattino <strong>"-"</strong>:
+                </p>
+                <div style={{ 
+                  background: 'var(--bg-card)', 
+                  border: '1px dashed var(--border-gold)', 
+                  borderRadius: 'var(--radius-sm)', 
+                  padding: '0.45rem 0.75rem', 
+                  fontFamily: 'monospace', 
+                  color: 'var(--gold-300)',
+                  fontSize: '0.88rem',
+                  fontWeight: 600
+                }}>
+                  titolo - tecnica - dimensione.jpg
+                </div>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                  <em>Esempio:</em> <strong style={{ color: 'var(--text-primary)' }}>Tramonto a Venezia - Olio su tela - 80x60.jpg</strong> (oppure con anno: <em>Tramonto a Venezia - Olio su tela - 80x60 - 2024.jpg</em>).
+                </div>
+              </div>
 
-              {/* TAB 2: IMPORTAZIONE DA CARTELLA LOCALE DEL COMPUTER */}
-              {activeTab === 'folder' && (
-                <div style={{
-                  background: 'var(--bg-card)',
-                  border: '1px dashed var(--border-medium)',
+              {/* AREA DI TRASCINAMENTO E SELEZIONE CARTELLA / FILE (INTERA AREA CLICCABILE) */}
+              <div 
+                style={{
+                  background: isDragging ? 'rgba(197, 160, 89, 0.15)' : 'var(--bg-card)',
+                  border: isDragging ? '2px dashed var(--gold-400)' : '2px dashed var(--border-medium)',
                   borderRadius: 'var(--radius-md)',
-                  padding: '2rem 1.5rem',
+                  padding: '2.5rem 1.5rem',
                   textAlign: 'center',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '0.85rem',
-                  cursor: 'pointer'
+                  gap: '1.25rem',
+                  transition: 'all var(--trans-fast)',
+                  cursor: isScanning ? 'wait' : 'pointer'
                 }}
-                onClick={() => folderInputRef.current?.click()}
-                >
-                  <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', margin: 0 }}>
-                    Seleziona una cartella sul computer contenente immagini di opere o salvataggi del sito.
-                  </p>
+                onClick={() => {
+                  if (!isScanning) imagesInputRef.current?.click();
+                }}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                title="Clicca per selezionare una o più foto"
+              >
+                <div style={{
+                  width: '58px',
+                  height: '58px',
+                  borderRadius: '50%',
+                  background: 'rgba(197, 160, 89, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--gold-400)'
+                }}>
+                  <FolderDown size={30} />
+                </div>
 
+                <div>
+                  <h3 style={{ fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
+                    Clicca qui per selezionare una foto o trascinala dentro
+                  </h3>
+                  <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
+                    Supporta tutti i formati: JPG, JPEG, PNG, WEBP, JFIF
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                  {/* Pulsante Principale: Scegli Foto (Singola o Multiple) */}
+                  <button 
+                    type="button" 
+                    className="btn btn-primary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      imagesInputRef.current?.click();
+                    }}
+                    disabled={isScanning}
+                  >
+                    <ImageIcon size={17} />
+                    <span>Scegli Foto (Singola o Multiple)</span>
+                  </button>
+
+                  {/* Pulsante Secondario: Sfoglia Intera Cartella */}
                   <button 
                     type="button" 
                     className="btn btn-secondary"
-                    style={{ pointerEvents: 'none' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      folderInputRef.current?.click();
+                    }}
+                    disabled={isScanning}
+                    title="Seleziona una cartella contenente più immagini"
                   >
-                    <span>Sfoglia Cartella</span>
+                    <FolderOpen size={17} />
+                    <span>Sfoglia Intera Cartella</span>
                   </button>
-
-                  {/* Input nativo HTML5 per selezione cartella intera */}
-                  <input 
-                    type="file" 
-                    ref={folderInputRef}
-                    onChange={handleFolderChange}
-                    // @ts-ignore
-                    webkitdirectory="" 
-                    // @ts-ignore
-                    directory="" 
-                    multiple 
-                    style={{ display: 'none' }} 
-                  />
                 </div>
-              )}
+
+                {/* Input nativo HTML5 per selezione cartella intera */}
+                <input 
+                  type="file" 
+                  ref={folderInputRef}
+                  onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
+                  onChange={handleFolderChange}
+                  // @ts-ignore
+                  webkitdirectory="" 
+                  // @ts-ignore
+                  directory="" 
+                  multiple 
+                  style={{ display: 'none' }} 
+                />
+
+                {/* Input nativo HTML5 per selezione immagini singole / multiple */}
+                <input 
+                  type="file" 
+                  ref={imagesInputRef}
+                  onClick={(e) => { (e.target as HTMLInputElement).value = ''; }}
+                  onChange={handleImagesChange}
+                  accept="image/*,.jpg,.jpeg,.png,.webp,.jfif,.avif,.bmp,.gif,.tiff"
+                  multiple 
+                  style={{ display: 'none' }} 
+                />
+              </div>
 
               {/* Indicatore di caricamento durante la scansione */}
               {isScanning && (
@@ -410,7 +442,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                         <span>Anno: {cand.year || '-'}</span>
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                        Origine: {cand.originalFileName}
+                        File originale: {cand.originalFileName}
                       </div>
                     </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, BarChart3, TrendingUp, DollarSign, MapPin, Palette, CheckCircle2 } from 'lucide-react';
+import { X, BarChart3, MapPin, Palette } from 'lucide-react';
 import { Artwork } from '../types/artwork';
 
 interface StatsModalProps {
@@ -12,13 +12,10 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
   const inBottega = artworks.filter(a => a.status === 'bottega');
   const inMostra = artworks.filter(a => a.status === 'mostra');
   const vendute = artworks.filter(a => a.status === 'venduto');
-  const inCorso = artworks.filter(a => a.status === 'in_corso');
-  const inPrestito = artworks.filter(a => a.status === 'prestito');
 
   const valBottega = inBottega.reduce((sum, a) => sum + (Number(a.price) || 0), 0);
   const valMostra = inMostra.reduce((sum, a) => sum + (Number(a.price) || 0), 0);
   const valVendute = vendute.reduce((sum, a) => sum + (Number(a.price) || 0), 0);
-  const valTotaleDisponibile = valBottega + valMostra;
 
   const avgPrice = total > 0 
     ? Math.round(artworks.reduce((sum, a) => sum + (Number(a.price) || 0), 0) / total)
