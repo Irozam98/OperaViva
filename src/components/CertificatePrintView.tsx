@@ -125,12 +125,16 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
         <div style={{
           background: '#ffffff',
           color: '#1a1a1a',
-          padding: '6mm 10mm',
+          padding: '7mm 10mm',
           width: '100%',
+          height: '188mm',
           boxSizing: 'border-box',
           border: '3px double #8c6d23',
           position: 'relative',
-          fontFamily: "'Playfair Display', Georgia, serif"
+          fontFamily: "'Playfair Display', Georgia, serif",
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between'
         }}>
           {/* Filetto oro sottile interno classico */}
           <div style={{
@@ -143,44 +147,43 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
             pointerEvents: 'none'
           }}></div>
 
-          {/* Intestazione Stampa Bottega / Artista in testata orizzontale */}
+          {/* Intestazione Stampa Bottega / Artista in testata orizzontale a tutta larghezza */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            borderBottom: '1.5px solid #8c6d23',
+            borderBottom: '2px solid #8c6d23',
             paddingBottom: '5px',
-            marginBottom: '7px'
+            marginBottom: '6px'
           }}>
             <div>
-              <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '16pt', fontWeight: 800, letterSpacing: '2px', margin: 0, color: '#111', lineHeight: 1.1 }}>
+              <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '17pt', fontWeight: 800, letterSpacing: '2px', margin: 0, color: '#111', lineHeight: 1.1 }}>
                 {studioProfile.studioName || "ATELIER D'ARTE"}
               </h1>
-              <div style={{ fontSize: '10pt', letterSpacing: '1.5px', color: '#8c6d23', textTransform: 'uppercase', marginTop: '1px', fontWeight: 600 }}>
+              <div style={{ fontSize: '10.5pt', letterSpacing: '1.5px', color: '#8c6d23', textTransform: 'uppercase', marginTop: '1px', fontWeight: 600 }}>
                 {studioProfile.artistName}
               </div>
             </div>
-            <div style={{ textAlign: 'right', fontSize: '7.5pt', color: '#555', fontFamily: "'Plus Jakarta Sans', sans-serif", maxWidth: '55%' }}>
+            <div style={{ textAlign: 'right', fontSize: '8pt', color: '#555', fontFamily: "'Plus Jakarta Sans', sans-serif", maxWidth: '55%' }}>
               {studioProfile.address} {studioProfile.city && `• ${studioProfile.city}`} {studioProfile.phone && `• Tel: ${studioProfile.phone}`} {studioProfile.email && `• ${studioProfile.email}`}
             </div>
           </div>
 
-          {/* Griglia a 2 Colonne perfettamente incastrata e simmetrica */}
+          {/* Sezione Centrale a 2 Colonne perfettamente bilanciata */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1.05fr 1.35fr',
+            gridTemplateColumns: '1.1fr 1.25fr',
             gap: '8mm',
             alignItems: 'center',
-            minHeight: '138mm'
+            flex: 1
           }}>
-            {/* Colonna Sinistra: Opera Protagonista */}
+            {/* Colonna Sinistra: Opera d'arte ad ampio respiro */}
             <div style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              height: '100%',
-              padding: '2mm'
+              height: '100%'
             }}>
               {mainImage && (
                 <div style={{ textAlign: 'center', width: '100%' }}>
@@ -188,7 +191,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                     src={mainImage} 
                     alt={artwork.title} 
                     style={{ 
-                      maxHeight: '108mm', 
+                      maxHeight: '105mm', 
                       maxWidth: '100%', 
                       objectFit: 'contain', 
                       border: '1px solid #c5a059', 
@@ -209,74 +212,76 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
               </div>
             </div>
 
-            {/* Colonna Destra: Certificato, Scheda Tecnica, Dichiarazione e Firme */}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%' }}>
+            {/* Colonna Destra: Titolo, Scheda Tecnica e Dichiarazione */}
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
               {/* Titolo e Codici */}
-              <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+              <div style={{ textAlign: 'center', marginBottom: '5px' }}>
                 <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '13.5pt', fontWeight: 700, letterSpacing: '1.8px', color: '#8c6d23', margin: 0, textTransform: 'uppercase' }}>
                   {language === 'en'
                     ? 'CERTIFICATE OF AUTHENTICITY'
                     : 'CERTIFICATO DI AUTENTICITÀ'}
                 </h2>
-                <div style={{ fontSize: '7.5pt', color: '#555', marginTop: '1px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                <div style={{ fontSize: '8pt', color: '#555', marginTop: '1px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                   {language === 'en' ? 'Inventory Code:' : 'Codice di Catalogo:'} <strong>{artwork.code}</strong> • {language === 'en' ? 'Certificate No.:' : 'N. Certificato:'} <strong>{artwork.certificateNumber || artwork.code}</strong>
                 </div>
               </div>
 
-              {/* Scheda Tecnica Descrittiva Compatta */}
+              {/* Scheda Tecnica Descrittiva */}
               <div style={{
                 background: '#faf9f5',
                 border: '1px solid #d4af37',
-                padding: '6px 10px',
-                marginBottom: '6px',
-                fontSize: '8pt',
+                padding: '7px 12px',
+                marginBottom: '7px',
+                fontSize: '8.5pt',
                 fontFamily: "'Plus Jakarta Sans', sans-serif"
               }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '3px', columnGap: '12px' }}>
-                  <div><strong style={{ color: '#666', fontSize: '7pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Author:' : 'Autore:'}</strong> <div style={{ fontWeight: 600 }}>{artwork.artist || studioProfile.artistName}</div></div>
-                  <div><strong style={{ color: '#666', fontSize: '7pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> {artwork.year}</div>
-                  <div><strong style={{ color: '#666', fontSize: '7pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium:' : 'Tecnica:'}</strong> {artwork.technique}</div>
-                  <div><strong style={{ color: '#666', fontSize: '7pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> {artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div>
-                  <div><strong style={{ color: '#666', fontSize: '7pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> {artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
-                  <div><strong style={{ color: '#666', fontSize: '7pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> {artwork.framed ? (language === 'en' ? `Framed (${artwork.frameDetails || 'Yes'})` : `Incorniciato (${artwork.frameDetails || 'Sì'})`) : (language === 'en' ? 'Unframed' : 'Senza cornice')}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '3.5px', columnGap: '12px' }}>
+                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Author:' : 'Autore:'}</strong> <div style={{ fontWeight: 600 }}>{artwork.artist || studioProfile.artistName}</div></div>
+                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> {artwork.year}</div>
+                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium:' : 'Tecnica:'}</strong> {artwork.technique}</div>
+                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> {artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div>
+                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> {artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
+                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> {artwork.framed ? (language === 'en' ? `Framed (${artwork.frameDetails || 'Yes'})` : `Incorniciato (${artwork.frameDetails || 'Sì'})`) : (language === 'en' ? 'Unframed' : 'Senza cornice')}</div>
                   <div style={{ gridColumn: 'span 2' }}>
-                    <strong style={{ color: '#666', fontSize: '7pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23', marginLeft: '4px' }}>{formattedPrice}</span>
+                    <strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23', marginLeft: '4px' }}>{formattedPrice}</span>
                   </div>
                 </div>
                 {artwork.notes && (
-                  <div style={{ marginTop: '3px', paddingTop: '2px', borderTop: '1px dotted #ccc', fontSize: '7pt', fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  <div style={{ marginTop: '3px', paddingTop: '2px', borderTop: '1px dotted #ccc', fontSize: '7.5pt', fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                     <strong>{language === 'en' ? 'Notes:' : 'Note:'}</strong> {artwork.notes}
                   </div>
                 )}
               </div>
 
               {/* Dichiarazione di Autenticità Ufficiale */}
-              <div style={{ fontSize: '7.8pt', fontStyle: 'italic', lineHeight: 1.35, textAlign: 'justify', color: '#222', marginBottom: '6px' }}>
+              <div style={{ fontSize: '8pt', fontStyle: 'italic', lineHeight: 1.4, textAlign: 'justify', color: '#222' }}>
                 {language === 'en'
                   ? 'This document certifies that the work of art described and reproduced above is an authentic original, created solely by hand by the artist and registered under the catalog number above in the official studio archive.'
                   : "Si certifica con il presente documento che l'opera sopra descritta e riprodotta è un originale autentico, realizzato unicamente a mano dall'artista e registrato con il numero di catalogo sopra indicato presso l'archivio ufficiale di bottega."}
               </div>
-
-              {/* Firme e Luogo di rilascio */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '2px' }}>
-                <div style={{ fontSize: '8pt' }}>
-                  <div>{language === 'en' ? 'Place & Date of Issue:' : 'Luogo e Data di rilascio:'}</div>
-                  <strong style={{ color: '#111' }}>{studioProfile.city || (language === 'en' ? 'In Studio' : 'In Bottega')}, {today}</strong>
-                </div>
-
-                <div style={{ textAlign: 'center', width: '180px' }}>
-                  <div style={{ borderBottom: '1px solid #111', height: '24px', marginBottom: '3px' }}></div>
-                  <div style={{ fontSize: '7.5pt', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                    {language === 'en' ? "Artist's Signature / Direction" : "Firma dell'Artista / Direzione"}
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Quel pezzetto: Piè di pagina regolato all'interno della cornice con safe margin */}
-          <div style={{ marginTop: '6px', textAlign: 'center', fontSize: '7pt', color: '#777', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-            Registro Ufficiale OperaViva • Created by Marzio Sparla
+          {/* Sezione Inferiore: Firme a tutta larghezza e Piè di pagina ancorato in basso */}
+          <div style={{ marginTop: 'auto', paddingTop: '6px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4px' }}>
+              <div style={{ fontSize: '8.5pt' }}>
+                <div>{language === 'en' ? 'Place & Date of Issue:' : 'Luogo e Data di rilascio:'}</div>
+                <strong style={{ color: '#111' }}>{studioProfile.city || (language === 'en' ? 'In Studio' : 'In Bottega')}, {today}</strong>
+              </div>
+
+              <div style={{ textAlign: 'center', width: '220px' }}>
+                <div style={{ borderBottom: '1px solid #111', height: '24px', marginBottom: '3px' }}></div>
+                <div style={{ fontSize: '8pt', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                  {language === 'en' ? "Artist's Signature / Direction" : "Firma dell'Artista / Direzione"}
+                </div>
+              </div>
+            </div>
+
+            {/* Quel pezzetto: Piè di pagina regolato al centro perfetto */}
+            <div style={{ textAlign: 'center', fontSize: '7pt', color: '#777', letterSpacing: '1.5px', textTransform: 'uppercase', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Registro Ufficiale OperaViva • Created by Marzio Sparla
+            </div>
           </div>
         </div>
       ) : (
@@ -403,168 +408,25 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
           className="modal-card" 
           onClick={e => e.stopPropagation()} 
           style={{ 
-            maxWidth: isLandscape ? '1060px' : '940px', 
+            maxWidth: isLandscape ? '1060px' : '920px', 
             maxHeight: '96vh', 
             background: '#252936', 
             border: '1px solid var(--border-gold)',
             transition: 'max-width 0.3s ease'
           }}
         >
-          <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.85rem 1.25rem', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
-                <Printer size={20} color="#d4af37" />
-                <h3 className="modal-title" style={{ fontSize: '1.15rem', margin: 0, whiteSpace: 'nowrap' }}>
-                  {language === 'en'
-                    ? 'Certificate Preview'
-                    : 'Anteprima Certificato'}
-                </h3>
-              </div>
-
-              {/* Selettore rapido e chiaro: [ 📄 Verticale ] [ 🖼️ Orizzontale ] */}
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                background: 'rgba(10, 13, 20, 0.85)',
-                padding: '3px',
-                borderRadius: '999px',
-                border: '1px solid var(--border-gold)',
-                gap: '2px'
-              }}>
-                <button
-                  type="button"
-                  onClick={() => setOrientation('portrait')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '4px 10px',
-                    borderRadius: '999px',
-                    border: 'none',
-                    background: !isLandscape ? 'var(--gold-400)' : 'transparent',
-                    color: !isLandscape ? '#000' : '#aaa',
-                    fontWeight: 700,
-                    fontSize: '0.78rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                  id="btn-cert-select-portrait"
-                  title={language === 'en' ? 'Portrait format (vertical)' : 'Formato verticale A4'}
-                >
-                  <span>📄</span>
-                  <span>{language === 'en' ? 'Portrait' : 'Verticale'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setOrientation('landscape')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '4px 10px',
-                    borderRadius: '999px',
-                    border: 'none',
-                    background: isLandscape ? 'var(--gold-400)' : 'transparent',
-                    color: isLandscape ? '#000' : '#aaa',
-                    fontWeight: 700,
-                    fontSize: '0.78rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                  id="btn-cert-select-landscape"
-                  title={language === 'en' ? 'Landscape format (horizontal)' : 'Formato orizzontale A4'}
-                >
-                  <span>🖼️</span>
-                  <span>{language === 'en' ? 'Landscape' : 'Orizzontale'}</span>
-                </button>
-              </div>
+          {/* Header pulito ed essenziale: solo titolo a sinistra e X a destra */}
+          <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.9rem 1.4rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+              <Printer size={20} color="#d4af37" />
+              <h3 className="modal-title" style={{ fontSize: '1.2rem', margin: 0 }}>
+                {language === 'en' ? 'Certificate Preview' : 'Anteprima Certificato'}
+              </h3>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', flexShrink: 0 }}>
-              {/* Pulsante Gira Foglio (Verticale / Orizzontale) */}
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-action-pill" 
-                onClick={toggleOrientation}
-                title={language === 'en' 
-                  ? (isLandscape ? 'Rotate: Switch to Portrait (A4 Vertical)' : 'Rotate: Switch to Landscape (A4 Horizontal)') 
-                  : (isLandscape ? 'Gira: Passa a Verticale (A4)' : 'Gira: Passa a Orizzontale (A4)')}
-                id="btn-cert-header-rotate"
-                style={{
-                  borderColor: isLandscape ? 'var(--gold-400)' : undefined,
-                  background: isLandscape ? 'rgba(212, 175, 55, 0.18)' : undefined,
-                  color: isLandscape ? 'var(--gold-300)' : undefined
-                }}
-              >
-                <span className="icon-circle" style={{ background: isLandscape ? 'rgba(212, 175, 55, 0.3)' : 'rgba(212, 175, 55, 0.15)', color: '#d4af37' }}>
-                  <RotateCw size={15} style={{ transform: isLandscape ? 'rotate(90deg)' : 'none', transition: 'transform 0.3s ease' }} />
-                </span>
-                <span>{language === 'en' ? 'Rotate' : 'Gira'}</span>
-              </button>
-
-              {/* Pulsante Anteprima PDF (apre il PDF nel lettore di sistema con zoom e anteprima reale) */}
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-action-pill" 
-                onClick={handlePreviewPDF}
-                title={language === 'en' ? 'Open real PDF preview in Windows' : 'Apri anteprima PDF reale in Windows'}
-                id="btn-cert-header-preview"
-              >
-                <span className="icon-circle" style={{ background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa' }}>
-                  <Eye size={15} />
-                </span>
-                <span>{language === 'en' ? 'PDF Preview' : 'Anteprima PDF'}</span>
-              </button>
-
-              {/* Pallino stampante */}
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-action-pill" 
-                onClick={handlePrint}
-                title={language === 'en' ? 'Print Sheet / Certificate' : 'Stampa Scheda / Certificato'}
-                id="btn-cert-header-print"
-              >
-                <span className="icon-circle icon-circle-print">
-                  <Printer size={15} />
-                </span>
-                <span>{language === 'en' ? 'Print' : 'Stampa'}</span>
-              </button>
-
-              {/* Pallino floppy per salvare PDF */}
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-action-pill" 
-                onClick={handleSavePDF}
-                disabled={isSaving}
-                title={language === 'en' ? 'Save as PDF (prompts save location)' : 'Salva in PDF (scegli cartella di destinazione)'}
-                id="btn-cert-header-save"
-              >
-                <span className="icon-circle icon-circle-save">
-                  <Save size={15} />
-                </span>
-                <span>{isSaving ? '...' : (language === 'en' ? 'Save PDF' : 'Salva PDF')}</span>
-              </button>
-
-              {/* Pallino penna per la modifica */}
-              {onEdit && (
-                <button 
-                  type="button" 
-                  className="btn btn-primary btn-action-pill" 
-                  onClick={() => onEdit(artwork)}
-                  title={language === 'en' ? 'Edit Artwork' : 'Modifica Opera'}
-                  id="btn-cert-header-edit"
-                >
-                  <span className="icon-circle icon-circle-edit">
-                    <PenLine size={15} />
-                  </span>
-                  <span>{language === 'en' ? 'Edit' : 'Modifica'}</span>
-                </button>
-              )}
-
-              <button className="btn-icon" onClick={onClose} title={language === 'en' ? 'Close' : 'Chiudi'}>
-                <X size={18} />
-              </button>
-            </div>
+            <button className="btn-icon" onClick={onClose} title={language === 'en' ? 'Close' : 'Chiudi'}>
+              <X size={20} />
+            </button>
           </div>
 
           {/* Banner di successo o errore salvataggio PDF */}
@@ -620,7 +482,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
               borderRadius: '3px',
               boxShadow: '0 12px 35px rgba(0,0,0,0.5)',
               fontFamily: "'Playfair Display', Georgia, serif",
-              maxWidth: isLandscape ? '920px' : '720px',
+              maxWidth: isLandscape ? '940px' : '720px',
               width: '100%',
               margin: '0 auto',
               border: '2px solid #c5a059',
@@ -641,31 +503,31 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
 
               {isLandscape ? (
                 /* ================== ANTEPRIMA ORIZZONTALE A VIDEO ================== */
-                <div>
-                  {/* Intestazione Bottega / Artista Orizzontale */}
+                <div style={{ display: 'flex', flexDirection: 'column', minHeight: '520px', justifyContent: 'space-between' }}>
+                  {/* Intestazione Bottega / Artista Orizzontale a tutta larghezza */}
                   <div style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    borderBottom: '1px solid #d4af37',
+                    borderBottom: '1.5px solid #8c6d23',
                     paddingBottom: '10px',
-                    marginBottom: '14px'
+                    marginBottom: '16px'
                   }}>
                     <div>
-                      <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '20px', fontWeight: 800, letterSpacing: '2px', color: '#1a1a1a', textTransform: 'uppercase', margin: 0, lineHeight: 1.1 }}>
+                      <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '21px', fontWeight: 800, letterSpacing: '2px', color: '#1a1a1a', textTransform: 'uppercase', margin: 0, lineHeight: 1.1 }}>
                         {studioProfile.studioName || "ATELIER D'ARTE"}
                       </h1>
-                      <div style={{ fontSize: '12px', letterSpacing: '1.5px', color: '#8c6d23', textTransform: 'uppercase', marginTop: '2px', fontWeight: 600 }}>
+                      <div style={{ fontSize: '12.5px', letterSpacing: '1.5px', color: '#8c6d23', textTransform: 'uppercase', marginTop: '2px', fontWeight: 600 }}>
                         {studioProfile.artistName || "Bottega d'Arte"}
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', fontSize: '10px', color: '#666', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                      {studioProfile.address} {studioProfile.city && `• ${studioProfile.city}`} {studioProfile.phone && `• Tel: ${studioProfile.phone}`}
+                      {studioProfile.address} {studioProfile.city && `• ${studioProfile.city}`} {studioProfile.phone && `• Tel: ${studioProfile.phone}`} {studioProfile.email && `• ${studioProfile.email}`}
                     </div>
                   </div>
 
-                  {/* 2 Colonne */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.3fr', gap: '24px', alignItems: 'center' }}>
+                  {/* 2 Colonne Centrali */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.05fr 1.25fr', gap: '28px', alignItems: 'center', flex: 1 }}>
                     {/* Colonna Sinistra: Opera */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                       {mainImage && (
@@ -674,7 +536,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                             src={mainImage} 
                             alt={artwork.title} 
                             style={{
-                              maxHeight: '260px',
+                              maxHeight: '270px',
                               maxWidth: '100%',
                               objectFit: 'contain',
                               border: '1px solid #c5a059',
@@ -695,75 +557,76 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                       </div>
                     </div>
 
-                    {/* Colonna Destra: Certificato, Dati, Firme */}
+                    {/* Colonna Destra: Certificato, Dati, Dichiarazione */}
                     <div>
-                      <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-                        <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '16px', fontWeight: 700, letterSpacing: '1.8px', color: '#8c6d23', textTransform: 'uppercase', margin: 0 }}>
+                      <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                        <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '16.5px', fontWeight: 700, letterSpacing: '1.8px', color: '#8c6d23', textTransform: 'uppercase', margin: 0 }}>
                           {language === 'en' ? 'CERTIFICATE OF AUTHENTICITY' : 'CERTIFICATO DI AUTENTICITÀ'}
                         </h2>
-                        <div style={{ fontSize: '10px', color: '#666', fontStyle: 'italic', marginTop: '2px' }}>
+                        <div style={{ fontSize: '10.5px', color: '#666', marginTop: '2px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
                           {language === 'en' ? 'Inventory Code:' : 'Codice di Catalogo:'} <strong>{artwork.code}</strong> • {language === 'en' ? 'Certificate No.:' : 'N. Certificato:'} <strong>{artwork.certificateNumber || artwork.code}</strong>
                         </div>
                       </div>
 
-                      {/* Scheda tecnica compatta */}
+                      {/* Scheda tecnica */}
                       <div style={{
                         background: '#faf9f5',
                         border: '1px solid #d4af37',
                         padding: '10px 14px',
                         borderRadius: '2px',
                         marginBottom: '10px',
-                        fontSize: '11px',
+                        fontSize: '11.5px',
                         fontFamily: "'Plus Jakarta Sans', sans-serif"
                       }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '4px', columnGap: '12px' }}>
-                          <div><strong style={{ color: '#666', fontSize: '9px', textTransform: 'uppercase' }}>{language === 'en' ? 'Author:' : 'Autore:'}</strong> <div style={{ fontWeight: 600 }}>{artwork.artist || studioProfile.artistName}</div></div>
-                          <div><strong style={{ color: '#666', fontSize: '9px', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> <div>{artwork.year}</div></div>
-                          <div><strong style={{ color: '#666', fontSize: '9px', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium:' : 'Tecnica:'}</strong> <div>{artwork.technique}</div></div>
-                          <div><strong style={{ color: '#666', fontSize: '9px', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> <div>{artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div></div>
-                          <div><strong style={{ color: '#666', fontSize: '9px', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> <div>{artwork.dimensions.height} × {artwork.dimensions.width} cm</div></div>
-                          <div><strong style={{ color: '#666', fontSize: '9px', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> <div>{artwork.framed ? 'Sì' : 'Senza cornice'}</div></div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '5px', columnGap: '12px' }}>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Author:' : 'Autore:'}</strong> <div style={{ fontWeight: 600 }}>{artwork.artist || studioProfile.artistName}</div></div>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> <div>{artwork.year}</div></div>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium:' : 'Tecnica:'}</strong> <div>{artwork.technique}</div></div>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> <div>{artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div></div>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> <div>{artwork.dimensions.height} × {artwork.dimensions.width} cm</div></div>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> <div>{artwork.framed ? 'Sì' : 'Senza cornice'}</div></div>
                           <div style={{ gridColumn: 'span 2' }}>
-                            <strong style={{ color: '#666', fontSize: '9px', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore Dichiarato / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23', marginLeft: '4px' }}>{formattedPrice}</span>
+                            <strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore Dichiarato / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23', marginLeft: '4px' }}>{formattedPrice}</span>
                           </div>
                         </div>
                       </div>
 
                       {/* Dichiarazione */}
-                      <div style={{ fontSize: '11px', fontStyle: 'italic', lineHeight: 1.4, color: '#222', marginBottom: '10px', textAlign: 'justify' }}>
+                      <div style={{ fontSize: '11px', fontStyle: 'italic', lineHeight: 1.45, color: '#222', textAlign: 'justify' }}>
                         {language === 'en'
                           ? 'This document certifies that the work of art described and reproduced above is an authentic original, created solely by hand by the artist and registered under the catalog number above in the official studio archive.'
                           : "Si certifica con il presente documento che l'opera sopra descritta e riprodotta è un originale autentico, realizzato unicamente a mano dall'artista e registrato con il numero di catalogo sopra indicato presso l'archivio ufficiale di bottega."}
                       </div>
-
-                      {/* Firme e Luogo */}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '6px' }}>
-                        <div style={{ fontSize: '10px' }}>
-                          <div>{language === 'en' ? 'Place & Date of Issue:' : 'Luogo e Data di rilascio:'}</div>
-                          <strong style={{ color: '#111' }}>{studioProfile.city || 'In Bottega'}, {today}</strong>
-                        </div>
-
-                        <div style={{ textAlign: 'center', width: '180px' }}>
-                          <div style={{ borderBottom: '1px solid #111', height: '26px', marginBottom: '3px' }}></div>
-                          <div style={{ fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-                            {language === 'en' ? "Artist's Signature / Direction" : "Firma dell'Artista / Direzione"}
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
 
-                  {/* Piè di pagina certificato */}
-                  <div style={{
-                    marginTop: '16px',
-                    textAlign: 'center',
-                    fontSize: '9px',
-                    color: '#777',
-                    letterSpacing: '1px',
-                    textTransform: 'uppercase',
-                    fontFamily: "'Plus Jakarta Sans', sans-serif"
-                  }}>
-                    Registro Ufficiale OperaViva • Created by Marzio Sparla
+                  {/* Firme a tutta larghezza e Piè di pagina in basso */}
+                  <div style={{ marginTop: '16px', paddingTop: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '6px' }}>
+                      <div style={{ fontSize: '11px' }}>
+                        <div>{language === 'en' ? 'Place & Date of Issue:' : 'Luogo e Data di rilascio:'}</div>
+                        <strong style={{ color: '#111' }}>{studioProfile.city || 'In Bottega'}, {today}</strong>
+                      </div>
+
+                      <div style={{ textAlign: 'center', width: '220px' }}>
+                        <div style={{ borderBottom: '1px solid #111', height: '28px', marginBottom: '3px' }}></div>
+                        <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                          {language === 'en' ? "Artist's Signature / Direction" : "Firma dell'Artista / Direzione"}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{
+                      marginTop: '8px',
+                      textAlign: 'center',
+                      fontSize: '9px',
+                      color: '#777',
+                      letterSpacing: '1.5px',
+                      textTransform: 'uppercase',
+                      fontFamily: "'Plus Jakarta Sans', sans-serif"
+                    }}>
+                      Registro Ufficiale OperaViva • Created by Marzio Sparla
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -957,14 +820,14 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
             </button>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-              {/* Pulsante Gira Foglio anche nel footer */}
+              {/* Pulsante Gira Foglio nel footer */}
               <button 
                 type="button" 
                 className="btn btn-secondary btn-action-pill" 
                 onClick={toggleOrientation}
                 title={language === 'en' 
                   ? (isLandscape ? 'Rotate: Switch to Portrait (A4 Vertical)' : 'Rotate: Switch to Landscape (A4 Horizontal)') 
-                  : (isLandscape ? 'Gira: Passa a Verticale (A4)' : 'Gira: Passa a Orizzontale (A4)')}
+                  : (isLandscape ? 'Gira in Verticale (A4)' : 'Gira in Orizzontale (A4)')}
                 id="btn-cert-footer-rotate"
                 style={{
                   borderColor: isLandscape ? 'var(--gold-400)' : undefined,
@@ -975,7 +838,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                 <span className="icon-circle" style={{ background: isLandscape ? 'rgba(212, 175, 55, 0.3)' : 'rgba(212, 175, 55, 0.15)', color: '#d4af37' }}>
                   <RotateCw size={15} style={{ transform: isLandscape ? 'rotate(90deg)' : 'none', transition: 'transform 0.3s ease' }} />
                 </span>
-                <span>{language === 'en' ? 'Rotate' : 'Gira'}</span>
+                <span>{isLandscape ? (language === 'en' ? 'Rotate: Vertical' : 'Gira: Verticale') : (language === 'en' ? 'Rotate: Horizontal' : 'Gira: Orizzontale')}</span>
               </button>
 
               {/* Anteprima PDF */}

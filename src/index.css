@@ -1260,7 +1260,8 @@ html, body {
   /* Versione Orizzontale (Landscape A4: 297mm x 210mm) */
   #operaviva-print-portal.portal-landscape {
     max-width: 281mm !important;
-    max-height: 194mm !important;
+    height: 188mm !important;
+    max-height: 188mm !important;
   }
 
   /* Catalogo d'Arte A4 Multipage */
