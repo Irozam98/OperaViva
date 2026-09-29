@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Chiudi se si ridimensiona a viewport desktop
     window.addEventListener('resize', () => {
-      if (window.innerWidth > 900 && navMenu.classList.contains('open')) {
+      if (window.innerWidth > 1100 && navMenu.classList.contains('open')) {
         setMobileMenu(false);
       }
     });

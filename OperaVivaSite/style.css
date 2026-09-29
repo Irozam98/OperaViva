@@ -122,6 +122,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 1.25rem;
 }
 
 .brand {
@@ -130,6 +131,7 @@ body {
   gap: 0.75rem;
   text-decoration: none;
   color: inherit;
+  flex-shrink: 0;
 }
 
 .brand-icon {
@@ -143,6 +145,13 @@ body {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
 }
 
 .brand-title {
@@ -175,6 +184,7 @@ body {
   text-decoration: none;
   font-size: 0.92rem;
   font-weight: 500;
+  white-space: nowrap;
   transition: color 0.2s ease;
 }
 
@@ -194,6 +204,24 @@ body {
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  flex-shrink: 0;
+}
+
+/* Ottimizzazione Desktop Compatto (1101px - 1260px) */
+@media (min-width: 1101px) and (max-width: 1260px) {
+  .nav-menu {
+    gap: 1.1rem;
+  }
+  .nav-link {
+    font-size: 0.86rem;
+  }
+  .header-cta {
+    gap: 0.65rem;
+  }
+  .btn-gold-sm {
+    padding: 0 1rem;
+    font-size: 0.8rem;
+  }
 }
 
 .btn-gold-sm {
@@ -1733,7 +1761,7 @@ section[id] {
    Responsive Media Queries per Tablet & Smartphone
    ========================================================================== */
 
-@media (max-width: 1024px) {
+@media (max-width: 1100px) {
   .hero-title {
     font-size: 2.8rem;
   }
@@ -1759,10 +1787,8 @@ section[id] {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
-}
 
-@media (max-width: 768px) {
-  /* Header & Navigation Drawer */
+  /* Header & Navigation Drawer per Tablet e Mobile */
   .site-header {
     padding: 0.75rem 0;
   }
@@ -1795,10 +1821,14 @@ section[id] {
 
   .nav-link {
     width: 100%;
-    padding: 0.75rem 1rem;
+    max-width: 520px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0.8rem 1rem;
     font-size: 1.05rem;
     border-radius: var(--radius-sm);
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    white-space: nowrap;
   }
 
   .nav-link:hover {
@@ -1807,6 +1837,13 @@ section[id] {
 
   .mobile-toggle {
     display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-link {
+    text-align: left;
+    max-width: 100%;
   }
 
   .mobile-lang-row {
