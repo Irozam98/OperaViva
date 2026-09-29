@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Printer, BookOpen, Save } from 'lucide-react';
+import { X, Printer, BookOpen, Save, Eye, Check, ExternalLink } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
 import { useI18n } from '../i18n';
 
@@ -28,8 +28,67 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
   const [includeCover, setIncludeCover] = useState(true);
   const [includeColophon, setIncludeColophon] = useState(true);
 
-  const handlePrint = () => {
-    window.print();
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedSuccessPath, setSavedSuccessPath] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+
+  const handlePrint = async () => {
+    if (window.electronAPI?.print) {
+      await window.electronAPI.print();
+    } else {
+      window.print();
+    }
+  };
+
+  const handleSavePDF = async () => {
+    setIsSaving(true);
+    setActionError(null);
+    try {
+      const artistClean = (studioProfile.artistName || 'Artista').replace(/[^a-zA-Z0-9_-]/g, '_');
+      const year = new Date().getFullYear();
+      const defaultFileName = `Catalogo_Opere_${artistClean}_${year}.pdf`;
+
+      if (window.electronAPI?.savePDF) {
+        const res = await window.electronAPI.savePDF({
+          defaultFileName,
+          title: language === 'en' ? 'Save Catalog as PDF' : 'Salva Catalogo d\'Arte in PDF'
+        });
+
+        if (res.success && res.filePath) {
+          setSavedSuccessPath(res.filePath);
+        } else if (res.error) {
+          setActionError(res.error);
+        }
+      } else {
+        window.print();
+      }
+    } catch (err: any) {
+      setActionError(err?.message || 'Errore durante il salvataggio');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePreviewPDF = async () => {
+    setActionError(null);
+    try {
+      if (window.electronAPI?.previewPDF) {
+        const artistClean = (studioProfile.artistName || 'Artista').replace(/[^a-zA-Z0-9_-]/g, '_');
+        await window.electronAPI.previewPDF({
+          title: `Catalogo_${artistClean}`
+        });
+      } else {
+        window.print();
+      }
+    } catch (err: any) {
+      setActionError(err?.message || 'Errore anteprima PDF');
+    }
+  };
+
+  const handleOpenSavedFile = async () => {
+    if (savedSuccessPath && window.electronAPI?.openPath) {
+      await window.electronAPI.openPath(savedSuccessPath);
+    }
   };
 
   // Filtraggio delle opere in base all'ambito scelto
@@ -79,12 +138,14 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
     <div 
       className="catalog-a4-page"
       style={{
-        width: '100%',
-        height: isPrint ? '275mm' : 'auto',
-        minHeight: !isPrint ? '920px' : undefined,
+        width: isPrint ? '210mm' : '100%',
+        maxWidth: isPrint ? '210mm' : '720px',
+        height: isPrint ? '297mm' : 'auto',
+        maxHeight: isPrint ? '297mm' : undefined,
+        minHeight: !isPrint ? '960px' : undefined,
         background: '#ffffff',
         color: '#1a1a1a',
-        padding: isPrint ? '15mm 18mm' : '45px 50px',
+        padding: isPrint ? '12mm 15mm' : '45px 50px',
         boxSizing: 'border-box',
         border: '3px double #8c6d23',
         position: 'relative',
@@ -96,22 +157,23 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
         pageBreakAfter: isPrint ? 'always' : 'auto',
         breakAfter: isPrint ? 'page' : 'auto',
         pageBreakInside: 'avoid',
-        breakInside: 'avoid'
+        breakInside: 'avoid',
+        overflow: 'hidden'
       }}
     >
       {/* Cornice decorativa classica */}
       <div style={{
         position: 'absolute',
-        top: '4mm',
-        left: '4mm',
-        right: '4mm',
-        bottom: '4mm',
+        top: '3.5mm',
+        left: '3.5mm',
+        right: '3.5mm',
+        bottom: '3.5mm',
         border: '1px solid #d4af37',
         pointerEvents: 'none'
       }}></div>
 
       {/* Intestazione Superiore Bottega */}
-      <div style={{ marginTop: '15mm' }}>
+      <div style={{ marginTop: '10mm' }}>
         <div style={{
           fontFamily: "'Cinzel', serif",
           fontSize: '11pt',
@@ -140,7 +202,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
       <div style={{ margin: 'auto 0' }}>
         <h1 style={{
           fontFamily: "'Playfair Display', Georgia, serif",
-          fontSize: '28pt',
+          fontSize: '26pt',
           fontWeight: 800,
           letterSpacing: '1px',
           color: '#111111',
@@ -173,7 +235,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
       </div>
 
       {/* Piede Copertina */}
-      <div style={{ marginBottom: '15mm', borderTop: '1px solid #d4af37', paddingTop: '15px' }}>
+      <div style={{ marginBottom: '10mm', borderTop: '1px solid #d4af37', paddingTop: '14px' }}>
         <div style={{ fontSize: '9pt', color: '#555', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
           {studioProfile.city && `${studioProfile.city} • `}
           {studioProfile.address && `${studioProfile.address} • `}
@@ -195,33 +257,33 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
       // Monografica: Grande impatto a pagina intera
       return (
         <div key={art.id} style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-          <div style={{ textAlign: 'center', flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '125mm', maxHeight: '140mm', marginBottom: '12px' }}>
+          <div style={{ textAlign: 'center', flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '110mm', maxHeight: '125mm', marginBottom: '10px' }}>
             {mainImg ? (
               <img 
                 src={mainImg} 
                 alt={art.title} 
-                style={{ maxHeight: '135mm', maxWidth: '100%', objectFit: 'contain', border: '1px solid #c5a059', padding: '3px', background: '#fff' }} 
+                style={{ maxHeight: '120mm', maxWidth: '100%', objectFit: 'contain', border: '1px solid #c5a059', padding: '3px', background: '#fff' }} 
               />
             ) : (
-              <div style={{ width: '100%', height: '100mm', border: '1px dashed #c5a059', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontStyle: 'italic' }}>
+              <div style={{ width: '100%', height: '90mm', border: '1px dashed #c5a059', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontStyle: 'italic' }}>
                 Nessuna foto disponibile
               </div>
             )}
           </div>
 
-          <div style={{ background: '#faf9f5', border: '1px solid #e8e3d5', padding: '14px 18px', borderRadius: '4px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid #d4af37', paddingBottom: '6px', marginBottom: '8px' }}>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '18pt', fontWeight: 700, margin: 0, color: '#111' }}>
+          <div style={{ background: '#faf9f5', border: '1px solid #e8e3d5', padding: '12px 16px', borderRadius: '3px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid #d4af37', paddingBottom: '5px', marginBottom: '6px' }}>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '16pt', fontWeight: 700, margin: 0, color: '#111' }}>
                 "{art.title}"
               </h2>
               {showPrices && (
-                <div style={{ fontFamily: "'Cinzel', serif", fontSize: '13pt', fontWeight: 700, color: '#8c6d23' }}>
+                <div style={{ fontFamily: "'Cinzel', serif", fontSize: '12pt', fontWeight: 700, color: '#8c6d23' }}>
                   {formatPrice(art.price, art.currency)}
                 </div>
               )}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px', fontSize: '9pt', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px', fontSize: '8.5pt', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               <div><strong style={{ color: '#666' }}>Codice:</strong> <div>{art.code}</div></div>
               <div><strong style={{ color: '#666' }}>Anno:</strong> <div>{art.year || '—'}</div></div>
               <div><strong style={{ color: '#666' }}>Tecnica:</strong> <div>{art.technique}</div></div>
@@ -233,7 +295,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
             </div>
 
             {art.notes && (
-              <div style={{ marginTop: '8px', paddingTop: '6px', borderTop: '1px dashed #ded8c8', fontSize: '8.5pt', color: '#444', fontStyle: 'italic' }}>
+              <div style={{ marginTop: '6px', paddingTop: '5px', borderTop: '1px dashed #ded8c8', fontSize: '8pt', color: '#444', fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                 <strong>Note d'opera:</strong> {art.notes}
               </div>
             )}
@@ -243,21 +305,21 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
     }
 
     if (layoutType === '2') {
-      // 2 Opere per Foglio: perfetto equilibrio curatoriale
+      // 2 Opere per Foglio: perfetto equilibrio curatoriale calibrato per A4
       return (
         <div key={art.id} style={{
-          height: '114mm',
-          maxHeight: '114mm',
+          height: '112mm',
+          maxHeight: '112mm',
           display: 'flex',
-          gap: '16px',
+          gap: '14px',
           borderBottom: '1px solid #e2d9c2',
-          paddingBottom: '8mm',
-          marginBottom: '8mm',
+          paddingBottom: '4mm',
+          marginBottom: '4mm',
           boxSizing: 'border-box',
           overflow: 'hidden'
         }}>
           {/* Immagine a Sinistra */}
-          <div style={{ width: '42%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: '40%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             {mainImg ? (
               <img 
                 src={mainImg} 
@@ -265,26 +327,26 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
                 style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', border: '1px solid #c5a059', padding: '2px', background: '#fff' }} 
               />
             ) : (
-              <div style={{ width: '100%', height: '80mm', border: '1px dashed #c5a059', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: '8pt', fontStyle: 'italic' }}>
+              <div style={{ width: '100%', height: '75mm', border: '1px dashed #c5a059', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#888', fontSize: '8pt', fontStyle: 'italic' }}>
                 Senza immagine
               </div>
             )}
           </div>
 
           {/* Dati Opera a Destra */}
-          <div style={{ width: '58%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <div style={{ width: '60%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '4px' }}>
-                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '14pt', fontWeight: 700, margin: 0, color: '#111', lineHeight: 1.2 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '3px' }}>
+                <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '13pt', fontWeight: 700, margin: 0, color: '#111', lineHeight: 1.2 }}>
                   "{art.title}"
                 </h3>
               </div>
               
-              <div style={{ fontSize: '8.5pt', color: '#8c6d23', fontFamily: "'Cinzel', serif", fontWeight: 600, letterSpacing: '1px', marginBottom: '8px' }}>
+              <div style={{ fontSize: '8pt', color: '#8c6d23', fontFamily: "'Cinzel', serif", fontWeight: 600, letterSpacing: '1px', marginBottom: '6px' }}>
                 {art.code} • {art.year || 'Senza anno'}
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5px', fontSize: '8.5pt', lineHeight: 1.35, color: '#333' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', fontSize: '8pt', lineHeight: 1.3, color: '#333' }}>
                 <div><strong>Tecnica:</strong> {art.technique}</div>
                 <div><strong>Supporto:</strong> {art.support || '—'}</div>
                 <div><strong>Misure:</strong> {art.dimensions.height}×{art.dimensions.width}{art.dimensions.depth ? `×${art.dimensions.depth}` : ''} cm</div>
@@ -294,16 +356,16 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               </div>
 
               {art.notes && (
-                <div style={{ fontSize: '7.8pt', color: '#555', marginTop: '6px', fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                <div style={{ fontSize: '7.5pt', color: '#555', marginTop: '4px', fontStyle: 'italic', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                   {art.notes}
                 </div>
               )}
             </div>
 
             {showPrices && (
-              <div style={{ borderTop: '1px dashed #c5a059', paddingTop: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '8pt', color: '#777', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quotazione:</span>
-                <span style={{ fontFamily: "'Cinzel', serif", fontSize: '11pt', fontWeight: 700, color: '#8c6d23' }}>
+              <div style={{ borderTop: '1px dashed #c5a059', paddingTop: '3px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '7.5pt', color: '#777', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quotazione:</span>
+                <span style={{ fontFamily: "'Cinzel', serif", fontSize: '10.5pt', fontWeight: 700, color: '#8c6d23' }}>
                   {formatPrice(art.price, art.currency)}
                 </span>
               </div>
@@ -313,35 +375,37 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
       );
     }
 
-    // Layout 4: Griglia 2x2
+    // Layout 4: Griglia 2x2 calibrata
     return (
       <div key={art.id} style={{
-        height: '110mm',
+        height: '112mm',
+        maxHeight: '112mm',
         border: '1px solid #e8e3d5',
         background: '#faf9f5',
-        padding: '8px',
+        padding: '6px',
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        fontFamily: "'Plus Jakarta Sans', sans-serif"
+        fontFamily: "'Plus Jakarta Sans', sans-serif",
+        overflow: 'hidden'
       }}>
         <div style={{ height: '62mm', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           {mainImg ? (
             <img src={mainImg} alt={art.title} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
           ) : (
-            <div style={{ color: '#999', fontSize: '8pt', fontStyle: 'italic' }}>Nessuna foto</div>
+            <div style={{ color: '#999', fontSize: '7.5pt', fontStyle: 'italic' }}>Nessuna foto</div>
           )}
         </div>
         <div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '10.5pt', color: '#111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '10pt', color: '#111', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             "{art.title}"
           </div>
           <div style={{ fontSize: '7.5pt', color: '#666', marginTop: '2px' }}>
             {art.technique} • {art.dimensions.height}×{art.dimensions.width} cm • {art.year}
           </div>
           {showPrices && (
-            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '9pt', fontWeight: 700, color: '#8c6d23', marginTop: '3px' }}>
+            <div style={{ fontFamily: "'Cinzel', serif", fontSize: '8.5pt', fontWeight: 700, color: '#8c6d23', marginTop: '2px' }}>
               {formatPrice(art.price, art.currency)}
             </div>
           )}
@@ -356,12 +420,14 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
       key={pageIndex}
       className="catalog-a4-page"
       style={{
-        width: '100%',
-        height: isPrint ? '275mm' : 'auto',
-        minHeight: !isPrint ? '920px' : undefined,
+        width: isPrint ? '210mm' : '100%',
+        maxWidth: isPrint ? '210mm' : '720px',
+        height: isPrint ? '297mm' : 'auto',
+        maxHeight: isPrint ? '297mm' : undefined,
+        minHeight: !isPrint ? '960px' : undefined,
         background: '#ffffff',
         color: '#1a1a1a',
-        padding: isPrint ? '10mm 12mm' : '35px 40px',
+        padding: isPrint ? '8mm 12mm' : '35px 40px',
         boxSizing: 'border-box',
         border: '1px solid #d4af37',
         position: 'relative',
@@ -372,7 +438,8 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
         pageBreakAfter: isPrint ? 'always' : 'auto',
         breakAfter: isPrint ? 'page' : 'auto',
         pageBreakInside: 'avoid',
-        breakInside: 'avoid'
+        breakInside: 'avoid',
+        overflow: 'hidden'
       }}
     >
       {/* Running Header */}
@@ -381,8 +448,8 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
         justifyContent: 'space-between',
         alignItems: 'center',
         borderBottom: '1px solid #d4af37',
-        paddingBottom: '6px',
-        marginBottom: '8mm'
+        paddingBottom: '4px',
+        marginBottom: '4mm'
       }}>
         <div style={{ fontFamily: "'Cinzel', serif", fontSize: '8.5pt', letterSpacing: '1.5px', color: '#8c6d23', textTransform: 'uppercase', fontWeight: 600 }}>
           {studioProfile.studioName || "ATELIER D'ARTE"} • {studioProfile.artistName || "OPERE"}
@@ -399,7 +466,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
         gridTemplateColumns: layout === '4' ? '1fr 1fr' : undefined,
         gridTemplateRows: layout === '4' ? '1fr 1fr' : undefined,
         flexDirection: layout !== '4' ? 'column' : undefined,
-        gap: layout === '4' ? '8mm' : '0',
+        gap: layout === '4' ? '6mm' : '0',
         justifyContent: 'space-between'
       }}>
         {chunk.map(art => renderArtworkItem(art, layout))}
@@ -411,8 +478,8 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
         justifyContent: 'space-between',
         alignItems: 'center',
         borderTop: '1px solid #d4af37',
-        paddingTop: '6px',
-        marginTop: '6mm',
+        paddingTop: '4px',
+        marginTop: '4mm',
         fontSize: '7.5pt',
         color: '#777',
         fontFamily: "'Plus Jakarta Sans', sans-serif"
@@ -430,12 +497,14 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
     <div 
       className="catalog-a4-page"
       style={{
-        width: '100%',
-        height: isPrint ? '275mm' : 'auto',
-        minHeight: !isPrint ? '920px' : undefined,
+        width: isPrint ? '210mm' : '100%',
+        maxWidth: isPrint ? '210mm' : '720px',
+        height: isPrint ? '297mm' : 'auto',
+        maxHeight: isPrint ? '297mm' : undefined,
+        minHeight: !isPrint ? '960px' : undefined,
         background: '#ffffff',
         color: '#1a1a1a',
-        padding: isPrint ? '15mm 18mm' : '45px 50px',
+        padding: isPrint ? '12mm 15mm' : '45px 50px',
         boxSizing: 'border-box',
         border: '3px double #8c6d23',
         position: 'relative',
@@ -446,87 +515,88 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
         pageBreakAfter: isPrint ? 'auto' : 'auto',
         breakAfter: isPrint ? 'auto' : 'auto',
         pageBreakInside: 'avoid',
-        breakInside: 'avoid'
+        breakInside: 'avoid',
+        overflow: 'hidden'
       }}
     >
       {/* Cornice interna */}
       <div style={{
         position: 'absolute',
-        top: '4mm',
-        left: '4mm',
-        right: '4mm',
-        bottom: '4mm',
+        top: '3.5mm',
+        left: '3.5mm',
+        right: '3.5mm',
+        bottom: '3.5mm',
         border: '1px solid #d4af37',
         pointerEvents: 'none'
       }}></div>
 
-      <div style={{ textAlign: 'center', marginTop: '10mm' }}>
-        <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '18pt', fontWeight: 800, color: '#8c6d23', letterSpacing: '3px', textTransform: 'uppercase', margin: 0 }}>
+      <div style={{ textAlign: 'center', marginTop: '8mm' }}>
+        <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '17pt', fontWeight: 800, color: '#8c6d23', letterSpacing: '3px', textTransform: 'uppercase', margin: 0 }}>
           {language === 'en' ? 'ATELIER & DIRECT CONTACTS' : 'BOTTEGA & CONTATTI'}
         </h2>
-        <div style={{ fontSize: '10pt', color: '#555', marginTop: '4px', fontStyle: 'italic' }}>
+        <div style={{ fontSize: '9.5pt', color: '#555', marginTop: '4px', fontStyle: 'italic' }}>
           {language === 'en' ? 'Official Inquiries, Acquisitions & Exhibitions' : 'Informazioni per Collezionisti, Gallerie e Acquisizioni'}
         </div>
-        <div style={{ width: '50px', height: '1.5px', background: '#d4af37', margin: '14px auto' }}></div>
+        <div style={{ width: '50px', height: '1.5px', background: '#d4af37', margin: '12px auto' }}></div>
       </div>
 
       <div style={{
         background: '#faf9f5',
         border: '1px solid #e8e3d5',
-        padding: '24px 28px',
-        borderRadius: '6px',
+        padding: '20px 24px',
+        borderRadius: '4px',
         fontFamily: "'Plus Jakarta Sans', sans-serif",
-        fontSize: '10pt',
-        lineHeight: 1.8,
-        maxWidth: '550px',
+        fontSize: '9.5pt',
+        lineHeight: 1.7,
+        maxWidth: '520px',
         margin: '0 auto',
         width: '100%',
         boxSizing: 'border-box'
       }}>
-        <div style={{ marginBottom: '10px' }}>
-          <strong style={{ color: '#8c6d23', textTransform: 'uppercase', fontSize: '9pt', letterSpacing: '1px' }}>Studio / Bottega:</strong>
-          <div style={{ fontSize: '12pt', fontWeight: 700, color: '#111' }}>{studioProfile.studioName || "Atelier d'Arte"}</div>
+        <div style={{ marginBottom: '8px' }}>
+          <strong style={{ color: '#8c6d23', textTransform: 'uppercase', fontSize: '8.5pt', letterSpacing: '1px' }}>Studio / Bottega:</strong>
+          <div style={{ fontSize: '11.5pt', fontWeight: 700, color: '#111' }}>{studioProfile.studioName || "Atelier d'Arte"}</div>
         </div>
 
-        <div style={{ marginBottom: '10px' }}>
-          <strong style={{ color: '#8c6d23', textTransform: 'uppercase', fontSize: '9pt', letterSpacing: '1px' }}>Autore:</strong>
-          <div style={{ fontSize: '11pt', fontWeight: 600, color: '#111' }}>{studioProfile.artistName || "Direzione Artistica"}</div>
+        <div style={{ marginBottom: '8px' }}>
+          <strong style={{ color: '#8c6d23', textTransform: 'uppercase', fontSize: '8.5pt', letterSpacing: '1px' }}>Autore:</strong>
+          <div style={{ fontSize: '10.5pt', fontWeight: 600, color: '#111' }}>{studioProfile.artistName || "Direzione Artistica"}</div>
         </div>
 
         {studioProfile.address && (
-          <div style={{ marginBottom: '8px' }}>
+          <div style={{ marginBottom: '6px' }}>
             <strong style={{ color: '#666' }}>Indirizzo:</strong> {studioProfile.address} {studioProfile.city && `• ${studioProfile.city}`}
           </div>
         )}
 
         {studioProfile.phone && (
-          <div style={{ marginBottom: '8px' }}>
+          <div style={{ marginBottom: '6px' }}>
             <strong style={{ color: '#666' }}>Telefono:</strong> {studioProfile.phone}
           </div>
         )}
 
         {studioProfile.email && (
-          <div style={{ marginBottom: '8px' }}>
+          <div style={{ marginBottom: '6px' }}>
             <strong style={{ color: '#666' }}>Email:</strong> {studioProfile.email}
           </div>
         )}
 
         {studioProfile.website && (
-          <div style={{ marginBottom: '8px' }}>
+          <div style={{ marginBottom: '6px' }}>
             <strong style={{ color: '#666' }}>Sito Web / Social:</strong> {studioProfile.website}
           </div>
         )}
       </div>
 
-      <div style={{ textAlign: 'center', marginBottom: '10mm', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-        <p style={{ fontSize: '8.5pt', color: '#666', fontStyle: 'italic', maxWidth: '480px', margin: '0 auto 20px', lineHeight: 1.5 }}>
+      <div style={{ textAlign: 'center', marginBottom: '8mm', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+        <p style={{ fontSize: '8pt', color: '#666', fontStyle: 'italic', maxWidth: '460px', margin: '0 auto 16px', lineHeight: 1.45 }}>
           {language === 'en'
             ? 'All artworks documented in this catalog are registered originals. For each acquisition, an official Certificate of Authenticity signed by the artist will be delivered.'
             : 'Tutte le opere documentate nel presente catalogo sono originali registrati in bottega. Ad ogni acquisizione viene rilasciato il Certificato di Autenticità ufficiale munito di timbro e firma autografa.'}
         </p>
 
-        <div style={{ width: '180px', borderBottom: '1px solid #111', margin: '0 auto 6px', height: '25px' }}></div>
-        <div style={{ fontSize: '8.5pt', color: '#444', textTransform: 'uppercase', letterSpacing: '1px' }}>
+        <div style={{ width: '180px', borderBottom: '1px solid #111', margin: '0 auto 6px', height: '22px' }}></div>
+        <div style={{ fontSize: '8pt', color: '#444', textTransform: 'uppercase', letterSpacing: '1px' }}>
           {language === 'en' ? "Artist's Signature" : "Firma dell'Autore"}
         </div>
       </div>
@@ -536,7 +606,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
   // Calcolo totale pagine del catalogo stampabile
   const totalPagesCount = pages.length;
 
-  // Foglio di stampa montato direttamente nel body tramite createPortal
+  // Foglio di stampa montato direttamente nel body tramite createPortal con dimensioni A4 esatte
   const printCatalogContent = (
     <div className="printable-area catalog-printable-area" id="operaviva-catalog-portal">
       {includeCover && renderCoverPage(true)}
@@ -554,21 +624,35 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
           style={{ maxWidth: '980px', maxHeight: '96vh', background: '#1c202a', border: '1px solid var(--border-gold)' }}
         >
           {/* Header Modale con Controlli */}
-          <div className="modal-header" style={{ borderBottom: '1px solid var(--border-subtle)', padding: '1rem 1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div className="modal-header" style={{ borderBottom: '1px solid var(--border-subtle)', padding: '0.85rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
               <BookOpen size={22} color="#d4af37" />
               <div>
-                <h3 className="modal-title" style={{ fontSize: '1.15rem', margin: 0 }}>
-                  {language === 'en' ? 'A4 Art Archive Catalog & Portfolio' : 'Catalogo & Portfolio A4 dell\'Archivio'}
+                <h3 className="modal-title" style={{ fontSize: '1.15rem', margin: 0, whiteSpace: 'nowrap' }}>
+                  {language === 'en' ? 'A4 Art Archive Catalog' : 'Catalogo A4 dell\'Archivio'}
                 </h3>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  {filteredArtworks.length} {language === 'en' ? 'artworks in document' : 'opere incluse'} • {pages.length} {language === 'en' ? 'pages' : 'pagine di catalogo'}
+                  {filteredArtworks.length} {language === 'en' ? 'artworks' : 'opere'} • {pages.length + (includeCover ? 1 : 0) + (includeColophon ? 1 : 0)} {language === 'en' ? 'A4 sheets' : 'fogli A4'}
                 </span>
               </div>
             </div>
 
-            {/* Pulsanti Azione Principali (Stampante, Floppy, Chiudi) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            {/* Pulsanti Azione Principali */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'nowrap', flexShrink: 0 }}>
+              {/* Anteprima PDF in Windows */}
+              <button 
+                type="button" 
+                className="btn btn-secondary btn-action-pill"
+                onClick={handlePreviewPDF}
+                title={language === 'en' ? 'Open real PDF preview in Windows' : 'Apri anteprima PDF reale in Windows'}
+                id="btn-preview-catalog"
+              >
+                <span className="icon-circle" style={{ background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa' }}>
+                  <Eye size={15} />
+                </span>
+                <span>{language === 'en' ? 'PDF Preview' : 'Anteprima PDF'}</span>
+              </button>
+
               {/* Pallino stampante */}
               <button 
                 type="button" 
@@ -587,14 +671,15 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               <button 
                 type="button" 
                 className="btn btn-secondary btn-action-pill"
-                onClick={handlePrint}
-                title={language === 'en' ? 'Save as PDF (via print dialog)' : 'Salva Catalogo in PDF'}
+                onClick={handleSavePDF}
+                disabled={isSaving}
+                title={language === 'en' ? 'Save as PDF (prompts save location)' : 'Salva Catalogo in PDF (scegli cartella di destinazione)'}
                 id="btn-save-pdf-catalog"
               >
                 <span className="icon-circle icon-circle-save">
                   <Save size={15} />
                 </span>
-                <span>{language === 'en' ? 'Save PDF' : 'Salva PDF'}</span>
+                <span>{isSaving ? '...' : (language === 'en' ? 'Save PDF' : 'Salva PDF')}</span>
               </button>
 
               <button className="btn-icon" onClick={onClose} title={language === 'en' ? 'Close' : 'Chiudi'}>
@@ -602,6 +687,49 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               </button>
             </div>
           </div>
+
+          {/* Banner di successo o errore salvataggio PDF */}
+          {savedSuccessPath && (
+            <div style={{
+              background: 'rgba(74, 222, 128, 0.15)',
+              borderBottom: '1px solid rgba(74, 222, 128, 0.35)',
+              padding: '0.65rem 1.25rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '1rem',
+              color: '#86efac',
+              fontSize: '0.85rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Check size={16} />
+                <span>
+                  {language === 'en' ? 'Catalog PDF saved successfully to:' : 'Catalogo PDF salvato con successo in:'} <strong>{savedSuccessPath}</strong>
+                </span>
+              </div>
+              <button 
+                type="button"
+                onClick={handleOpenSavedFile}
+                className="btn btn-secondary"
+                style={{ padding: '0.25rem 0.65rem', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                <ExternalLink size={13} />
+                <span>{language === 'en' ? 'Open PDF' : 'Apri PDF'}</span>
+              </button>
+            </div>
+          )}
+
+          {actionError && (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.15)',
+              borderBottom: '1px solid rgba(239, 68, 68, 0.35)',
+              padding: '0.65rem 1.25rem',
+              color: '#fca5a5',
+              fontSize: '0.85rem'
+            }}>
+              {actionError}
+            </div>
+          )}
 
           {/* Barra Strumenti di Configurazione Impaginazione */}
           <div style={{
@@ -720,23 +848,38 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
 
           {/* Anteprima Documento A4 a Video */}
           <div className="modal-body" style={{ background: '#0e1117', padding: '2rem 1.5rem', overflowY: 'auto' }}>
-            <div style={{ maxWidth: '780px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+            <div style={{ maxWidth: '740px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               
               {includeCover && (
-                <div style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.6)', borderRadius: '2px', overflow: 'hidden' }}>
-                  {renderCoverPage(false)}
+                <div>
+                  <div style={{ color: 'var(--gold-400)', fontSize: '0.78rem', marginBottom: '0.4rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>
+                    Copertina d'Atelier (Foglio 1)
+                  </div>
+                  <div style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.6)', borderRadius: '2px', overflow: 'hidden' }}>
+                    {renderCoverPage(false)}
+                  </div>
                 </div>
               )}
 
               {pages.map((chunk, idx) => (
-                <div key={idx} style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.6)', borderRadius: '2px', overflow: 'hidden' }}>
-                  {renderArtworkPage(chunk, idx, totalPagesCount, false)}
+                <div key={idx}>
+                  <div style={{ color: 'var(--gold-400)', fontSize: '0.78rem', marginBottom: '0.4rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>
+                    {language === 'en' ? 'Page' : 'Foglio'} {idx + 1 + (includeCover ? 1 : 0)} / {totalPagesCount + (includeCover ? 1 : 0) + (includeColophon ? 1 : 0)}
+                  </div>
+                  <div style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.6)', borderRadius: '2px', overflow: 'hidden' }}>
+                    {renderArtworkPage(chunk, idx, totalPagesCount, false)}
+                  </div>
                 </div>
               ))}
 
               {includeColophon && (
-                <div style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.6)', borderRadius: '2px', overflow: 'hidden' }}>
-                  {renderColophonPage(false)}
+                <div>
+                  <div style={{ color: 'var(--gold-400)', fontSize: '0.78rem', marginBottom: '0.4rem', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>
+                    {language === 'en' ? 'Final Page (Contacts & Colophon)' : 'Pagina Finale (Contatti & Registro)'}
+                  </div>
+                  <div style={{ boxShadow: '0 12px 35px rgba(0,0,0,0.6)', borderRadius: '2px', overflow: 'hidden' }}>
+                    {renderColophonPage(false)}
+                  </div>
                 </div>
               )}
 
@@ -749,7 +892,22 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               {language === 'en' ? 'Close' : 'Chiudi'}
             </button>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+              {/* Anteprima PDF */}
+              <button 
+                type="button" 
+                className="btn btn-secondary btn-action-pill"
+                onClick={handlePreviewPDF}
+                title={language === 'en' ? 'Open real PDF preview in Windows' : 'Apri anteprima PDF reale in Windows'}
+                id="btn-footer-preview-catalog"
+              >
+                <span className="icon-circle" style={{ background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa' }}>
+                  <Eye size={15} />
+                </span>
+                <span>{language === 'en' ? 'PDF Preview' : 'Anteprima PDF'}</span>
+              </button>
+
+              {/* Stampa */}
               <button 
                 type="button" 
                 className="btn btn-secondary btn-action-pill"
@@ -761,15 +919,17 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
                 <span>{language === 'en' ? 'Print A4' : 'Stampa A4'}</span>
               </button>
 
+              {/* Salva PDF */}
               <button 
                 type="button" 
                 className="btn btn-primary btn-action-pill"
-                onClick={handlePrint}
+                onClick={handleSavePDF}
+                disabled={isSaving}
               >
                 <span className="icon-circle icon-circle-save">
                   <Save size={15} />
                 </span>
-                <span>{language === 'en' ? 'Save as PDF (A4)' : 'Salva in PDF (A4)'}</span>
+                <span>{isSaving ? '...' : (language === 'en' ? 'Save as PDF (A4)' : 'Salva in PDF (A4)')}</span>
               </button>
             </div>
           </div>

@@ -1201,7 +1201,7 @@ html, body {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 10mm;
+    margin: 8mm;
   }
 
   html, body {
@@ -1226,7 +1226,7 @@ html, body {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 auto !important;
-    padding: 6mm 10mm !important;
+    padding: 0 !important;
     background: #ffffff !important;
     color: #111111 !important;
     font-family: 'Playfair Display', Georgia, serif;
@@ -1240,6 +1240,29 @@ html, body {
     print-color-adjust: exact !important;
   }
 
+  /* Certificato d'Autenticità A4 Single Page - RIGOROSAMENTE UNICO FOGLIO */
+  #operaviva-print-portal {
+    width: 100% !important;
+    max-width: 194mm !important;
+    height: auto !important;
+    max-height: 275mm !important;
+    box-sizing: border-box !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    overflow: hidden !important;
+    margin: 0 auto !important;
+  }
+
+  /* Versione Orizzontale (Landscape A4: 297mm x 210mm) */
+  #operaviva-print-portal.portal-landscape {
+    max-width: 281mm !important;
+    max-height: 194mm !important;
+  }
+
   /* Catalogo d'Arte A4 Multipage */
   .catalog-printable-area {
     padding: 0 !important;
@@ -1248,10 +1271,11 @@ html, body {
 
   .catalog-a4-page {
     width: 100% !important;
-    max-width: 100% !important;
+    max-width: 198mm !important;
     height: 275mm !important;
     max-height: 275mm !important;
-    padding: 10mm 12mm !important;
+    min-height: 275mm !important;
+    padding: 6mm 8mm !important;
     box-sizing: border-box !important;
     page-break-after: always !important;
     break-after: page !important;
@@ -1261,6 +1285,7 @@ html, body {
     position: relative !important;
     background: #ffffff !important;
     color: #1a1a1a !important;
+    margin: 0 auto !important;
   }
 
   .catalog-a4-page:last-child {

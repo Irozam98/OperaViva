@@ -1,5 +1,6 @@
-const { app, BrowserWindow, Menu, dialog } = require('electron');
+const { app, BrowserWindow, Menu, dialog, ipcMain, shell } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 // Se siamo in modalità Portable (Windows .exe portatile), salva tutti i dati
 // (database quadri, foto salvate, impostazioni) direttamente nella cartella dell'eseguibile o chiavetta USB
@@ -21,6 +22,7 @@ function createWindow() {
     title: "OperaViva | Archivio Personale d'Arte • Created by Marzio Sparla",
     icon: iconPath,
     webPreferences: {
+      preload: path.join(__dirname, 'preload.cjs'),
       nodeIntegration: false,
       contextIsolation: true,
       // CRITICO: sandbox:true blocca IndexedDB/Dexie → schermata nera
@@ -86,6 +88,89 @@ function createWindow() {
   });
 }
 
+// Handler per Salva PDF con finestra nativa "Salva con nome"
+ipcMain.handle('save-pdf', async (event, { defaultFileName, title, landscape } = {}) => {
+  try {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    const { canceled, filePath } = await dialog.showSaveDialog(win, {
+      title: title || 'Salva Documento PDF',
+      defaultPath: defaultFileName || 'OperaViva_Documento.pdf',
+      filters: [
+        { name: 'Documento PDF (*.pdf)', extensions: ['pdf'] }
+      ]
+    });
+
+    if (canceled || !filePath) {
+      return { success: false, canceled: true };
+    }
+
+    const pdfBuffer = await event.sender.printToPDF({
+      pageSize: 'A4',
+      landscape: !!landscape,
+      printBackground: true,
+      preferCSSPageSize: true
+    });
+
+    await fs.promises.writeFile(filePath, pdfBuffer);
+    return { success: true, filePath };
+  } catch (err) {
+    console.error('Errore durante la generazione PDF:', err);
+    return { success: false, error: err.message };
+  }
+});
+
+// Handler per Anteprima PDF: salva in temp e apre nel visualizzatore di sistema (Edge, Acrobat, etc.)
+ipcMain.handle('preview-pdf', async (event, { title, landscape } = {}) => {
+  try {
+    const pdfBuffer = await event.sender.printToPDF({
+      pageSize: 'A4',
+      landscape: !!landscape,
+      printBackground: true,
+      preferCSSPageSize: true
+    });
+
+    const tempDir = app.getPath('temp');
+    const safeTitle = (title || 'Anteprima').replace(/[^a-zA-Z0-9_-]/g, '_');
+    const tempFileName = `OperaViva_${safeTitle}_${Date.now()}.pdf`;
+    const tempFilePath = path.join(tempDir, tempFileName);
+
+    await fs.promises.writeFile(tempFilePath, pdfBuffer);
+    await shell.openPath(tempFilePath);
+    return { success: true, tempFilePath };
+  } catch (err) {
+    console.error('Errore durante anteprima PDF:', err);
+    return { success: false, error: err.message };
+  }
+});
+
+// Handler per Stampa con dialogo di sistema e background a colori sempre abilitato
+ipcMain.handle('print', async (event) => {
+  try {
+    event.sender.print({
+      silent: false,
+      printBackground: true
+    });
+    return true;
+  } catch (err) {
+    console.error('Errore durante la stampa:', err);
+    return false;
+  }
+});
+
+// Handler per aprire file o percorsi nel sistema
+ipcMain.handle('open-path', async (event, targetPath) => {
+  if (targetPath) {
+    try {
+      await shell.openPath(targetPath);
+      return true;
+    } catch (err) {
+      console.error('Errore openPath:', err);
+      return false;
+    }
+  }
+  return false;
+});
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -101,3 +186,4 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
