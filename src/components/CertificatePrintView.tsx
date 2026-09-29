@@ -410,17 +410,77 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
             transition: 'max-width 0.3s ease'
           }}
         >
-          <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.85rem 1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
-              <Printer size={20} color="#d4af37" />
-              <h3 className="modal-title" style={{ fontSize: '1.15rem', margin: 0, whiteSpace: 'nowrap' }}>
-                {language === 'en'
-                  ? 'Certificate Preview'
-                  : 'Anteprima Certificato'}
-              </h3>
+          <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', padding: '0.85rem 1.25rem', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexShrink: 0 }}>
+                <Printer size={20} color="#d4af37" />
+                <h3 className="modal-title" style={{ fontSize: '1.15rem', margin: 0, whiteSpace: 'nowrap' }}>
+                  {language === 'en'
+                    ? 'Certificate Preview'
+                    : 'Anteprima Certificato'}
+                </h3>
+              </div>
+
+              {/* Selettore rapido e chiaro: [ 📄 Verticale ] [ 🖼️ Orizzontale ] */}
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                background: 'rgba(10, 13, 20, 0.85)',
+                padding: '3px',
+                borderRadius: '999px',
+                border: '1px solid var(--border-gold)',
+                gap: '2px'
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setOrientation('portrait')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 10px',
+                    borderRadius: '999px',
+                    border: 'none',
+                    background: !isLandscape ? 'var(--gold-400)' : 'transparent',
+                    color: !isLandscape ? '#000' : '#aaa',
+                    fontWeight: 700,
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  id="btn-cert-select-portrait"
+                  title={language === 'en' ? 'Portrait format (vertical)' : 'Formato verticale A4'}
+                >
+                  <span>📄</span>
+                  <span>{language === 'en' ? 'Portrait' : 'Verticale'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOrientation('landscape')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 10px',
+                    borderRadius: '999px',
+                    border: 'none',
+                    background: isLandscape ? 'var(--gold-400)' : 'transparent',
+                    color: isLandscape ? '#000' : '#aaa',
+                    fontWeight: 700,
+                    fontSize: '0.78rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  id="btn-cert-select-landscape"
+                  title={language === 'en' ? 'Landscape format (horizontal)' : 'Formato orizzontale A4'}
+                >
+                  <span>🖼️</span>
+                  <span>{language === 'en' ? 'Landscape' : 'Orizzontale'}</span>
+                </button>
+              </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'nowrap', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', flexShrink: 0 }}>
               {/* Pulsante Gira Foglio (Verticale / Orizzontale) */}
               <button 
                 type="button" 
