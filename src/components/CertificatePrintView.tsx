@@ -115,7 +115,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
         @media print {
           @page {
             size: A4 ${isLandscape ? 'landscape' : 'portrait'};
-            margin: 8mm;
+            margin: ${isLandscape ? '12mm 14mm' : '8mm'};
           }
         }
       `}</style>
@@ -125,16 +125,18 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
         <div style={{
           background: '#ffffff',
           color: '#1a1a1a',
-          padding: '7mm 10mm',
+          padding: '6mm 9mm',
           width: '100%',
-          height: '188mm',
+          maxWidth: '268mm',
+          height: '182mm',
           boxSizing: 'border-box',
           border: '3px double #8c6d23',
           position: 'relative',
           fontFamily: "'Playfair Display', Georgia, serif",
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          margin: '0 auto'
         }}>
           {/* Filetto oro sottile interno classico */}
           <div style={{
