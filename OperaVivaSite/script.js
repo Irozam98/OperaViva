@@ -161,21 +161,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Aggiorna visivamente il bottone unificato lingua (solo bandierina italiana / inglese)
-    const flag = lang === 'en' ? '🇬🇧' : '🇮🇹';
+    // Aggiorna visivamente il bottone unificato lingua (solo bandierina grafica SVG italiana / inglese)
+    const FLAG_IT_SVG = `<svg width="22" height="15" viewBox="0 0 30 20" class="flag-svg" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#ffffff"/><rect x="20" width="10" height="20" fill="#ce2b37"/><rect width="30" height="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/></svg>`;
+    const FLAG_EN_SVG = `<svg width="22" height="15" viewBox="0 0 60 40" class="flag-svg" xmlns="http://www.w3.org/2000/svg"><clipPath id="uk-flag-clip-site"><rect width="60" height="40" rx="3"/></clipPath><g clipPath="url(#uk-flag-clip-site)"><rect width="60" height="40" fill="#012169"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#ffffff" stroke-width="8"/><path d="M0,0 L60,40 M60,0 L0,40" stroke="#C8102E" stroke-width="4"/><path d="M30,0 V40 M0,20 H60" stroke="#ffffff" stroke-width="12"/><path d="M30,0 V40 M0,20 H60" stroke="#C8102E" stroke-width="7"/><rect width="60" height="40" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/></g></svg>`;
+
+    const flagSvg = lang === 'en' ? FLAG_EN_SVG : FLAG_IT_SVG;
     const titleText = lang === 'it' 
-      ? 'Lingua: Italiano (clicca per passare all\'Inglese)' 
-      : 'Language: English (click to switch to Italian)';
+      ? 'Lingua attuale: Italiano (clicca per passare all\'Inglese)' 
+      : 'Current language: English (click to switch to Italian)';
 
     const langFlag = document.getElementById('langFlag');
-    if (langFlag) langFlag.textContent = flag;
+    if (langFlag) langFlag.innerHTML = flagSvg;
     const langToggle = document.getElementById('langToggleBtn');
     if (langToggle) langToggle.setAttribute('title', titleText);
 
     const langFlagMobile = document.getElementById('langFlagMobile');
-    if (langFlagMobile) langFlagMobile.textContent = flag;
-    const langCodeMobile = document.getElementById('langCodeMobile');
-    if (langCodeMobile) langCodeMobile.textContent = lang.toUpperCase();
+    if (langFlagMobile) langFlagMobile.innerHTML = flagSvg;
     const langToggleMobile = document.getElementById('langToggleBtnMobile');
     if (langToggleMobile) langToggleMobile.setAttribute('title', titleText);
 

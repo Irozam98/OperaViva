@@ -5,6 +5,7 @@ const siteTranslations = {
     navFilosofia: 'Filosofia',
     navFunzionalita: 'Funzionalità',
     navCertificati: 'Certificati',
+    navCatalogo: 'Catalogo PDF',
     navImportatore: 'Importatore',
     navPiattaforme: 'Piattaforme',
     navFaq: 'FAQ',
@@ -23,14 +24,16 @@ const siteTranslations = {
     pillOffline: '100% Offline & Riservato',
     pillNoSub: 'Nessun Canone Mensile',
     pillCert: 'Certificati di Autenticità Stampabili',
+    pillCatalog: 'Catalogo A4 per Gallerie & Collezionisti',
     pillVault: 'Backup Portatile .artvault',
 
     // Finestra Mockup App
-    windowTitle: "OperaViva — Archivio Personale d'Arte • Bottega & Atelier",
+    windowTitle: "OperaViva | Archivio Personale d'Arte • Created by Marzio Sparla",
     windowStatus: 'Database Locale Attivo',
     mockNewArtwork: '+ Nuova Opera',
     mockStats: '📊 Statistiche',
     mockBackup: '💾 Archivio & Backup',
+    mockCatalog: '📖 Catalogo PDF',
     mockCuratorCounts: 'ARCHIVIO GENERALE: <strong>11 opere</strong> / 6 in bottega / 1 in esposizione / 2 in collezioni private',
     mockCuratorVal: 'Valore opere disponibili: <strong class="gold-text">16.650 €</strong>',
     statusInBottega: 'In Bottega',
@@ -40,8 +43,8 @@ const siteTranslations = {
     // Quadri di Esempio Mockup
     mockTitle1: 'Tramonto sulla Laguna',
     mockSub1: 'Olio su tela • 80 × 60 cm (2024)',
-    mockTitle2: 'Studio per Figura Sospesa',
-    mockSub2: 'Acrilico e foglia oro • 50 × 70 cm (2025)',
+    mockTitle2: 'Studio di Figura',
+    mockSub2: 'Olio e carboncino su tela • 50 × 70 cm (2025)',
     mockTitle3: "Melodia d'Autunno",
     mockSub3: 'Tecnica mista su tavola • 100 × 80 cm (2023)',
 
@@ -118,27 +121,39 @@ const siteTranslations = {
     batchDelete: "🗑 Elimina Opere",
     batchCancel: "Annulla",
 
+    // Sezione Catalogo PDF
+    f5Pill: "Presentazione d'Autore",
+    f5Title: "Catalogo d'Archivio A4 & Portfolio Digitale",
+    f5Desc: "Devi presentare la tua produzione a una galleria, a un curatore o inviare un dossier ai tuoi collezionisti? Con <strong>OperaViva</strong> generi con un solo clic un elegante <strong>Catalogo A4 stampabile o condivisibile in PDF</strong>:",
+    f5Item1: "<strong>Copertina d'Autore Personalizzata</strong> con il nome della tua bottega, dell'artista e data d'archivio.",
+    f5Item2: "<strong>Impaginazione Flessibile A4</strong>: scegli tra 1 opera per pagina in grande, 2 affiancate o 4 per foglio.",
+    f5Item3: "<strong>Scheda Finale con Contatti & Social</strong> per facilitare contatti d'acquisto e richieste espositive.",
+    f5Item4: "<strong>Controllo Riservatezza Prezzi</strong>: decidi se mostrare o nascondere le quotazioni con un semplice selettore.",
+    f5Item5: "<strong>Formato Universale per Stampa e Invio</strong>: perfetto sia stampato su carta pregiata che inviato via email o WhatsApp.",
+
     // Piattaforme
     platTag: "Applicazioni Native Offline",
     platTitleLine1: "Disponibile su tutti",
     platTitleLine2: "i tuoi dispositivi.",
     platSubtitle: "OperaViva è un software nativo 100% offline per Windows e Android. Scarica l'applicazione e gestisci il tuo atelier in totale riservatezza senza mai trasmettere dati sul web.",
 
+    comingSoon: "Prossimamente",
     // Card Windows
     platWinBadge: "Consigliato PC & Studio",
     platWinTitle: "Windows Desktop",
-    platWinDesc: "L'applicazione professionale per computer di studio e archiviazione a lungo termine. Disponibile con installatore classico o in versione Portable da eseguire senza installazione, anche da chiavetta USB.",
+    platWinDesc: "L'applicazione professionale per computer di studio e archiviazione a lungo termine. La versione Portable è pronta all'uso senza installazione, eseguibile anche direttamente da chiavetta USB.",
     platWinBtn1: "Scarica Portable (.exe)",
     platWinBtn2: "Scarica Installer (.exe)",
+    platWinPortableTip: "<strong>Consiglio Portable:</strong> Inserisci l'eseguibile dentro una cartella dedicata (es. <em>Documenti\\OperaViva</em> o su una chiavetta USB) prima di avviarlo, poiché creerà lì la sua cartella dati e foto. Se invece preferisci l'installazione automatica in <em>C:</em> con sola icona sul desktop, scarica l'<strong>Installer</strong>.",
     platWinSpec1: "✔ 100% Offline: zero connessioni, zero cloud, privacy sovrana",
-    platWinSpec2: "✔ Versione Portable: portala ovunque su chiavetta USB",
+    platWinSpec2: "✔ Versione Portable: pronta subito, portala ovunque su chiavetta USB",
     platWinSpec3: "✔ Compatibile con Windows 10 e Windows 11 (64-bit)",
 
     // Card Android
-    platAndBadge: "In Bottega & Mostra",
+    platAndBadge: "Disponibile • Mobile",
     platAndTitle: "Android App (.apk)",
     platAndDesc: "L'applicazione nativa per smartphone e tablet Android. Fotografa i quadri appena completati sul cavalletto con la fotocamera integrata e consulta l'intero catalogo durante fiere, mostre o collezioni.",
-    platAndBtn1: "Scarica Pacchetto (.apk)",
+    platAndBtn1: "Scarica Pacchetto Android (.apk)",
     platAndBtn2: "Guida Installazione Android",
     platAndSpec1: "✔ Fotocamera ad alta definizione con ritocco foto integrato",
     platAndSpec2: "✔ Interfaccia touch ottimizzata per smartphone e tablet",
@@ -159,6 +174,10 @@ const siteTranslations = {
     faqA5: "Puoi usare il formato raccomandato: <code>Titolo - Tecnica - Dimensioni.jpg</code> (ad esempio: <em>\"Luce del Mattino - Acrilico su tela - 70x50.jpg\"</em>). L'importatore automatico analizzerà il nome e popolerà i campi corrispondenti senza che tu debba digitarli a mano!",
     faqQ6: "OperaViva fa perizie o stime automatiche sul valore delle mie opere?",
     faqA6: "<strong>Assolutamente no.</strong> OperaViva rispetta la tua professionalità: non esistono algoritmi fittizi che pretendono di valutare l'arte al posto tuo. Il programma si limita a <strong>sommare e riepilogare con precisione contabile</strong> i prezzi e le quotazioni che inserisci tu stesso per ciascuna opera, fornendoti in tempo reale il controvalore totale delle opere attualmente disponibili in bottega o affidate alle mostre.",
+    faqQ7: "Quale versione Windows scegliere tra Portable e Installer?",
+    faqA7: "La versione <strong>Portable (.exe)</strong> non richiede alcuna installazione e non tocca il sistema operativo: basta creare una cartella (es. in Documenti o su una chiavetta USB) e avviare il file da lì; tutti i dati e le foto rimarranno racchiusi in quella cartella, permettendoti di portare il tuo archivio ovunque. La versione <strong>Installer (.exe)</strong> esegue invece l'installazione guidata automatica in <code>C:</code>, crea il collegamento pulito sul Desktop e nel Menu Start ed è la scelta consigliata per chi cerca la massima semplicità d'uso.",
+    faqQ8: "Posso inviare il catalogo delle mie opere a galleristi o collezionisti via email o WhatsApp?",
+    faqA8: "Certamente! Con la nuova funzione <strong>Catalogo PDF</strong> puoi generare in pochi secondi un portfolio d'autore completo in formato A4, pronto per essere stampato su carta pregiata o salvato in PDF, con copertina personalizzata, immagini nitide, dati d'archivio e tutti i tuoi recapiti d'atelier.",
 
     // CTA Bottom
     ctaTag: "Inizia Oggi",
@@ -184,6 +203,7 @@ const siteTranslations = {
     navFilosofia: 'Philosophy',
     navFunzionalita: 'Features',
     navCertificati: 'Certificates',
+    navCatalogo: 'PDF Catalog',
     navImportatore: 'Importer',
     navPiattaforme: 'Platforms',
     navFaq: 'FAQ',
@@ -202,14 +222,16 @@ const siteTranslations = {
     pillOffline: '100% Offline & Private',
     pillNoSub: 'Zero Monthly Fees',
     pillCert: 'Printable Certificates of Authenticity',
+    pillCatalog: 'A4 Catalog for Galleries & Collectors',
     pillVault: 'Portable .artvault Backup',
 
     // App Mockup Window
-    windowTitle: 'OperaViva — Fine Art Personal Archive • Studio & Atelier',
+    windowTitle: 'OperaViva | Fine Art Personal Archive • Created by Marzio Sparla',
     windowStatus: 'Local Database Active',
     mockNewArtwork: '+ New Artwork',
     mockStats: '📊 Analytics',
     mockBackup: '💾 Archive & Backup',
+    mockCatalog: '📖 PDF Catalog',
     mockCuratorCounts: 'GENERAL ARCHIVE: <strong>11 artworks</strong> / 6 in studio / 1 in exhibition / 2 in private collections',
     mockCuratorVal: 'Available artworks value: <strong class="gold-text">€16,650</strong>',
     statusInBottega: 'In Studio',
@@ -219,8 +241,8 @@ const siteTranslations = {
     // Mockup Artworks
     mockTitle1: 'Sunset over the Lagoon',
     mockSub1: 'Oil on canvas • 80 × 60 cm (2024)',
-    mockTitle2: 'Study for Suspended Figure',
-    mockSub2: 'Acrylic & gold leaf • 50 × 70 cm (2025)',
+    mockTitle2: 'Figure Study',
+    mockSub2: 'Oil & charcoal on canvas • 50 × 70 cm (2025)',
     mockTitle3: 'Autumn Melody',
     mockSub3: 'Mixed media on panel • 100 × 80 cm (2023)',
 
@@ -297,27 +319,39 @@ const siteTranslations = {
     batchDelete: '🗑 Delete Artworks',
     batchCancel: 'Cancel',
 
+    // Feature 5: PDF Catalog
+    f5Pill: 'Fine Art Portfolio',
+    f5Title: 'Printable A4 Studio Catalog & Digital Dossier',
+    f5Desc: 'Need to present your work to art galleries, curators, or email a portfolio to prospective collectors? <strong>OperaViva</strong> creates a pristine <strong>A4 Printable & Shareable PDF Catalog</strong> in a single click:',
+    f5Item1: '<strong>Bespoke Atelier Cover Page</strong> personalized with your studio name, artist signature, and catalog date.',
+    f5Item2: '<strong>Flexible A4 Grid Layouts</strong>: select 1 full-page artwork, 2 side-by-side, or 4 artworks per sheet.',
+    f5Item3: '<strong>Closing Contact & Social Dossier</strong> to streamline sales inquiries and gallery representations.',
+    f5Item4: '<strong>Price Privacy Toggle</strong>: effortlessly choose whether to display or conceal valuations.',
+    f5Item5: '<strong>Universal Print & Digital Standard</strong>: flawless on fine art papers or shared via email / WhatsApp.',
+
     // Platforms
     platTag: 'Native Offline Applications',
     platTitleLine1: 'Available on all',
     platTitleLine2: 'your devices.',
     platSubtitle: 'OperaViva is built as a 100% native offline application for Windows and Android. Download the software and manage your atelier in absolute privacy without ever exposing data to the web.',
 
+    comingSoon: 'Coming Soon',
     // Card Windows
     platWinBadge: 'Recommended PC & Studio',
     platWinTitle: 'Windows Desktop',
-    platWinDesc: 'The professional desktop application for studio workstations and long-term archiving. Available with a standard installer or as a Portable edition to run instantly, even directly from a USB flash drive.',
+    platWinDesc: 'The professional desktop application for studio workstations and long-term archiving. The Portable edition runs instantly without installation, even directly from any USB flash drive.',
     platWinBtn1: 'Download Portable (.exe)',
     platWinBtn2: 'Download Installer (.exe)',
+    platWinPortableTip: "<strong>Portable Tip:</strong> Place the executable inside a dedicated folder (e.g. <em>Documents\\OperaViva</em> or on a USB flash drive) before launching it, as it creates its data and photos folder alongside the exe. If you prefer automatic installation to <em>C:</em> with a clean desktop shortcut, download the <strong>Installer</strong>.",
     platWinSpec1: '✔ 100% Offline: zero network connections, sovereign local privacy',
-    platWinSpec2: '✔ Portable Edition: run directly from any USB flash drive',
+    platWinSpec2: '✔ Portable Edition: ready instantly, run from any USB drive',
     platWinSpec3: '✔ Fully compatible with Windows 10 & 11 (64-bit)',
 
     // Card Android
-    platAndBadge: 'In Studio & Exhibitions',
+    platAndBadge: 'Available • Mobile',
     platAndTitle: 'Android App (.apk)',
     platAndDesc: 'The native offline application for Android smartphones and tablets. Photograph freshly finished artworks on your easel with the built-in camera and inspect your full archive during exhibitions and art fairs.',
-    platAndBtn1: 'Download Package (.apk)',
+    platAndBtn1: 'Download Android Package (.apk)',
     platAndBtn2: 'Android Install Guide',
     platAndSpec1: '✔ High-definition camera integration with studio photo darkroom',
     platAndSpec2: '✔ Touch-optimized interface for phones and tablets',
@@ -338,6 +372,10 @@ const siteTranslations = {
     faqA5: 'Use the recommended format: <code>Title - Technique - Dimensions.jpg</code> (e.g., <em>"Morning Light - Oil on canvas - 70x50.jpg"</em>). The automated parser extracts all fields directly into the technical sheet without manual typing!',
     faqQ6: 'Does OperaViva automatically appraise or guess the value of my art?',
     faqA6: '<strong>Absolutely not.</strong> OperaViva respects your artistic autonomy: there are no arbitrary algorithms claiming to evaluate art. The software strictly <strong>tallies and summarizes with accounting precision</strong> the sale prices and quotations you define, presenting real-time totals for artworks in studio or on exhibition.',
+    faqQ7: 'Which Windows edition should I choose: Portable or Installer?',
+    faqA7: 'The <strong>Portable (.exe)</strong> edition requires zero installation and leaves no trace in the Windows registry: simply place it in a dedicated folder (e.g. in Documents or on a USB drive) and launch it; all data and images remain self-contained within that folder so you can carry your studio anywhere. The <strong>Installer (.exe)</strong> performs a standard automated installation to <code>C:</code>, places a shortcut on your Desktop and Start Menu, and is ideal for users seeking the simplest one-click experience.',
+    faqQ8: 'Can I email or share my artwork catalog with art galleries and collectors?',
+    faqA8: 'Yes, absolutely! The new <strong>PDF Catalog</strong> tool generates a professional, multi-page A4 portfolio complete with custom cover, high-resolution photography, technical data, and your contact info, perfect for print or digital sharing.',
 
     // CTA Bottom
     ctaTag: 'Get Started Today',

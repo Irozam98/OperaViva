@@ -17,16 +17,18 @@ export class ArtVaultDatabase extends Dexie {
 
 export const db = new ArtVaultDatabase();
 
-// Inizializza le impostazioni base e popola le 10 opere di prova richieste
+// Inizializza le impostazioni base per la versione definitiva di produzione
 export async function initializeDatabase(): Promise<void> {
   try {
     const profile = await db.settings.get('studioProfile');
     if (!profile) {
       await db.settings.put({ key: 'studioProfile', value: DEFAULT_STUDIO_PROFILE });
     }
-    const count = await db.artworks.count();
-    if (count < 10) {
-      await db.artworks.bulkPut(SAMPLE_ARTWORKS);
+    // Rimuove qualsiasi residuo di schede demo per garantire un archivio pulito al 100%
+    const isCleaned = localStorage.getItem('operaviva_demo_cleaned_v2');
+    if (!isCleaned) {
+      await db.artworks.clear();
+      localStorage.setItem('operaviva_demo_cleaned_v2', 'true');
     }
   } catch (error) {
     console.error('Errore durante inizializzazione database:', error);

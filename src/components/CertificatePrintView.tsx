@@ -1,5 +1,6 @@
 import React from 'react';
-import { X, Printer } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { X, Printer, Save, PenLine } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
 import { useI18n } from '../i18n';
 
@@ -7,12 +8,14 @@ interface CertificatePrintViewProps {
   artwork: Artwork;
   studioProfile: StudioProfile;
   onClose: () => void;
+  onEdit?: (artwork: Artwork) => void;
 }
 
 export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
   artwork,
   studioProfile,
-  onClose
+  onClose,
+  onEdit
 }) => {
   const { language } = useI18n();
 
@@ -34,6 +37,121 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
     year: 'numeric'
   });
 
+  // Foglio di stampa vero e proprio montato direttamente sul body tramite createPortal
+  const printSheetContent = (
+    <div className="printable-area" id="operaviva-print-portal">
+      <div style={{
+        background: '#ffffff',
+        color: '#1a1a1a',
+        padding: '12mm 15mm',
+        fontFamily: "'Playfair Display', Georgia, serif",
+        width: '100%',
+        boxSizing: 'border-box',
+        border: '3px double #8c6d23',
+        position: 'relative'
+      }}>
+        {/* Cornice decorativa classica */}
+        <div style={{
+          position: 'absolute',
+          top: '3mm',
+          left: '3mm',
+          right: '3mm',
+          bottom: '3mm',
+          border: '1px solid #d4af37',
+          pointerEvents: 'none'
+        }}></div>
+
+        {/* Intestazione Stampa */}
+        <div style={{ textAlign: 'center', borderBottom: '2px solid #8c6d23', paddingBottom: '12px', marginBottom: '14px' }}>
+          <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '20pt', fontWeight: 800, letterSpacing: '3px', margin: 0, color: '#111' }}>
+            {studioProfile.studioName || "ATELIER D'ARTE"}
+          </h1>
+          <div style={{ fontSize: '12pt', letterSpacing: '2px', color: '#8c6d23', textTransform: 'uppercase', marginTop: '3px', fontWeight: 600 }}>
+            {studioProfile.artistName}
+          </div>
+          <div style={{ fontSize: '9pt', color: '#555', marginTop: '3px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            {studioProfile.address} {studioProfile.city && `• ${studioProfile.city}`} {studioProfile.phone && `• Tel: ${studioProfile.phone}`} {studioProfile.email && `• ${studioProfile.email}`}
+          </div>
+        </div>
+
+        {/* Titolo Certificato */}
+        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+          <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '15pt', fontWeight: 700, letterSpacing: '2px', color: '#8c6d23', margin: 0, textTransform: 'uppercase' }}>
+            {language === 'en'
+              ? 'CERTIFICATE OF AUTHENTICITY & ARCHIVE RECORD'
+              : 'CERTIFICATO DI AUTENTICITÀ & ARCHIVIO'}
+          </h2>
+          <div style={{ fontSize: '10pt', color: '#555', marginTop: '2px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+            {language === 'en' ? 'Inventory Code:' : 'Codice di Catalogo:'} <strong>{artwork.code}</strong> • {language === 'en' ? 'Archive No.:' : 'N. Certificato / Archivio:'} <strong>{artwork.certificateNumber || artwork.code}</strong>
+          </div>
+        </div>
+
+        {/* Immagine dell'opera */}
+        {mainImage && (
+          <div style={{ textAlign: 'center', marginBottom: '14px' }}>
+            <img 
+              src={mainImage} 
+              alt={artwork.title} 
+              style={{ maxHeight: '80mm', maxWidth: '100%', objectFit: 'contain', border: '1px solid #c5a059', padding: '3px', background: '#fff' }} 
+            />
+          </div>
+        )}
+
+        {/* Scheda Tecnica Descrittiva */}
+        <div style={{
+          background: '#faf9f5',
+          border: '1px solid #d4af37',
+          padding: '12px 16px',
+          marginBottom: '14px',
+          fontSize: '10.5pt',
+          fontFamily: "'Plus Jakarta Sans', sans-serif"
+        }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '6px', columnGap: '16px' }}>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Title:' : 'Titolo:'}</strong> <div style={{ fontSize: '13pt', fontWeight: 700, fontFamily: "'Playfair Display', serif" }}>"{artwork.title}"</div></div>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Author:' : 'Autore:'}</strong> <div style={{ fontWeight: 600 }}>{artwork.artist || studioProfile.artistName}</div></div>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> {artwork.year}</div>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium / Technique:' : 'Tecnica:'}</strong> {artwork.technique}</div>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> {artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> {artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> {artwork.framed ? (language === 'en' ? `Framed (${artwork.frameDetails || 'Yes'})` : `Incorniciato (${artwork.frameDetails || 'Sì'})`) : (language === 'en' ? 'Unframed' : 'Senza cornice')}</div>
+            <div><strong style={{ color: '#666', fontSize: '9pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore Dichiarato / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23' }}>{formattedPrice}</span></div>
+          </div>
+          {artwork.notes && (
+            <div style={{ marginTop: '8px', paddingTop: '6px', borderTop: '1px dotted #ccc', fontSize: '9.5pt' }}>
+              <strong>{language === 'en' ? 'Notes:' : 'Note:'}</strong> {artwork.notes}
+            </div>
+          )}
+        </div>
+
+        {/* Dichiarazione di Autenticità */}
+        <div style={{ fontSize: '10pt', fontStyle: 'italic', lineHeight: 1.45, marginBottom: '22px', textAlign: 'justify' }}>
+          {language === 'en'
+            ? 'This document certifies that the work of art described and reproduced above is an authentic original, created solely by hand by the artist and registered under the catalog number above in the official studio archive.'
+            : "Si certifica con il presente documento che l'opera sopra descritta e riprodotta è un originale autentico, realizzato unicamente a mano dall'artista e registrato con il numero di catalogo sopra indicato presso l'archivio ufficiale di bottega."}
+        </div>
+
+        {/* Firme e Luogo */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '14px' }}>
+          <div style={{ fontSize: '10pt' }}>
+            <div>{language === 'en' ? 'Place & Date of Issue:' : 'Luogo e Data di rilascio:'}</div>
+            <strong style={{ color: '#111' }}>{studioProfile.city || (language === 'en' ? 'In Studio' : 'In Bottega')}, {today}</strong>
+          </div>
+
+          <div style={{ textAlign: 'center', width: '220px' }}>
+            <div style={{ borderBottom: '1px solid #111', height: '35px', marginBottom: '4px' }}></div>
+            <div style={{ fontSize: '9pt', textTransform: 'uppercase', letterSpacing: '1px', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              {language === 'en' ? "Artist's Signature / Direction" : "Firma dell'Artista / Direzione"}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: '22px', textAlign: 'center', fontSize: '8pt', color: '#777', letterSpacing: '1px', textTransform: 'uppercase', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          Registro Ufficiale OperaViva • Created by Marzio Sparla
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <>
       {/* Schermata di anteprima modale a schermo intero prima della stampa */}
@@ -53,12 +171,52 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
               </h3>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.6rem' }}>
-              <button className="btn btn-primary btn-sm" onClick={handlePrint}>
-                <Printer size={16} />
-                <span>{language === 'en' ? 'Print / Save as PDF' : 'Stampa / Salva in PDF'}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              {/* Pallino stampante */}
+              <button 
+                type="button"
+                className="btn btn-secondary btn-action-pill" 
+                onClick={handlePrint}
+                title={language === 'en' ? 'Print Sheet / Certificate' : 'Stampa Scheda / Certificato'}
+                id="btn-cert-header-print"
+              >
+                <span className="icon-circle icon-circle-print">
+                  <Printer size={15} />
+                </span>
+                <span>{language === 'en' ? 'Print' : 'Stampa'}</span>
               </button>
-              <button className="btn-icon" onClick={onClose}>
+
+              {/* Pallino floppy per salvare */}
+              <button 
+                type="button"
+                className="btn btn-secondary btn-action-pill" 
+                onClick={handlePrint}
+                title={language === 'en' ? 'Save as PDF' : 'Salva in PDF'}
+                id="btn-cert-header-save"
+              >
+                <span className="icon-circle icon-circle-save">
+                  <Save size={15} />
+                </span>
+                <span>{language === 'en' ? 'Save PDF' : 'Salva PDF'}</span>
+              </button>
+
+              {/* Pallino penna con linea per la modifica */}
+              {onEdit && (
+                <button 
+                  type="button"
+                  className="btn btn-primary btn-action-pill" 
+                  onClick={() => onEdit(artwork)}
+                  title={language === 'en' ? 'Edit Artwork' : 'Modifica Opera'}
+                  id="btn-cert-header-edit"
+                >
+                  <span className="icon-circle icon-circle-edit">
+                    <PenLine size={15} />
+                  </span>
+                  <span>{language === 'en' ? 'Edit' : 'Modifica'}</span>
+                </button>
+              )}
+
+              <button className="btn-icon" onClick={onClose} title={language === 'en' ? 'Close' : 'Chiudi'}>
                 <X size={18} />
               </button>
             </div>
@@ -66,7 +224,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
 
           <div className="modal-body" style={{ background: '#e2e8f0', padding: '1.5rem', overflowY: 'auto' }}>
             
-            {/* Foglio Certificato Reale con stile tipografico per Belle Arti */}
+            {/* Foglio Certificato Reale con stile tipografico per Belle Arti (Anteprima a video) */}
             <div id="print-sheet" style={{
               background: '#ffffff',
               color: '#1a1a1a',
@@ -128,7 +286,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                     : 'CERTIFICATO DI AUTENTICITÀ & ARCHIVIO'}
                 </h2>
                 <div style={{ fontSize: '12px', color: '#666', fontStyle: 'italic', marginTop: '3px' }}>
-                  {language === 'en' ? 'Inventory Code:' : 'Codice di Inventario:'} <strong>{artwork.code}</strong> • {language === 'en' ? 'Archive No.:' : 'N. Archivio:'} <strong>{artwork.certificateNumber || artwork.code}</strong>
+                  {language === 'en' ? 'Inventory Code:' : 'Codice di Catalogo:'} <strong>{artwork.code}</strong> • {language === 'en' ? 'Archive No.:' : 'N. Certificato / Archivio:'} <strong>{artwork.certificateNumber || artwork.code}</strong>
                 </div>
               </div>
 
@@ -272,99 +430,62 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
 
           </div>
 
-          <div className="modal-footer">
+          <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <button className="btn btn-secondary" onClick={onClose}>
-              Chiudi
+              {language === 'en' ? 'Close' : 'Chiudi'}
             </button>
-            <button className="btn btn-primary" onClick={handlePrint}>
-              <Printer size={18} />
-              <span>Stampa Certificato</span>
-            </button>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              {/* Pallino stampante */}
+              <button 
+                type="button"
+                className="btn btn-secondary btn-action-pill" 
+                onClick={handlePrint}
+                title={language === 'en' ? 'Send to printer' : 'Invia a stampante'}
+                id="btn-cert-footer-print"
+              >
+                <span className="icon-circle icon-circle-print">
+                  <Printer size={15} />
+                </span>
+                <span>{language === 'en' ? 'Print' : 'Stampa'}</span>
+              </button>
+
+              {/* Pallino floppy per salvare */}
+              <button 
+                type="button"
+                className="btn btn-secondary btn-action-pill" 
+                onClick={handlePrint}
+                title={language === 'en' ? 'Save as PDF' : 'Salva in PDF'}
+                id="btn-cert-footer-save"
+              >
+                <span className="icon-circle icon-circle-save">
+                  <Save size={15} />
+                </span>
+                <span>{language === 'en' ? 'Save PDF' : 'Salva PDF'}</span>
+              </button>
+
+              {/* Pallino penna con linea per la modifica */}
+              {onEdit && (
+                <button 
+                  type="button"
+                  className="btn btn-primary btn-action-pill" 
+                  onClick={() => onEdit(artwork)}
+                  title={language === 'en' ? 'Edit Artwork' : 'Modifica Scheda Opera'}
+                  id="btn-cert-footer-edit"
+                >
+                  <span className="icon-circle icon-circle-edit">
+                    <PenLine size={15} />
+                  </span>
+                  <span>{language === 'en' ? 'Edit' : 'Modifica'}</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Area Stampa Dedicata per il browser (attivata solo tramite @media print) */}
-      <div className="printable-area">
-        <div style={{
-          background: '#ffffff',
-          color: '#1a1a1a',
-          padding: '25mm 20mm',
-          fontFamily: "'Playfair Display', Georgia, serif",
-          width: '100%',
-          boxSizing: 'border-box'
-        }}>
-          {/* Intestazione Stampa */}
-          <div style={{ textAlign: 'center', borderBottom: '2px solid #8c6d23', paddingBottom: '15px', marginBottom: '20px' }}>
-            <h1 style={{ fontFamily: "'Cinzel', serif", fontSize: '24pt', fontWeight: 800, letterSpacing: '3px', margin: 0 }}>
-              {studioProfile.studioName || "ATELIER D'ARTE"}
-            </h1>
-            <div style={{ fontSize: '13pt', letterSpacing: '2px', color: '#8c6d23', textTransform: 'uppercase', marginTop: '4px', fontWeight: 600 }}>
-              {studioProfile.artistName}
-            </div>
-            <div style={{ fontSize: '10pt', color: '#555', marginTop: '4px' }}>
-              {studioProfile.address} {studioProfile.city && `• ${studioProfile.city}`} {studioProfile.phone && `• ${studioProfile.phone}`}
-            </div>
-          </div>
-
-          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <h2 style={{ fontFamily: "'Cinzel', serif", fontSize: '16pt', fontWeight: 700, letterSpacing: '2px', color: '#8c6d23', margin: 0 }}>
-              CERTIFICATO DI AUTENTICITÀ & ARCHIVIO
-            </h2>
-            <div style={{ fontSize: '11pt', color: '#555', marginTop: '3px' }}>
-              Codice Catalogo: <strong>{artwork.code}</strong> • N. Certificato: <strong>{artwork.certificateNumber || artwork.code}</strong>
-            </div>
-          </div>
-
-          {mainImage && (
-            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <img 
-                src={mainImage} 
-                alt={artwork.title} 
-                style={{ maxHeight: '90mm', maxWidth: '100%', objectFit: 'contain', border: '1px solid #bbb' }} 
-              />
-            </div>
-          )}
-
-          <div style={{ border: '1px solid #ccc', padding: '14px', marginBottom: '20px', fontSize: '11pt' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '8px' }}>
-              <div><strong>Titolo:</strong> {artwork.title}</div>
-              <div><strong>Autore:</strong> {artwork.artist || studioProfile.artistName}</div>
-              <div><strong>Anno:</strong> {artwork.year}</div>
-              <div><strong>Tecnica:</strong> {artwork.technique}</div>
-              <div><strong>Supporto:</strong> {artwork.support || 'Supporto d\'autore'}</div>
-              <div><strong>Dimensioni:</strong> {artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
-              <div><strong>Incorniciatura:</strong> {artwork.framed ? `Sì (${artwork.frameDetails || 'Sì'})` : 'Senza cornice'}</div>
-              <div><strong>Valore Dichiarato / Prezzo:</strong> {formattedPrice}</div>
-            </div>
-            {artwork.notes && (
-              <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px dotted #ccc', fontSize: '10pt' }}>
-                <strong>Note:</strong> {artwork.notes}
-              </div>
-            )}
-          </div>
-
-          <div style={{ fontSize: '11pt', fontStyle: 'italic', lineHeight: 1.5, marginBottom: '30px' }}>
-            Si certifica con il presente documento che l'opera sopra descritta e riprodotta è un originale autentico, eseguito a mano dall'artista e registrato presso l'archivio ufficiale di bottega.
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '20px' }}>
-            <div style={{ fontSize: '11pt' }}>
-              <div>Rilasciato a: <strong>{studioProfile.city || 'In Bottega'}</strong></div>
-              <div>Data: <strong>{today}</strong></div>
-            </div>
-
-            <div style={{ textAlign: 'center', width: '220px' }}>
-              <div style={{ borderBottom: '1px solid #000', height: '40px', marginBottom: '6px' }}></div>
-              <div style={{ fontSize: '10pt', textTransform: 'uppercase' }}>Firma dell'Artista / Direzione</div>
-            </div>
-          </div>
-
-          <div style={{ marginTop: '35px', textAlign: 'center', fontSize: '8pt', color: '#777', letterSpacing: '1px', textTransform: 'uppercase' }}>
-            Registro Ufficiale OperaViva • Created by Marzio Sparla
-          </div>
-        </div>
-      </div>
+      {/* Montaggio Area Stampa all'esterno di .app-container per evitare che display:none nasconda la stampa */}
+      {typeof document !== 'undefined' && createPortal(printSheetContent, document.body)}
     </>
   );
 };

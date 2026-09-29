@@ -1,7 +1,8 @@
 import React from 'react';
-import { Palette, Plus, Download, BarChart3, Settings } from 'lucide-react';
+import { Palette, Plus, Download, BarChart3, Settings, BookOpen } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
 import { useI18n } from '../i18n';
+import { FlagIcon } from './FlagIcon';
 
 interface HeaderProps {
   artworks: Artwork[];
@@ -10,6 +11,7 @@ interface HeaderProps {
   onOpenStatsModal: () => void;
   onOpenBackupModal: () => void;
   onOpenProfileModal: () => void;
+  onOpenCatalogModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,6 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenStatsModal,
   onOpenBackupModal,
   onOpenProfileModal,
+  onOpenCatalogModal,
 }) => {
   const { language, setLanguage, t } = useI18n();
 
@@ -43,16 +46,16 @@ export const Header: React.FC<HeaderProps> = ({
     maximumFractionDigits: 0
   }).format(availableValue);
 
-  // Bottone unificato lingua solo con bandierina italiana e inglese che cambia al click
+  // Bottone unificato lingua solo con bandierina italiana e inglese grafica SVG che cambia al click
   const renderLangSwitch = (extraClass = '') => (
     <button
       type="button"
       className={`btn-lang-unified ${extraClass}`}
       onClick={() => setLanguage(language === 'it' ? 'en' : 'it')}
-      title={language === 'it' ? 'Lingua: Italiano (clicca per passare in Inglese)' : 'Language: English (click to switch to Italian)'}
+      title={language === 'it' ? 'Lingua attuale: Italiano (clicca per passare in Inglese)' : 'Current language: English (click to switch to Italian)'}
       aria-label="Cambia Lingua"
     >
-      <span className="flag-icon">{language === 'en' ? '🇬🇧' : '🇮🇹'}</span>
+      <FlagIcon language={language} size={24} />
     </button>
   );
 
@@ -118,6 +121,16 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Download size={15} />
               <span>{t('backup')}</span>
+            </button>
+
+            <button 
+              className="btn btn-secondary header-btn-secondary"
+              onClick={onOpenCatalogModal}
+              id="btn-catalog"
+              title={t('catalog')}
+            >
+              <BookOpen size={15} color="#d4af37" />
+              <span>{t('catalog')}</span>
             </button>
 
             {/* Switch Lingua a scorrimento con bandierine su desktop */}

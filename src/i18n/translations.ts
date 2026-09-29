@@ -10,6 +10,7 @@ export const translations = {
     newArtwork: 'Nuova Opera',
     stats: 'Statistiche',
     backup: 'Archivio & Backup',
+    catalog: 'Catalogo PDF',
     settings: 'Impostazioni',
     profileSettings: "Impostazioni Bottega & Artista",
     
@@ -155,7 +156,7 @@ export const translations = {
     profileArtistName: 'Nome Artista Principale',
     profileEmail: 'Email di Contatto',
     profilePhone: 'Telefono',
-    profileWebsite: 'Sito Web Ufficiale',
+    profileWebsite: 'Sito Web o Profilo Social',
     profileCity: 'Città / Sede Bottega',
     profileAddress: 'Indirizzo Studio',
     profileCurrency: 'Valuta Predefinita',
@@ -182,6 +183,7 @@ export const translations = {
     newArtwork: 'New Artwork',
     stats: 'Analytics',
     backup: 'Archive & Backup',
+    catalog: 'PDF Catalog',
     settings: 'Settings',
     profileSettings: "Studio & Artist Settings",
 
@@ -327,7 +329,7 @@ export const translations = {
     profileArtistName: 'Primary Artist Name',
     profileEmail: 'Contact Email',
     profilePhone: 'Phone Number',
-    profileWebsite: 'Official Website',
+    profileWebsite: 'Website or Social Profile',
     profileCity: 'City / Studio Location',
     profileAddress: 'Studio Address',
     profileCurrency: 'Default Currency',

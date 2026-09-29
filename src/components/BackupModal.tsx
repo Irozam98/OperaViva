@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { X, Download, Upload, FileSpreadsheet, Trash2, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { exportCatalogBackup, importCatalogBackup, exportCatalogToCSV } from '../services/backup';
 import { clearAllArtworks } from '../services/db';
+import { ConfirmModal } from './ConfirmModal';
 import { useI18n } from '../i18n';
 
 interface BackupModalProps {
@@ -16,6 +17,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
   const [csvStatus, setCsvStatus] = useState<string | null>(null);
+  const [isClearConfirmOpen, setIsClearConfirmOpen] = useState(false);
 
   const handleExport = async () => {
     try {
@@ -80,17 +82,11 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
     }
   };
 
-  const handleClearAll = async () => {
-    const clearPrompt = language === 'en'
-      ? 'WARNING: Are you sure you want to permanently erase ALL artworks from the catalog?\nMake sure you have downloaded a backup before proceeding!'
-      : 'ATTENZIONE: Sei sicuro di voler cancellare TUTTE le opere dal catalogo?\nAssicurati di aver scaricato un backup prima di procedere!';
-      
-    if (confirm(clearPrompt)) {
-      await clearAllArtworks();
-      onDataChanged();
-      alert(language === 'en' ? 'Inventory cleared. You can now add fresh artworks.' : 'Inventario svuotato. Puoi ora inserire le tue opere.');
-      onClose();
-    }
+  const handleExecuteClearAll = async () => {
+    setIsClearConfirmOpen(false);
+    await clearAllArtworks();
+    onDataChanged();
+    onClose();
   };
 
   return (
@@ -281,7 +277,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
 
           {/* Gestione Catalogo */}
           <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <button className="btn-danger btn-sm" onClick={handleClearAll} style={{ fontSize: '0.8rem' }}>
+            <button className="btn-danger btn-sm" onClick={() => setIsClearConfirmOpen(true)} style={{ fontSize: '0.8rem' }}>
               <Trash2 size={14} />
               <span>{language === 'en' ? 'Erase Entire Catalog' : 'Svuota Catalogo'}</span>
             </button>
@@ -295,6 +291,23 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
           </button>
         </div>
       </div>
+
+      {/* Banner Pop-up di Conferma Svuota Catalogo */}
+      <ConfirmModal
+        isOpen={isClearConfirmOpen}
+        title={language === 'en' ? 'Erase Entire Catalog' : 'Svuota Tutto il Catalogo'}
+        message={language === 'en'
+          ? 'Are you sure you want to permanently erase ALL artworks from the catalog?'
+          : 'Sei sicuro di voler cancellare TUTTE le opere dall\'inventario?'}
+        warningNote={language === 'en'
+          ? 'Make sure you have downloaded a backup before proceeding. This action cannot be reversed!'
+          : 'Assicurati di aver scaricato un backup prima di procedere. Questa azione cancellerà ogni dato!'}
+        confirmLabel={language === 'en' ? 'Yes, Erase All' : 'Sì, Cancella Tutto'}
+        cancelLabel={language === 'en' ? 'No, Cancel' : 'No, Annulla'}
+        isDanger={true}
+        onConfirm={handleExecuteClearAll}
+        onCancel={() => setIsClearConfirmOpen(false)}
+      />
     </div>
   );
 };

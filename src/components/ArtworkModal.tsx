@@ -151,9 +151,16 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
     });
   };
 
+  // Helper per verificare se un file è un'immagine valida, sia per MIME type sia per estensione del nome
+  const isImageFile = (f: File): boolean => {
+    if (f.type && f.type.startsWith('image/')) return true;
+    const name = (f.name || '').toLowerCase();
+    return /\.(jpe?g|png|webp|bmp|gif|tiff?|avif|heic|heif)$/i.test(name);
+  };
+
   // Funzione comune per processare file da click o drag & drop
   const processFiles = async (files: FileList | File[]) => {
-    const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
+    const fileArray = Array.from(files).filter(isImageFile);
     if (fileArray.length === 0) return;
 
     setIsProcessingImage(true);
@@ -182,7 +189,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
     await processFiles(files);
   };
 
-  // Handler Drag & Drop — funziona sia in browser che in Electron desktop
+  // Handler Drag & Drop — funziona sia in browser che in Electron desktop Windows
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -208,9 +215,22 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(false);
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      await processFiles(files);
+
+    let droppedFiles: File[] = [];
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      droppedFiles = Array.from(e.dataTransfer.files);
+    } else if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      for (let i = 0; i < e.dataTransfer.items.length; i++) {
+        const item = e.dataTransfer.items[i];
+        if (item.kind === 'file') {
+          const file = item.getAsFile();
+          if (file) droppedFiles.push(file);
+        }
+      }
+    }
+
+    if (droppedFiles.length > 0) {
+      await processFiles(droppedFiles);
     }
   };
 
@@ -581,9 +601,10 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                   value={formData.currency || 'EUR'}
                   onChange={e => setFormData({ ...formData, currency: e.target.value })}
                 >
-                  <option value="EUR">€ Euro</option>
-                  <option value="USD">$ Dollaro USA</option>
-                  <option value="GBP">£ Sterlina UK</option>
+                  <option value="EUR">€ (EUR)</option>
+                  <option value="USD">$ (USD)</option>
+                  <option value="GBP">£ (GBP)</option>
+                  <option value="CHF">CHF (CHF)</option>
                 </select>
               </div>
 

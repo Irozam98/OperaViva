@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { X, Printer, Edit3, Trash2, MapPin, Crop } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { X, Printer, Save, PenLine, Trash2, MapPin, Crop, ChevronDown, Check } from 'lucide-react';
 import { Artwork, ArtworkStatus } from '../types/artwork';
 import { ImageEditorModal } from './ImageEditorModal';
+import { ConfirmModal } from './ConfirmModal';
 import { useI18n } from '../i18n';
 
 interface ArtworkDetailModalProps {
@@ -30,6 +31,31 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [newLocationText, setNewLocationText] = useState(artwork.location || '');
   const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const statusDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(e.target as Node)) {
+        setIsStatusDropdownOpen(false);
+      }
+    };
+    if (isStatusDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isStatusDropdownOpen]);
+
+  const STATUS_OPTIONS: { value: ArtworkStatus; labelIt: string; labelEn: string; color: string }[] = [
+    { value: 'bottega', labelIt: 'In Bottega / Studio', labelEn: 'In Studio', color: '#4ade80' },
+    { value: 'mostra', labelIt: 'In Mostra / Galleria', labelEn: 'In Exhibition', color: '#60a5fa' },
+    { value: 'venduto', labelIt: 'Venduto', labelEn: 'Sold / Private', color: '#c084fc' },
+    { value: 'prestito', labelIt: 'In Prestito', labelEn: 'On Loan', color: '#fbbf24' },
+    { value: 'in_corso', labelIt: 'In Lavorazione', labelEn: 'Work in Progress', color: '#38bdf8' },
+  ];
 
   const statusMap: Record<ArtworkStatus, { label: string; className: string }> = {
     bottega: {
@@ -235,23 +261,61 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
                   </div>
                 )}
 
-                {/* Cambio rapido di stato */}
-                <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                {/* Cambio rapido di stato con Dropdown Custom Atelier */}
+                <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative' }}>
                   <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
                     {language === 'en' ? 'Update status:' : 'Aggiorna stato:'}
                   </span>
-                  <select 
-                    className="filter-dropdown-select"
-                    value={artwork.status}
-                    onChange={e => onQuickUpdateStatus(artwork, e.target.value as ArtworkStatus)}
-                    style={{ padding: '0.35rem 0.7rem' }}
-                  >
-                    <option value="bottega">{language === 'en' ? 'In Studio' : 'In Bottega / Studio'}</option>
-                    <option value="mostra">{language === 'en' ? 'In Exhibition' : 'In Mostra / Galleria'}</option>
-                    <option value="venduto">{language === 'en' ? 'Sold / Private' : 'Venduto'}</option>
-                    <option value="prestito">{language === 'en' ? 'On Loan' : 'In Prestito'}</option>
-                    <option value="in_corso">{language === 'en' ? 'Work in Progress' : 'In Lavorazione'}</option>
-                  </select>
+
+                  <div ref={statusDropdownRef} style={{ position: 'relative' }}>
+                    {(() => {
+                      const currentStatusObj = STATUS_OPTIONS.find(s => s.value === artwork.status) || STATUS_OPTIONS[0];
+                      const currentLabel = language === 'en' ? currentStatusObj.labelEn : currentStatusObj.labelIt;
+                      return (
+                        <>
+                          <button
+                            type="button"
+                            className="custom-status-trigger"
+                            onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
+                          >
+                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: currentStatusObj.color, boxShadow: `0 0 7px ${currentStatusObj.color}`, flexShrink: 0 }}></span>
+                            <span>{currentLabel}</span>
+                            <ChevronDown size={14} color="#d4af37" style={{ transform: isStatusDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s ease' }} />
+                          </button>
+
+                          {isStatusDropdownOpen && (
+                            <div className="custom-status-menu">
+                              {STATUS_OPTIONS.map(opt => {
+                                const isSelected = opt.value === artwork.status;
+                                const optLabel = language === 'en' ? opt.labelEn : opt.labelIt;
+                                return (
+                                  <div
+                                    key={opt.value}
+                                    className="custom-status-item"
+                                    style={{
+                                      background: isSelected ? 'rgba(212, 175, 55, 0.18)' : 'transparent',
+                                      color: isSelected ? '#faebc8' : '#cbd5e1',
+                                      fontWeight: isSelected ? 700 : 500
+                                    }}
+                                    onClick={() => {
+                                      onQuickUpdateStatus(artwork, opt.value);
+                                      setIsStatusDropdownOpen(false);
+                                    }}
+                                  >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                      <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: opt.color, boxShadow: `0 0 6px ${opt.color}`, flexShrink: 0 }}></span>
+                                      <span>{optLabel}</span>
+                                    </div>
+                                    {isSelected && <Check size={14} color="#d4af37" />}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
                 </div>
               </div>
 
@@ -407,38 +471,54 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
           <button 
             type="button" 
             className="btn btn-danger btn-sm"
-            onClick={() => {
-              const confirmMsg = language === 'en'
-                ? `Are you sure you want to permanently delete the artwork "${artwork.title}" from the catalog?`
-                : `Sei sicuro di voler eliminare definitivamente l'opera "${artwork.title}" dall'inventario?`;
-              if (confirm(confirmMsg)) {
-                onDelete(artwork.id);
-              }
-            }}
+            onClick={() => setIsDeleteConfirmOpen(true)}
+            id="btn-delete-artwork"
+            title={language === 'en' ? 'Delete artwork from catalog' : 'Elimina opera dal catalogo'}
           >
             <Trash2 size={16} />
             <span>{t('delete')}</span>
           </button>
 
           <div className="detail-modal-footer-actions">
+            {/* Pallino stampante */}
             <button 
               type="button" 
-              className="btn btn-secondary"
+              className="btn btn-secondary btn-action-pill"
               onClick={() => onPrintCertificate(artwork)}
               id="btn-print-certificate"
-              title={language === 'en' ? 'Print or save to PDF the Technical Record & Certificate of Authenticity' : 'Stampa o salva in PDF la Scheda Tecnica e Certificato di Autenticità per gallerie o collezionisti'}
+              title={language === 'en' ? 'Print Sheet / Certificate of Authenticity' : 'Stampa Scheda Tecnica / Certificato di Autenticità'}
             >
-              <Printer size={17} color="#d4af37" />
-              <span>{language === 'en' ? 'Print Sheet / Certificate' : 'Stampa Scheda / Certificato'}</span>
+              <span className="icon-circle icon-circle-print">
+                <Printer size={15} />
+              </span>
+              <span>{language === 'en' ? 'Print' : 'Stampa'}</span>
             </button>
 
+            {/* Pallino floppy per salvare */}
             <button 
               type="button" 
-              className="btn btn-primary"
+              className="btn btn-secondary btn-action-pill"
+              onClick={() => onPrintCertificate(artwork)}
+              id="btn-save-certificate"
+              title={language === 'en' ? 'Save as PDF' : 'Salva in PDF'}
+            >
+              <span className="icon-circle icon-circle-save">
+                <Save size={15} />
+              </span>
+              <span>{language === 'en' ? 'Save PDF' : 'Salva PDF'}</span>
+            </button>
+
+            {/* Pallino penna con linea per la modifica */}
+            <button 
+              type="button" 
+              className="btn btn-primary btn-action-pill"
               onClick={() => onEdit(artwork)}
               id="btn-edit-artwork"
+              title={language === 'en' ? 'Edit Artwork' : 'Modifica Opera'}
             >
-              <Edit3 size={17} />
+              <span className="icon-circle icon-circle-edit">
+                <PenLine size={15} />
+              </span>
               <span>{t('edit')}</span>
             </button>
           </div>
@@ -456,6 +536,27 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
           onClose={() => setIsImageEditorOpen(false)}
         />
       )}
+
+      {/* Banner Pop-up di Conferma Eliminazione Opera a tema Bottega */}
+      <ConfirmModal
+        isOpen={isDeleteConfirmOpen}
+        title={language === 'en' ? 'Delete Artwork' : 'Elimina Opera'}
+        message={language === 'en' 
+          ? 'Are you sure you want to permanently remove this artwork from your catalog?' 
+          : "Sei sicuro di voler eliminare definitivamente quest'opera dal tuo archivio d'atelier?"}
+        itemName={artwork.title}
+        warningNote={language === 'en'
+          ? 'This action cannot be undone. Technical specifications, certificate history, and photos will be removed.'
+          : 'Questa azione non può essere annullata. La scheda tecnica, il certificato e le fotografie verranno cancellati.'}
+        confirmLabel={language === 'en' ? 'Yes, Delete' : 'Sì, Elimina'}
+        cancelLabel={language === 'en' ? 'No, Cancel' : 'No, Annulla'}
+        isDanger={true}
+        onConfirm={() => {
+          setIsDeleteConfirmOpen(false);
+          onDelete(artwork.id);
+        }}
+        onCancel={() => setIsDeleteConfirmOpen(false)}
+      />
     </div>
   );
 };

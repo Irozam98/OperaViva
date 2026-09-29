@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Search, Plus, ImageOff, Trash2, CheckSquare, Square, X, MapPin, Palette, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { Search, Plus, ImageOff, Trash2, CheckSquare, Square, X, MapPin, Palette, ArrowUpDown, ChevronDown, BookOpen } from 'lucide-react';
 import { Artwork, ArtworkStatus, FilterState, StudioProfile } from './types/artwork';
 import { getAllArtworks, getStudioProfile, saveArtwork, deleteArtwork, deleteArtworks, saveStudioProfile, initializeDatabase } from './services/db';
 import { DEFAULT_STUDIO_PROFILE } from './services/sampleData';
@@ -12,6 +12,8 @@ import { StatsModal } from './components/StatsModal';
 import { BackupModal } from './components/BackupModal';
 import { ProfileModal } from './components/ProfileModal';
 import { SiteImporterModal } from './components/SiteImporterModal';
+import { ConfirmModal } from './components/ConfirmModal';
+import { CatalogPrintModal } from './components/CatalogPrintModal';
 import { useI18n } from './i18n';
 
 export function App() {
@@ -29,6 +31,9 @@ export function App() {
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isSiteImporterOpen, setIsSiteImporterOpen] = useState(false);
+  const [isBulkDeleteConfirmOpen, setIsBulkDeleteConfirmOpen] = useState(false);
+  const [isFirstRun, setIsFirstRun] = useState(false);
+  const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
 
   // Multi-Selezione Opere per Eliminazione di Gruppo
   const [selectedArtworkIds, setSelectedArtworkIds] = useState<string[]>([]);
@@ -66,6 +71,14 @@ export function App() {
           setArtworks(list);
           setStudioProfile(profile);
           setIsLoading(false);
+
+          // Controllo Primo Avvio: verifica se la bottega deve ancora essere configurata
+          const isSetupDone = localStorage.getItem('operaviva_setup_completed');
+          const isProfileEmpty = !profile?.studioName?.trim() && !profile?.artistName?.trim();
+          if (!isSetupDone || isProfileEmpty) {
+            setIsFirstRun(true);
+            setIsProfileModalOpen(true);
+          }
         }
       })
       .catch((err) => {
@@ -75,6 +88,19 @@ export function App() {
 
     return () => {
       active = false;
+    };
+  }, []);
+
+  // Previene navigazione accidentale di Electron o Chromium quando si trascina un file da Windows
+  useEffect(() => {
+    const preventDefaultDrop = (e: DragEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('dragover', preventDefaultDrop);
+    window.addEventListener('drop', preventDefaultDrop);
+    return () => {
+      window.removeEventListener('dragover', preventDefaultDrop);
+      window.removeEventListener('drop', preventDefaultDrop);
     };
   }, []);
 
@@ -191,16 +217,13 @@ export function App() {
   };
 
   // Eliminazione Multipla di Gruppo
-  const handleConfirmBulkDelete = async () => {
-    const count = selectedArtworkIds.length;
-    if (count === 0) return;
+  const handleOpenBulkDeleteConfirm = () => {
+    if (selectedArtworkIds.length === 0) return;
+    setIsBulkDeleteConfirmOpen(true);
+  };
 
-    const confirmMsg = count === 1
-      ? t('confirmBulkDeleteSingle')
-      : t('confirmBulkDeleteMulti', { count });
-
-    if (!window.confirm(confirmMsg)) return;
-
+  const handleExecuteBulkDelete = async () => {
+    setIsBulkDeleteConfirmOpen(false);
     try {
       await deleteArtworks(selectedArtworkIds);
       await loadData();
@@ -210,7 +233,6 @@ export function App() {
       setSelectedArtworkIds([]);
     } catch (err: any) {
       console.error('Errore durante eliminazione di gruppo:', err);
-      alert(`Errore durante l'eliminazione: ${err.message || 'Errore database'}`);
     }
   };
 
@@ -260,6 +282,8 @@ export function App() {
   const handleSaveProfile = async (profile: StudioProfile) => {
     await saveStudioProfile(profile);
     setStudioProfile(profile);
+    localStorage.setItem('operaviva_setup_completed', 'true');
+    setIsFirstRun(false);
   };
 
   return (
@@ -276,6 +300,7 @@ export function App() {
         onOpenStatsModal={() => setIsStatsModalOpen(true)}
         onOpenBackupModal={() => setIsBackupModalOpen(true)}
         onOpenProfileModal={() => setIsProfileModalOpen(true)}
+        onOpenCatalogModal={() => setIsCatalogModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -546,7 +571,7 @@ export function App() {
               <button 
                 type="button" 
                 className="btn btn-sm"
-                onClick={handleConfirmBulkDelete}
+                onClick={handleOpenBulkDeleteConfirm}
                 style={{
                   background: 'rgba(239, 68, 68, 0.22)',
                   border: '1px solid #ef4444',
@@ -557,6 +582,18 @@ export function App() {
               >
                 <Trash2 size={15} />
                 <span>{t('bulkDeleteBtn')} ({selectedArtworkIds.length})</span>
+              </button>
+
+              {/* Genera Catalogo A4 per Opere Selezionate */}
+              <button 
+                type="button" 
+                className="btn btn-secondary btn-sm"
+                onClick={() => setIsCatalogModalOpen(true)}
+                title={language === 'en' ? 'Generate A4 PDF Catalog for selected' : 'Genera Catalogo A4 PDF per le opere selezionate'}
+                id="btn-batch-catalog"
+              >
+                <BookOpen size={15} color="#d4af37" />
+                <span>{language === 'en' ? 'A4 Catalog' : 'Catalogo A4'} ({selectedArtworkIds.length})</span>
               </button>
 
               {/* Annulla Selezione */}
@@ -631,6 +668,12 @@ export function App() {
           artwork={artworkToPrint}
           studioProfile={studioProfile}
           onClose={() => setArtworkToPrint(null)}
+          onEdit={(art) => {
+            setArtworkToPrint(null);
+            setSelectedArtwork(null);
+            setArtworkToEdit(art);
+            setIsNewArtworkModalOpen(true);
+          }}
         />
       )}
 
@@ -665,8 +708,39 @@ export function App() {
       {isProfileModalOpen && (
         <ProfileModal 
           studioProfile={studioProfile}
+          isFirstRun={isFirstRun}
           onSave={handleSaveProfile}
-          onClose={() => setIsProfileModalOpen(false)}
+          onClose={() => {
+            setIsProfileModalOpen(false);
+            setIsFirstRun(false);
+          }}
+        />
+      )}
+
+      {/* Banner Pop-up di Conferma Eliminazione Multipla a tema Bottega */}
+      <ConfirmModal
+        isOpen={isBulkDeleteConfirmOpen}
+        title={language === 'en' ? 'Delete Selected Artworks' : 'Eliminazione Opere Selezionate'}
+        message={language === 'en'
+          ? `Are you sure you want to permanently delete the ${selectedArtworkIds.length} selected artworks from your catalog?`
+          : `Sei sicuro di voler eliminare definitivamente le ${selectedArtworkIds.length} opere selezionate dall'archivio?`}
+        warningNote={language === 'en'
+          ? 'This batch operation cannot be undone. All technical records, photos, and certificates will be erased.'
+          : 'Questa operazione di gruppo è irreversibile. Tutte le schede, le foto e i certificati selezionati verranno rimossi.'}
+        confirmLabel={language === 'en' ? `Yes, Delete (${selectedArtworkIds.length})` : `Sì, Elimina (${selectedArtworkIds.length})`}
+        cancelLabel={language === 'en' ? 'No, Cancel' : 'No, Annulla'}
+        isDanger={true}
+        onConfirm={handleExecuteBulkDelete}
+        onCancel={() => setIsBulkDeleteConfirmOpen(false)}
+      />
+
+      {/* Modale Generatore Catalogo & Portfolio A4 d'Archivio */}
+      {isCatalogModalOpen && (
+        <CatalogPrintModal
+          artworks={artworks}
+          selectedArtworkIds={selectedArtworkIds}
+          studioProfile={studioProfile}
+          onClose={() => setIsCatalogModalOpen(false)}
         />
       )}
 

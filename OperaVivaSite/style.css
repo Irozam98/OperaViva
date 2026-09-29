@@ -450,32 +450,74 @@ body {
 }
 
 .window-bar {
-  background: #0f1219;
+  background: #11141c;
   border-bottom: 1px solid var(--border-subtle);
-  padding: 0.75rem 1.25rem;
+  padding: 0 0 0 0.85rem;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  user-select: none;
 }
 
-.window-dots {
+.win-title-left {
   display: flex;
-  gap: 6px;
+  align-items: center;
+  gap: 0.6rem;
+  overflow: hidden;
 }
 
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+.win-app-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
-.dot-red { background: #ef4444; }
-.dot-yellow { background: #eab308; }
-.dot-green { background: #22c55e; }
 
 .window-title {
   font-size: 0.82rem;
   color: var(--text-dim);
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.win-controls-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 0.75rem;
+}
+
+.win-window-buttons {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.win-btn {
+  width: 44px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.win-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.win-btn.win-close:hover {
+  background: #e81123 !important;
+  color: #ffffff !important;
 }
 
 .window-status {
@@ -594,21 +636,29 @@ body {
 }
 
 .mock-thumb {
-  height: 140px;
+  height: 155px;
   position: relative;
-  padding: 0.6rem;
+  padding: 0.65rem;
   background-size: cover;
   background-position: center;
+  border-bottom: 1px solid rgba(223, 186, 115, 0.18);
+  box-shadow: inset 0 -30px 25px -10px rgba(0, 0, 0, 0.75);
 }
 
 .art-bg-1 {
-  background: linear-gradient(135deg, #4338ca 0%, #a855f7 50%, #f97316 100%);
+  background-image: url('images/tramonto_laguna.jpg');
+  background-size: cover;
+  background-position: center;
 }
 .art-bg-2 {
-  background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #eab308 100%);
+  background-image: url('images/studio_figura.jpg');
+  background-size: cover;
+  background-position: center top;
 }
 .art-bg-3 {
-  background: linear-gradient(135deg, #7c2d12 0%, #b45309 50%, #713f12 100%);
+  background-image: url('images/melodia_autunno.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 .card-status {
@@ -1174,6 +1224,105 @@ body {
   border: 1px solid var(--border-subtle);
 }
 
+/* Catalog A4 Mockup */
+.catalog-mockup {
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(212, 175, 55, 0.3);
+  position: relative;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.catalog-page-mock {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 1.25rem;
+  background: #fdfdfd;
+}
+
+.cat-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #b8860b;
+  padding-bottom: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.cat-page-logo {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #b8860b;
+}
+
+.cat-page-tag {
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.cat-grid-mock {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.cat-item-mock {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.cat-item-img {
+  height: 85px;
+  width: 100%;
+}
+
+.cat-item-info {
+  padding: 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.cat-item-info strong {
+  font-size: 0.76rem;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-item-info small {
+  font-size: 0.66rem;
+  color: #64748b;
+}
+
+.cat-item-price {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #b8860b;
+  margin-top: 0.2rem;
+}
+
+.cat-page-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #94a3b8;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.6rem;
+}
+
 section[id] {
   scroll-margin-top: 90px;
 }
@@ -1318,6 +1467,40 @@ section[id] {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--border-gold);
   color: var(--gold-300);
+}
+
+.btn-download-soon {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-muted);
+  border: 1px dashed rgba(223, 186, 115, 0.35);
+  cursor: default;
+  user-select: none;
+  opacity: 0.85;
+}
+
+.btn-download-soon:hover {
+  background: rgba(223, 186, 115, 0.05);
+  border-color: rgba(223, 186, 115, 0.5);
+}
+
+.btn-download-soon .badge-soon {
+  font-size: 0.65rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: rgba(223, 186, 115, 0.15);
+  color: var(--gold-300);
+  border: 1px solid rgba(223, 186, 115, 0.3);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.flag-svg {
+  display: inline-block;
+  vertical-align: middle;
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
 }
 
 .platform-specs {
@@ -1995,5 +2178,34 @@ section[id] {
   .col-span-2 {
     grid-column: span 1;
   }
+}
+
+/* Tip Box per Versione Portable */
+.portable-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 0.95rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+}
+
+.portable-tip svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.portable-tip strong {
+  color: var(--gold-300);
+}
+
+.portable-tip em {
+  color: #fff;
+  font-style: normal;
 }
 

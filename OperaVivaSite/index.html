@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=1.1">
 </head>
 <body>
 
@@ -52,14 +52,14 @@
         <a href="#filosofia" class="nav-link" data-i18n="navFilosofia">Filosofia</a>
         <a href="#funzionalita" class="nav-link" data-i18n="navFunzionalita">Funzionalità</a>
         <a href="#certificati" class="nav-link" data-i18n="navCertificati">Certificati</a>
+        <a href="#catalogo" class="nav-link" data-i18n="navCatalogo">Catalogo PDF</a>
         <a href="#importatore" class="nav-link" data-i18n="navImportatore">Importatore</a>
         <a href="#piattaforme" class="nav-link" data-i18n="navPiattaforme">Piattaforme</a>
         <a href="#faq" class="nav-link" data-i18n="navFaq">FAQ</a>
         
         <div class="mobile-lang-row">
-          <button type="button" class="btn-lang-mobile" id="langToggleBtnMobile" title="Cambia lingua (IT / EN)" aria-label="Cambia Lingua">
-            <span class="flag-icon" id="langFlagMobile">🇮🇹</span>
-            <span class="lang-text" id="langCodeMobile">IT</span>
+          <button type="button" class="btn-lang-mobile" id="langToggleBtnMobile" title="Cambia lingua" aria-label="Cambia Lingua">
+            <span class="flag-icon" id="langFlagMobile"><svg width="22" height="15" viewBox="0 0 30 20" class="flag-svg" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#ffffff"/><rect x="20" width="10" height="20" fill="#ce2b37"/><rect width="30" height="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/></svg></span>
           </button>
         </div>
 
@@ -67,8 +67,8 @@
       </nav>
 
       <div class="header-cta">
-        <button type="button" class="btn-lang-unified" id="langToggleBtn" title="Cambia lingua (IT / EN)" aria-label="Cambia Lingua">
-          <span class="flag-icon" id="langFlag">🇮🇹</span>
+        <button type="button" class="btn-lang-unified" id="langToggleBtn" title="Cambia lingua" aria-label="Cambia Lingua">
+          <span class="flag-icon" id="langFlag"><svg width="22" height="15" viewBox="0 0 30 20" class="flag-svg" xmlns="http://www.w3.org/2000/svg"><rect width="10" height="20" fill="#009246"/><rect x="10" width="10" height="20" fill="#ffffff"/><rect x="20" width="10" height="20" fill="#ce2b37"/><rect width="30" height="20" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/></svg></span>
         </button>
         <a href="#piattaforme" class="btn-gold-sm" data-i18n="ctaStart">Scarica Ora</a>
         <button class="mobile-toggle" id="mobileToggle" aria-label="Menu di navigazione">
@@ -125,6 +125,10 @@
           <span data-i18n="pillCert">Certificati di Autenticità Stampabili</span>
         </div>
         <div class="pill-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
+          <span data-i18n="pillCatalog">Catalogo A4 per Gallerie & Collezionisti</span>
+        </div>
+        <div class="pill-item">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
           <span data-i18n="pillVault">Backup Portatile .artvault</span>
         </div>
@@ -133,14 +137,34 @@
       <!-- App Interface Preview Card -->
       <div class="preview-stage">
         <div class="preview-window">
-          <div class="window-bar">
-            <div class="window-dots">
-              <span class="dot dot-red"></span>
-              <span class="dot dot-yellow"></span>
-              <span class="dot dot-green"></span>
+          <div class="window-bar win-titlebar" style="background:#11141c;border-bottom:1px solid rgba(223,186,115,0.2);padding:0 0 0 12px;height:38px;display:flex;align-items:center;justify-content:space-between;user-select:none;">
+            <div class="win-title-left" style="display:flex;align-items:center;gap:0.6rem;overflow:hidden;">
+              <div class="win-app-icon" style="display:flex;align-items:center;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="13.5" cy="6.5" r=".5" fill="#d4af37"></circle>
+                  <circle cx="17.5" cy="10.5" r=".5" fill="#d4af37"></circle>
+                  <circle cx="8.5" cy="7.5" r=".5" fill="#d4af37"></circle>
+                  <circle cx="6.5" cy="12.5" r=".5" fill="#d4af37"></circle>
+                  <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2Z"></path>
+                </svg>
+              </div>
+              <span class="window-title" data-i18n="windowTitle" style="font-size:0.82rem;color:#94a3b8;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">OperaViva | Archivio Personale d'Arte • Created by Marzio Sparla</span>
             </div>
-            <div class="window-title" data-i18n="windowTitle">OperaViva — Archivio Personale d'Arte • Bottega & Atelier</div>
-            <div class="window-status"><span class="status-indicator"></span> <span data-i18n="windowStatus">Database Locale Attivo</span></div>
+            
+            <div class="win-controls-right" style="display:flex;align-items:center;height:100%;gap:0.75rem;">
+              <div class="window-status" style="font-size:0.78rem;color:#4ade80;display:flex;align-items:center;gap:0.4rem;white-space:nowrap;"><span class="status-indicator"></span> <span data-i18n="windowStatus">Database Locale Attivo</span></div>
+              <div class="win-window-buttons" style="display:flex;align-items:center;height:100%;">
+                <div class="win-btn win-minimize" style="width:44px;height:38px;display:flex;align-items:center;justify-content:center;color:#94a3b8;cursor:default;">
+                  <svg width="10" height="1" viewBox="0 0 10 1"><rect width="10" height="1" fill="currentColor"/></svg>
+                </div>
+                <div class="win-btn win-maximize" style="width:44px;height:38px;display:flex;align-items:center;justify-content:center;color:#94a3b8;cursor:default;">
+                  <svg width="10" height="10" viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+                </div>
+                <div class="win-btn win-close" style="width:44px;height:38px;display:flex;align-items:center;justify-content:center;color:#94a3b8;cursor:default;">
+                  <svg width="10" height="10" viewBox="0 0 10 10"><path d="M1 1 L9 9 M9 1 L1 9" stroke="currentColor" stroke-width="1.2"/></svg>
+                </div>
+              </div>
+            </div>
           </div>
           <div class="preview-content">
             <div class="mockup-header">
@@ -155,6 +179,7 @@
                 <span class="mock-btn mock-primary" data-i18n="mockNewArtwork">+ Nuova Opera</span>
                 <span class="mock-btn" data-i18n="mockStats">📊 Statistiche</span>
                 <span class="mock-btn" data-i18n="mockBackup">💾 Archivio & Backup</span>
+                <span class="mock-btn" data-i18n="mockCatalog">📖 Catalogo PDF</span>
                 <span class="mock-btn">⚙</span>
               </div>
             </div>
@@ -184,8 +209,8 @@
                   <span class="card-status in-mostra" data-i18n="statusInMostra">In Esposizione</span>
                 </div>
                 <div class="mock-info">
-                  <h4 data-i18n="mockTitle2">Studio per Figura Sospesa</h4>
-                  <p data-i18n="mockSub2">Acrilico e foglia oro • 50 × 70 cm (2025)</p>
+                  <h4 data-i18n="mockTitle2">Studio di Figura</h4>
+                  <p data-i18n="mockSub2">Olio e carboncino su tela • 50 × 70 cm (2025)</p>
                   <div class="mock-footer">
                     <span class="mock-code">OPV-002</span>
                     <span class="mock-price">2.400 €</span>
@@ -474,6 +499,57 @@
         </div>
       </div>
 
+      <!-- Feature Block 5: Catalogo PDF A4 per Gallerie e Collezionisti -->
+      <div class="split-feature" id="catalogo">
+        <div class="split-text">
+          <div class="split-pill" data-i18n="f5Pill">Presentazione d'Autore</div>
+          <h3 data-i18n="f5Title">Catalogo d'Archivio A4 & Portfolio Digitale</h3>
+          <p data-i18n-html="f5Desc">
+            Devi presentare la tua produzione a una galleria, a un curatore o inviare un dossier ai tuoi collezionisti? 
+            Con <strong>OperaViva</strong> generi con un solo clic un elegante <strong>Catalogo A4 stampabile o condivisibile in PDF</strong>:
+          </p>
+          <ul class="check-list">
+            <li data-i18n-html="f5Item1"><strong>Copertina d'Autore Personalizzata</strong> con il nome della tua bottega, dell'artista e data d'archivio.</li>
+            <li data-i18n-html="f5Item2"><strong>Impaginazione Flessibile A4</strong>: scegli tra 1 opera per pagina in grande, 2 affiancate o 4 per foglio.</li>
+            <li data-i18n-html="f5Item3"><strong>Scheda Finale con Contatti & Social</strong> per facilitare contatti d'acquisto e richieste espositive.</li>
+            <li data-i18n-html="f5Item4"><strong>Controllo Riservatezza Prezzi</strong>: decidi se mostrare o nascondere le quotazioni con un semplice selettore.</li>
+            <li data-i18n-html="f5Item5"><strong>Formato Universale per Stampa e Invio</strong>: perfetto sia stampato su carta pregiata che inviato via email o WhatsApp.</li>
+          </ul>
+        </div>
+        <div class="split-visual">
+          <div class="catalog-mockup">
+            <div class="catalog-page-mock">
+              <div class="cat-page-header">
+                <span class="cat-page-logo">⚜ OPERAVIVA</span>
+                <span class="cat-page-tag">CATALOGO D'ATELIER</span>
+              </div>
+              <div class="cat-grid-mock">
+                <div class="cat-item-mock">
+                  <div class="cat-item-img art-bg-1"></div>
+                  <div class="cat-item-info">
+                    <strong>Tramonto sulla Laguna</strong>
+                    <small>Olio su tela • 80 × 60 cm</small>
+                    <span class="cat-item-price">1.800 €</span>
+                  </div>
+                </div>
+                <div class="cat-item-mock">
+                  <div class="cat-item-img art-bg-2"></div>
+                  <div class="cat-item-info">
+                    <strong>Studio di Figura</strong>
+                    <small>Olio e carboncino • 50 × 70 cm</small>
+                    <span class="cat-item-price">2.400 €</span>
+                  </div>
+                </div>
+              </div>
+              <div class="cat-page-footer">
+                <span>Atelier delle Belle Arti • Marzio Sparla</span>
+                <span>Formato A4 • Pagina 1 / 3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -501,14 +577,20 @@
             </p>
           </div>
           <div class="platform-downloads">
-            <a href="https://github.com/tuo-profilo/operaviva/releases/latest" target="_blank" rel="noopener" class="btn-download btn-download-primary">
+            <a href="https://github.com/tuo-profilo/operaviva/releases/latest" target="_blank" rel="noopener" class="btn-download btn-download-primary" id="btn-win-portable">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span data-i18n="platWinBtn1">Scarica Portable (.exe)</span>
             </a>
-            <a href="https://github.com/tuo-profilo/operaviva/releases/latest" target="_blank" rel="noopener" class="btn-download btn-download-secondary">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+            <a href="#" target="_blank" rel="noopener" class="btn-download btn-download-secondary" id="btn-win-installer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
               <span data-i18n="platWinBtn2">Scarica Installer (.exe)</span>
             </a>
+          </div>
+          <div class="portable-tip">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            <span data-i18n-html="platWinPortableTip">
+              <strong>Consiglio Portable:</strong> Inserisci l'eseguibile dentro una cartella dedicata (es. <em>Documenti\OperaViva</em> o su una chiavetta USB) prima di avviarlo, poiché creerà lì la sua cartella dati e foto. Se invece preferisci l'installazione automatica in <em>C:</em> con sola icona sul desktop, scarica l'<strong>Installer</strong>.
+            </span>
           </div>
           <ul class="platform-specs">
             <li data-i18n="platWinSpec1">✔ 100% Offline: zero connessioni, zero cloud, privacy sovrana</li>
@@ -519,7 +601,7 @@
 
         <!-- Card 2: Android -->
         <div class="platform-card" data-platform="android">
-          <div class="platform-badge" data-i18n="platAndBadge">In Bottega & Mostra</div>
+          <div class="platform-badge" data-i18n="platAndBadge">Disponibile • Mobile</div>
           <div class="platform-icon">📱</div>
           <div class="platform-info">
             <h3 data-i18n="platAndTitle">Android App (.apk)</h3>
@@ -529,9 +611,9 @@
             </p>
           </div>
           <div class="platform-downloads">
-            <a href="https://github.com/tuo-profilo/operaviva/releases/latest" target="_blank" rel="noopener" class="btn-download btn-download-primary">
+            <a href="#" target="_blank" rel="noopener" class="btn-download btn-download-primary" id="btn-android-apk">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-              <span data-i18n="platAndBtn1">Scarica Pacchetto (.apk)</span>
+              <span data-i18n="platAndBtn1">Scarica Pacchetto Android (.apk)</span>
             </a>
             <a href="#faq" class="btn-download btn-download-secondary">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
@@ -635,6 +717,30 @@
               <strong>Assolutamente no.</strong> OperaViva rispetta la tua professionalità: non esistono algoritmi fittizi che pretendono di valutare l'arte al posto tuo. 
               Il programma si limita a <strong>sommare e riepilogare con precisione contabile</strong> i prezzi e le quotazioni che inserisci tu stesso per ciascuna opera, 
               fornendoti in tempo reale il controvalore totale delle opere attualmente disponibili in bottega o affidate alle mostre.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faqQ7">Quale versione Windows scegliere tra Portable e Installer?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA7">
+              La versione <strong>Portable (.exe)</strong> non richiede alcuna installazione e non tocca il sistema operativo: basta creare una cartella (es. in Documenti o su una chiavetta USB) e avviare il file da lì; tutti i dati e le foto rimarranno racchiusi in quella cartella, permettendoti di portare il tuo archivio ovunque. La versione <strong>Installer (.exe)</strong> esegue invece l'installazione guidata automatica in <code>C:</code>, crea il collegamento pulito sul Desktop e nel Menu Start ed è la scelta consigliata per chi cerca la massima semplicità d'uso.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faqQ8">Posso inviare il catalogo delle mie opere a galleristi o collezionisti via email o WhatsApp?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA8">
+              Certamente! Con la nuova funzione <strong>Catalogo PDF</strong> puoi generare in pochi secondi un portfolio d'autore completo in formato A4, pronto per essere stampato su carta pregiata o salvato in PDF, con copertina personalizzata, immagini nitide, dati d'archivio e tutti i tuoi recapiti d'atelier.
             </p>
           </div>
         </div>
