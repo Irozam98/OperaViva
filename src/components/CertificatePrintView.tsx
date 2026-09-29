@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Printer } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
+import { useI18n } from '../i18n';
 
 interface CertificatePrintViewProps {
   artwork: Artwork;
@@ -13,18 +14,24 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
   studioProfile,
   onClose
 }) => {
+  const { language } = useI18n();
+
   const handlePrint = () => {
     window.print();
   };
 
-  const formattedPrice = new Intl.NumberFormat('it-IT', {
+  const formattedPrice = new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', {
     style: 'currency',
     currency: 'EUR',
     maximumFractionDigits: 0
   }).format(artwork.price || 0);
 
   const mainImage = artwork.images && artwork.images.length > 0 ? artwork.images[0] : '';
-  const today = new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
+  const today = new Date().toLocaleDateString(language === 'en' ? 'en-US' : 'it-IT', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
 
   return (
     <>
@@ -39,14 +46,16 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <Printer size={20} color="#d4af37" />
               <h3 className="modal-title" style={{ fontSize: '1.15rem' }}>
-                Anteprima Scheda Opera & Certificato di Autenticità
+                {language === 'en'
+                  ? 'Artwork Record Preview & Certificate of Authenticity'
+                  : 'Anteprima Scheda Opera & Certificato di Autenticità'}
               </h3>
             </div>
 
             <div style={{ display: 'flex', gap: '0.6rem' }}>
               <button className="btn btn-primary btn-sm" onClick={handlePrint}>
                 <Printer size={16} />
-                <span>Stampa / Salva in PDF</span>
+                <span>{language === 'en' ? 'Print / Save as PDF' : 'Stampa / Salva in PDF'}</span>
               </button>
               <button className="btn-icon" onClick={onClose}>
                 <X size={18} />
@@ -113,10 +122,12 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                   textTransform: 'uppercase',
                   margin: 0
                 }}>
-                  CERTIFICATO DI AUTENTICITÀ & ARCHIVIO
+                  {language === 'en'
+                    ? 'CERTIFICATE OF AUTHENTICITY & ARCHIVE RECORD'
+                    : 'CERTIFICATO DI AUTENTICITÀ & ARCHIVIO'}
                 </h2>
                 <div style={{ fontSize: '12px', color: '#666', fontStyle: 'italic', marginTop: '3px' }}>
-                  Codice di Inventario: <strong>{artwork.code}</strong> • N. Archivio: <strong>{artwork.certificateNumber || artwork.code}</strong>
+                  {language === 'en' ? 'Inventory Code:' : 'Codice di Inventario:'} <strong>{artwork.code}</strong> • {language === 'en' ? 'Archive No.:' : 'N. Archivio:'} <strong>{artwork.certificateNumber || artwork.code}</strong>
                 </div>
               </div>
 
@@ -148,42 +159,54 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
               }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', rowGap: '10px', columnGap: '20px', fontSize: '13px' }}>
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Titolo dell'Opera:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Title of Artwork:' : "Titolo dell'Opera:"}
+                    </span>
                     <div style={{ fontWeight: 700, fontSize: '16px', color: '#111', fontFamily: "'Playfair Display', serif" }}>
                       "{artwork.title}"
                     </div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Autore:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Artist / Author:' : 'Autore:'}
+                    </span>
                     <div style={{ fontWeight: 600, color: '#111' }}>
                       {artwork.artist || studioProfile.artistName}
                     </div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Anno di realizzazione:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Year of Creation:' : 'Anno di realizzazione:'}
+                    </span>
                     <div style={{ fontWeight: 600, color: '#111' }}>
                       {artwork.year}
                     </div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Tecnica esecutiva:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Technique / Medium:' : 'Tecnica esecutiva:'}
+                    </span>
                     <div style={{ fontWeight: 600, color: '#111' }}>
                       {artwork.technique}
                     </div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Supporto:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Support / Substrate:' : 'Supporto:'}
+                    </span>
                     <div style={{ fontWeight: 600, color: '#111' }}>
-                      {artwork.support || 'Supporto originale'}
+                      {artwork.support || (language === 'en' ? 'Original substrate' : 'Supporto originale')}
                     </div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Dimensioni:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Dimensions:' : 'Dimensioni:'}
+                    </span>
                     <div style={{ fontWeight: 700, color: '#111' }}>
                       {artwork.dimensions.height} × {artwork.dimensions.width}
                       {artwork.dimensions.depth ? ` × ${artwork.dimensions.depth}` : ''} cm
@@ -191,14 +214,20 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                   </div>
 
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Incorniciatura:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Framing:' : 'Incorniciatura:'}
+                    </span>
                     <div style={{ fontWeight: 600, color: '#111' }}>
-                      {artwork.framed ? `Incorniciato (${artwork.frameDetails || 'Sì'})` : 'Senza cornice'}
+                      {artwork.framed 
+                        ? (language === 'en' ? `Framed (${artwork.frameDetails || 'Yes'})` : `Incorniciato (${artwork.frameDetails || 'Sì'})`)
+                        : (language === 'en' ? 'Unframed' : 'Senza cornice')}
                     </div>
                   </div>
 
                   <div>
-                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Stima / Valore Ufficiale:</span>
+                    <span style={{ color: '#777', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {language === 'en' ? 'Declared Value / Price:' : 'Valore Dichiarato / Prezzo:'}
+                    </span>
                     <div style={{ fontWeight: 700, color: '#8c6d23', fontSize: '15px' }}>
                       {formattedPrice}
                     </div>
@@ -207,27 +236,29 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
 
                 {artwork.notes && (
                   <div style={{ marginTop: '12px', paddingTop: '10px', borderTop: '1px dashed #ded8c8', fontSize: '12px', color: '#444' }}>
-                    <strong style={{ color: '#222' }}>Note dell'opera:</strong> {artwork.notes}
+                    <strong style={{ color: '#222' }}>{language === 'en' ? 'Artwork Notes:' : "Note dell'opera:"}</strong> {artwork.notes}
                   </div>
                 )}
               </div>
 
               {/* Dichiarazione di Autenticità Ufficiale */}
               <div style={{ fontSize: '12px', color: '#333', textAlign: 'justify', lineHeight: 1.5, marginBottom: '35px', fontStyle: 'italic' }}>
-                Si certifica con il presente documento che l'opera sopra descritta e riprodotta è un originale autentico, realizzato unicamente a mano dall'artista e registrato con il numero di catalogo sopra indicato presso l'archivio ufficiale di bottega.
+                {language === 'en'
+                  ? 'This document certifies that the work of art described and reproduced above is an authentic original, created solely by hand by the artist and registered under the catalog number above in the official studio archive.'
+                  : "Si certifica con il presente documento che l'opera sopra descritta e riprodotta è un originale autentico, realizzato unicamente a mano dall'artista e registrato con il numero di catalogo sopra indicato presso l'archivio ufficiale di bottega."}
               </div>
 
               {/* Firme e Luogo */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '20px' }}>
                 <div style={{ fontSize: '12px', color: '#444' }}>
-                  <div>Luogo e Data di rilascio:</div>
-                  <strong style={{ color: '#111' }}>{studioProfile.city || 'In Bottega'}, {today}</strong>
+                  <div>{language === 'en' ? 'Place & Date of Issue:' : 'Luogo e Data di rilascio:'}</div>
+                  <strong style={{ color: '#111' }}>{studioProfile.city || (language === 'en' ? 'In Studio' : 'In Bottega')}, {today}</strong>
                 </div>
 
                 <div style={{ textAlign: 'center', width: '220px' }}>
                   <div style={{ borderBottom: '1px solid #111', height: '35px', marginBottom: '6px' }}></div>
                   <div style={{ fontSize: '11px', color: '#555', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    Firma dell'Artista / Direzione
+                    {language === 'en' ? "Artist's Signature / Direction" : "Firma dell'Artista / Direzione"}
                   </div>
                 </div>
               </div>
@@ -303,7 +334,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
               <div><strong>Supporto:</strong> {artwork.support || 'Supporto d\'autore'}</div>
               <div><strong>Dimensioni:</strong> {artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
               <div><strong>Incorniciatura:</strong> {artwork.framed ? `Sì (${artwork.frameDetails || 'Sì'})` : 'Senza cornice'}</div>
-              <div><strong>Prezzo di Stima:</strong> {formattedPrice}</div>
+              <div><strong>Valore Dichiarato / Prezzo:</strong> {formattedPrice}</div>
             </div>
             {artwork.notes && (
               <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px dotted #ccc', fontSize: '10pt' }}>

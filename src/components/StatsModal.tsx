@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, BarChart3, MapPin, Palette } from 'lucide-react';
 import { Artwork } from '../types/artwork';
+import { useI18n } from '../i18n';
 
 interface StatsModalProps {
   artworks: Artwork[];
@@ -8,6 +9,7 @@ interface StatsModalProps {
 }
 
 export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => {
+  const { t, language } = useI18n();
   const total = artworks.length;
   const inBottega = artworks.filter(a => a.status === 'bottega');
   const inMostra = artworks.filter(a => a.status === 'mostra');
@@ -24,19 +26,23 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
   // Ripartizione per Tecnica
   const techniqueCounts: Record<string, number> = {};
   artworks.forEach(a => {
-    const tech = a.technique || 'Altro';
+    const tech = a.technique || (language === 'en' ? 'Other' : 'Altro');
     techniqueCounts[tech] = (techniqueCounts[tech] || 0) + 1;
   });
 
   // Ripartizione per Collocazione
   const locationCounts: Record<string, number> = {};
   artworks.forEach(a => {
-    const loc = a.location || 'Non specificata';
+    const loc = a.location || (language === 'en' ? 'Unspecified' : 'Non specificata');
     locationCounts[loc] = (locationCounts[loc] || 0) + 1;
   });
 
   const formatEuro = (val: number) =>
-    new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(val);
+    new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', {
+      style: 'currency',
+      currency: 'EUR',
+      maximumFractionDigits: 0
+    }).format(val);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -44,7 +50,9 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <BarChart3 size={22} color="#d4af37" />
-            <h2 className="modal-title">Statistiche Atelier & Valore Economico</h2>
+            <h2 className="modal-title">
+              {language === 'en' ? 'Studio Analytics & Heritage Value' : 'Statistiche Atelier & Valore Economico'}
+            </h2>
           </div>
           <button className="btn-icon" onClick={onClose}>
             <X size={20} />
@@ -58,49 +66,49 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
             
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-gold)', borderRadius: 'var(--radius-md)', padding: '1.2rem' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Valore Opere in Bottega
+                {language === 'en' ? 'Artworks in Studio' : 'Valore Opere in Bottega'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--gold-400)', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
                 {formatEuro(valBottega)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                {inBottega.length} opere disponibili subito
+                {inBottega.length} {language === 'en' ? 'available now' : 'opere disponibili subito'}
               </div>
             </div>
 
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '1.2rem' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Valore Opere in Mostra
+                {language === 'en' ? 'Artworks in Exhibition' : 'Valore Opere in Mostra'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#60a5fa', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
                 {formatEuro(valMostra)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                {inMostra.length} opere esposte in galleria
+                {inMostra.length} {language === 'en' ? 'on exhibition' : 'opere esposte in galleria'}
               </div>
             </div>
 
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '1.2rem' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Incasso Opere Vendute
+                {language === 'en' ? 'Total Sold Artworks' : 'Incasso Opere Vendute'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#c084fc', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
                 {formatEuro(valVendute)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                {vendute.length} opere vendute
+                {vendute.length} {language === 'en' ? 'artworks sold' : 'opere vendute'}
               </div>
             </div>
 
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '1.2rem' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Prezzo Medio ad Opera
+                {language === 'en' ? 'Average Price' : 'Prezzo Medio ad Opera'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
                 {formatEuro(avgPrice)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                Su {total} opere totali
+                {language === 'en' ? `Out of ${total} total artworks` : `Su ${total} opere totali`}
               </div>
             </div>
 
@@ -113,7 +121,11 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold-400)', fontWeight: 600 }}>
                 <MapPin size={18} />
-                <span>Opere per Collocazione ({Object.keys(locationCounts).length} luoghi)</span>
+                <span>
+                  {language === 'en'
+                    ? `Artworks by Location (${Object.keys(locationCounts).length} locations)`
+                    : `Opere per Collocazione (${Object.keys(locationCounts).length} luoghi)`}
+                </span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '200px', overflowY: 'auto' }}>
@@ -130,7 +142,9 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
             <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--gold-400)', fontWeight: 600 }}>
                 <Palette size={18} />
-                <span>Opere per Tecnica Esecutiva</span>
+                <span>
+                  {language === 'en' ? 'Artworks by Technique' : 'Opere per Tecnica Esecutiva'}
+                </span>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', maxHeight: '200px', overflowY: 'auto' }}>
@@ -149,7 +163,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
 
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>
-            Chiudi
+            {t('close')}
           </button>
         </div>
       </div>

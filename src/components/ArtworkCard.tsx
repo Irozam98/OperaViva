@@ -1,6 +1,7 @@
 import React from 'react';
 import { MapPin, Check } from 'lucide-react';
 import { Artwork, ArtworkStatus } from '../types/artwork';
+import { useI18n } from '../i18n';
 
 interface ArtworkCardProps {
   artwork: Artwork;
@@ -10,14 +11,6 @@ interface ArtworkCardProps {
   onToggleSelect?: (artworkId: string) => void;
 }
 
-const statusLabels: Record<ArtworkStatus, { label: string; className: string }> = {
-  bottega: { label: 'In Bottega', className: 'badge-bottega' },
-  mostra: { label: 'In Mostra', className: 'badge-mostra' },
-  venduto: { label: 'Venduto', className: 'badge-venduto' },
-  prestito: { label: 'In Prestito', className: 'badge-prestito' },
-  in_corso: { label: 'In Lavorazione', className: 'badge-in_corso' }
-};
-
 export const ArtworkCard: React.FC<ArtworkCardProps> = ({ 
   artwork, 
   onSelect,
@@ -25,11 +18,30 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
   isSelectionMode = false,
   onToggleSelect
 }) => {
-  const statusInfo = statusLabels[artwork.status] || { label: artwork.status, className: 'badge-bottega' };
+  const { t, language } = useI18n();
+
+  const getStatusInfo = (status: ArtworkStatus) => {
+    switch (status) {
+      case 'bottega':
+        return { label: t('statusBottega'), className: 'badge-bottega' };
+      case 'mostra':
+        return { label: t('statusMostra'), className: 'badge-mostra' };
+      case 'venduto':
+        return { label: t('statusVenduto'), className: 'badge-venduto' };
+      case 'prestito':
+        return { label: t('statusPrestito'), className: 'badge-prestito' };
+      case 'in_corso':
+        return { label: t('statusInCorso'), className: 'badge-in_corso' };
+      default:
+        return { label: status, className: 'badge-bottega' };
+    }
+  };
+
+  const statusInfo = getStatusInfo(artwork.status);
   
-  const formattedPrice = new Intl.NumberFormat('it-IT', {
+  const formattedPrice = new Intl.NumberFormat(language === 'it' ? 'it-IT' : 'en-US', {
     style: 'currency',
-    currency: 'EUR',
+    currency: artwork.currency || 'EUR',
     maximumFractionDigits: 0
   }).format(artwork.price || 0);
 
@@ -113,7 +125,7 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
         <div className="art-card-footer">
           <div className="art-card-price-block">
             <span className="price-label">
-              {artwork.status === 'venduto' ? 'Prezzo finale' : 'Quotazione'}
+              {artwork.status === 'venduto' ? (language === 'it' ? 'Prezzo finale' : 'Final price') : (language === 'it' ? 'Quotazione' : 'Value')}
             </span>
             <span className="art-card-price">
               {formattedPrice}
@@ -122,9 +134,9 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
           <div className="art-card-action-hint">
             {artwork.status === 'venduto' ? (
-              <span className="sold-indicator">Collezione Privata</span>
+              <span className="sold-indicator">{language === 'it' ? 'Collezione Privata' : 'Private Collection'}</span>
             ) : (
-              <span className="detail-link">Scheda opera →</span>
+              <span className="detail-link">{language === 'it' ? 'Scheda opera →' : 'View record →'}</span>
             )}
           </div>
         </div>

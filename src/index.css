@@ -177,6 +177,83 @@ html, body {
   gap: 0.45rem;
 }
 
+/* Unified Language Toggle Button (Solo bandierina italiana / inglese che cambia al click) */
+.btn-lang-unified {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 36px;
+  padding: 0;
+  background: rgba(18, 22, 34, 0.9);
+  border: 1px solid var(--border-gold);
+  color: #faebc8;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  user-select: none;
+  transition: all var(--trans-fast);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.btn-lang-unified:hover {
+  background: rgba(223, 186, 115, 0.18);
+  border-color: var(--gold-400);
+  box-shadow: 0 0 12px rgba(197, 160, 89, 0.35);
+  transform: translateY(-1px) scale(1.05);
+}
+
+.btn-lang-unified:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.btn-lang-unified .flag-icon {
+  font-size: 1.25rem;
+  display: inline-block;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.btn-lang-unified:hover .flag-icon {
+  transform: scale(1.1);
+}
+
+.desktop-only-switch {
+  display: inline-flex !important;
+}
+
+.mobile-switch {
+  display: none !important;
+}
+
+.btn-lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background: rgba(26, 32, 45, 0.85);
+  color: var(--gold-300);
+  border: 1px solid var(--border-gold);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  letter-spacing: 0.8px;
+}
+
+.btn-lang-toggle:hover {
+  background: #262e40;
+  color: #fff;
+  border-color: var(--gold-400);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+}
+
+.mobile-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .logo-section {
   display: flex;
   align-items: center;
@@ -1105,6 +1182,14 @@ html, body {
     align-items: center;
     justify-content: space-between;
     width: 100%;
+  }
+
+  .mobile-switch {
+    display: inline-flex !important;
+  }
+
+  .desktop-only-switch {
+    display: none !important;
   }
 
   .mobile-only-btn {

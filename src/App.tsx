@@ -12,8 +12,10 @@ import { StatsModal } from './components/StatsModal';
 import { BackupModal } from './components/BackupModal';
 import { ProfileModal } from './components/ProfileModal';
 import { SiteImporterModal } from './components/SiteImporterModal';
+import { useI18n } from './i18n';
 
 export function App() {
+  const { t, language } = useI18n();
   const [artworks, setArtworks] = useState<Artwork[]>([]);
   const [studioProfile, setStudioProfile] = useState<StudioProfile>(DEFAULT_STUDIO_PROFILE);
   const [isLoading, setIsLoading] = useState(true);
@@ -196,8 +198,8 @@ export function App() {
     if (count === 0) return;
 
     const confirmMsg = count === 1
-      ? "Sei sicuro di voler eliminare definitivamente l'opera selezionata?\n\nQuesta azione non può essere annullata."
-      : `ATTENZIONE: Sei sicuro di voler eliminare definitivamente le ${count} opere selezionate?\n\nQuesta azione non può essere annullata.`;
+      ? t('confirmBulkDeleteSingle')
+      : t('confirmBulkDeleteMulti', { count });
 
     if (!window.confirm(confirmMsg)) return;
 
@@ -291,7 +293,7 @@ export function App() {
               <input 
                 type="text" 
                 className="search-input"
-                placeholder="Cerca per titolo opera, codice, tecnica, collocazione..."
+                placeholder={t('searchPlaceholder')}
                 value={filters.searchQuery}
                 onChange={e => setFilters({ ...filters, searchQuery: e.target.value })}
                 id="search-artworks"
@@ -301,7 +303,7 @@ export function App() {
             {/* Raggruppamento Filtri Dropdown con Icone e Design Atelier */}
             <div className="filter-dropdowns-group">
               {/* Filtro Collocazione */}
-              <div className={`filter-select-box ${filters.location ? 'has-value' : ''}`} title="Filtra per collocazione">
+              <div className={`filter-select-box ${filters.location ? 'has-value' : ''}`} title={t('location')}>
                 <MapPin size={15} className="select-lead-icon" />
                 <select 
                   className="filter-select-input"
@@ -309,7 +311,7 @@ export function App() {
                   onChange={e => setFilters({ ...filters, location: e.target.value })}
                   id="filter-location"
                 >
-                  <option value="">Tutte le Collocazioni</option>
+                  <option value="">{t('allLocations')}</option>
                   {uniqueLocations.map((loc, idx) => (
                     <option key={idx} value={loc}>{loc}</option>
                   ))}
@@ -318,7 +320,7 @@ export function App() {
               </div>
 
               {/* Filtro Tecnica */}
-              <div className={`filter-select-box ${filters.technique ? 'has-value' : ''}`} title="Filtra per tecnica">
+              <div className={`filter-select-box ${filters.technique ? 'has-value' : ''}`} title={t('technique')}>
                 <Palette size={15} className="select-lead-icon" />
                 <select 
                   className="filter-select-input"
@@ -326,7 +328,7 @@ export function App() {
                   onChange={e => setFilters({ ...filters, technique: e.target.value })}
                   id="filter-technique"
                 >
-                  <option value="">Tutte le Tecniche</option>
+                  <option value="">{t('allTechniques')}</option>
                   {uniqueTechniques.map((tech, idx) => (
                     <option key={idx} value={tech}>{tech}</option>
                   ))}
@@ -335,7 +337,7 @@ export function App() {
               </div>
 
               {/* Ordinamento */}
-              <div className={`filter-select-box ${filters.sortBy !== 'date_desc' ? 'has-value' : ''}`} title="Ordina opere">
+              <div className={`filter-select-box ${filters.sortBy !== 'date_desc' ? 'has-value' : ''}`} title="Ordina">
                 <ArrowUpDown size={15} className="select-lead-icon" />
                 <select 
                   className="filter-select-input"
@@ -343,12 +345,12 @@ export function App() {
                   onChange={e => setFilters({ ...filters, sortBy: e.target.value as any })}
                   id="filter-sort"
                 >
-                  <option value="date_desc">Più recenti inseriti</option>
-                  <option value="date_asc">Meno recenti inseriti</option>
-                  <option value="price_desc">Prezzo: dal più alto</option>
-                  <option value="price_asc">Prezzo: dal più basso</option>
-                  <option value="title_asc">Titolo (A - Z)</option>
-                  <option value="year_desc">Anno di realizzazione</option>
+                  <option value="date_desc">{t('sortLatest')}</option>
+                  <option value="date_asc">{t('sortOldest')}</option>
+                  <option value="price_desc">{t('sortPriceDesc')}</option>
+                  <option value="price_asc">{t('sortPriceAsc')}</option>
+                  <option value="title_asc">{t('sortTitleAsc')}</option>
+                  <option value="year_desc">{t('sortYearDesc')}</option>
                 </select>
                 <ChevronDown size={14} className="select-chevron-icon" />
               </div>
@@ -362,7 +364,7 @@ export function App() {
               className={`filter-tab ${filters.status === 'all' ? 'active' : ''}`}
               onClick={() => setFilters({ ...filters, status: 'all' })}
             >
-              Tutte le Opere ({artworks.length})
+              {t('tabAll')} ({artworks.length})
             </button>
 
             <button 
@@ -370,7 +372,7 @@ export function App() {
               onClick={() => setFilters({ ...filters, status: 'bottega' })}
             >
               <span style={{ color: 'var(--status-bottega)', marginRight: '4px' }}>●</span>
-              In Bottega ({artworks.filter(a => a.status === 'bottega').length})
+              {t('tabBottega')} ({artworks.filter(a => a.status === 'bottega').length})
             </button>
 
             <button 
@@ -378,7 +380,7 @@ export function App() {
               onClick={() => setFilters({ ...filters, status: 'mostra' })}
             >
               <span style={{ color: 'var(--status-mostra)', marginRight: '4px' }}>●</span>
-              In Mostra ({artworks.filter(a => a.status === 'mostra').length})
+              {t('tabMostra')} ({artworks.filter(a => a.status === 'mostra').length})
             </button>
 
             <button 
@@ -386,7 +388,7 @@ export function App() {
               onClick={() => setFilters({ ...filters, status: 'venduto' })}
             >
               <span style={{ color: 'var(--status-venduto)', marginRight: '4px' }}>●</span>
-              Venduti ({artworks.filter(a => a.status === 'venduto').length})
+              {t('tabVenduto')} ({artworks.filter(a => a.status === 'venduto').length})
             </button>
 
             <button 
@@ -394,7 +396,7 @@ export function App() {
               onClick={() => setFilters({ ...filters, status: 'in_corso' })}
             >
               <span style={{ color: 'var(--status-in_corso)', marginRight: '4px' }}>●</span>
-              In Lavorazione ({artworks.filter(a => a.status === 'in_corso').length})
+              {t('tabInCorso')} ({artworks.filter(a => a.status === 'in_corso').length})
             </button>
 
             <button 
@@ -402,7 +404,7 @@ export function App() {
               onClick={() => setFilters({ ...filters, status: 'prestito' })}
             >
               <span style={{ color: 'var(--status-prestito)', marginRight: '4px' }}>●</span>
-              In Prestito ({artworks.filter(a => a.status === 'prestito').length})
+              {t('tabPrestito')} ({artworks.filter(a => a.status === 'prestito').length})
             </button>
 
             {(filters.searchQuery || filters.status !== 'all' || filters.location || filters.technique) && (
@@ -420,19 +422,19 @@ export function App() {
                 })}
                 style={{ fontSize: '0.8rem', color: 'var(--gold-400)' }}
               >
-                Azzera filtri
+                {language === 'en' ? 'Reset filters' : 'Azzera filtri'}
               </button>
             )}
           </div>
         </div>
 
-        {/* Barra di Stato Catalogo & Selezione Multipla (Visibile sempre, fissa su Mobile & Desktop) */}
+        {/* Barra di Stato Catalogo & Selezione Multipla */}
         {!isLoading && filteredArtworks.length > 0 && (
           <div className="catalog-meta-bar">
             <div className="catalog-count-info">
-              <span>Opere nel catalogo: <strong>{filteredArtworks.length}</strong></span>
+              <span>{t('catalogCount')} <strong>{filteredArtworks.length}</strong></span>
               {selectedArtworkIds.length > 0 && (
-                <span className="selected-tag">{selectedArtworkIds.length} selezionate</span>
+                <span className="selected-tag">{selectedArtworkIds.length} {t('selectedArtworks').toLowerCase()}</span>
               )}
             </div>
 
@@ -448,13 +450,13 @@ export function App() {
                   }
                 }}
                 id="btn-multi-select"
-                title="Seleziona o deseleziona tutte le opere"
+                title={t('multiSelectBtn')}
               >
                 <CheckSquare size={16} />
                 <span>
                   {selectedArtworkIds.length > 0 
-                    ? `Deseleziona Tutte (${selectedArtworkIds.length})` 
-                    : 'Selezione Multipla'}
+                    ? `${t('deselectAll')} (${selectedArtworkIds.length})` 
+                    : t('multiSelectBtn')}
                 </span>
               </button>
             </div>
@@ -464,7 +466,7 @@ export function App() {
         {/* Griglia Opere */}
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--text-secondary)' }}>
-            Caricamento inventario in corso...
+            {language === 'en' ? 'Loading studio catalog...' : 'Caricamento inventario in corso...'}
           </div>
         ) : filteredArtworks.length > 0 ? (
           <div className="artworks-grid">
@@ -483,12 +485,16 @@ export function App() {
           <div className="empty-state">
             <ImageOff className="empty-state-icon" />
             <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.4rem', color: '#fff', marginBottom: '0.5rem' }}>
-              Nessuna opera trovata
+              {language === 'en' ? 'No artworks found' : 'Nessuna opera trovata'}
             </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
               {filters.searchQuery || filters.status !== 'all' || filters.location
-                ? 'Prova a modificare i filtri di ricerca o la collocazione selezionata.'
-                : 'Il tuo inventario è vuoto. Inizia registrando il primo quadro o scultura presente in bottega!'}
+                ? (language === 'en'
+                    ? 'Try adjusting your search query, status tabs, or selected location.'
+                    : 'Prova a modificare i filtri di ricerca o la collocazione selezionata.')
+                : (language === 'en'
+                    ? 'Your studio inventory is empty. Start by cataloging your first painting or sculpture!'
+                    : 'Il tuo inventario è vuoto. Inizia registrando il primo quadro o scultura presente in bottega!')}
             </p>
             <button 
               className="btn btn-primary"
@@ -498,7 +504,7 @@ export function App() {
               }}
             >
               <Plus size={18} />
-              <span>Registra la tua prima opera</span>
+              <span>{language === 'en' ? 'Register your first artwork' : 'Registra la tua prima opera'}</span>
             </button>
           </div>
         )}
@@ -511,7 +517,7 @@ export function App() {
                 {selectedArtworkIds.length}
               </span>
               <span className="batch-label">
-                {selectedArtworkIds.length === 1 ? 'opera selezionata' : 'opere selezionate'}
+                {selectedArtworkIds.length === 1 ? t('operaSingular') : t('opereCount')} {t('selectedArtworks').toLowerCase()}
               </span>
             </div>
 
@@ -522,10 +528,10 @@ export function App() {
                   type="button" 
                   className="btn btn-secondary btn-sm"
                   onClick={handleSelectAllVisible}
-                  title="Seleziona tutte le opere attualmente visibili"
+                  title={t('selectAllVisible', { count: filteredArtworks.length })}
                 >
                   <CheckSquare size={15} />
-                  <span>Tutte ({filteredArtworks.length})</span>
+                  <span>{t('selectAllVisible', { count: filteredArtworks.length })}</span>
                 </button>
               ) : (
                 <button 
@@ -534,7 +540,7 @@ export function App() {
                   onClick={handleDeselectAll}
                 >
                   <Square size={15} />
-                  <span>Deseleziona</span>
+                  <span>{t('deselectAll')}</span>
                 </button>
               )}
 
@@ -549,10 +555,10 @@ export function App() {
                   color: '#fca5a5',
                   fontWeight: 600
                 }}
-                title="Elimina definitivamente le opere selezionate"
+                title={t('bulkDeleteBtn')}
               >
                 <Trash2 size={15} />
-                <span>Elimina Selezionate ({selectedArtworkIds.length})</span>
+                <span>{t('bulkDeleteBtn')} ({selectedArtworkIds.length})</span>
               </button>
 
               {/* Annulla Selezione */}
@@ -560,7 +566,7 @@ export function App() {
                 type="button" 
                 className="btn-icon"
                 onClick={handleDeselectAll}
-                title="Chiudi selezione"
+                title={t('exitMultiSelect')}
                 style={{ marginLeft: '0.35rem' }}
               >
                 <X size={18} />

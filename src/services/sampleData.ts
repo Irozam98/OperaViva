@@ -160,7 +160,7 @@ export const SAMPLE_ARTWORKS: Artwork[] = [
     title: "Canto del Mare",
     artist: "Marco Valenti",
     year: 2024,
-    technique: "Olio e sabbia su tela",
+    technique: "Olio su tela",
     support: "Telaio maxi spessore 3D",
     dimensions: { height: 100, width: 120, depth: 4.5 },
     framed: false,

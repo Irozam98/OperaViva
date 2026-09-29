@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Settings, Check, Building, User, Mail, Phone, Globe, MapPin, Hash } from 'lucide-react';
 import { StudioProfile } from '../types/artwork';
+import { useI18n } from '../i18n';
 
 interface ProfileModalProps {
   studioProfile: StudioProfile;
@@ -13,6 +14,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
   onSave,
   onClose
 }) => {
+  const { t, language } = useI18n();
   const [profile, setProfile] = useState<StudioProfile>({ ...studioProfile });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -27,7 +29,9 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <Settings size={22} color="#d4af37" />
-            <h2 className="modal-title">Dati Bottega & Artista</h2>
+            <h2 className="modal-title">
+              {language === 'en' ? 'Studio & Artist Settings' : 'Dati Bottega & Artista'}
+            </h2>
           </div>
           <button className="btn-icon" onClick={onClose}>
             <X size={20} />
@@ -37,7 +41,9 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="modal-body">
             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-              Questi recapiti verranno inseriti automaticamente nei Certificati di Autenticità, nelle schede d'opera stampabili e nell'intestazione del catalogo.
+              {language === 'en'
+                ? 'These details will automatically appear on Certificates of Authenticity, printable technical sheets, and catalog headers.'
+                : 'Questi recapiti verranno inseriti automaticamente nei Certificati di Autenticità, nelle schede d\'opera stampabili e nell\'intestazione del catalogo.'}
             </p>
 
             <div className="form-grid">
@@ -45,14 +51,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               <div className="col-6 form-group">
                 <label className="form-label">
                   <Building size={14} color="#d4af37" />
-                  Nome Bottega / Atelier
+                  {language === 'en' ? 'Studio / Atelier Name' : 'Nome Bottega / Atelier'}
                 </label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={profile.studioName || ''}
                   onChange={e => setProfile({ ...profile, studioName: e.target.value })}
-                  placeholder="es. Atelier delle Belle Arti"
+                  placeholder={language === 'en' ? 'e.g. Fine Arts Atelier' : 'es. Atelier delle Belle Arti'}
                   required
                 />
               </div>
@@ -60,14 +66,14 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               <div className="col-6 form-group">
                 <label className="form-label">
                   <User size={14} color="#d4af37" />
-                  Nome Artista
+                  {language === 'en' ? 'Artist Name' : 'Nome Artista'}
                 </label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={profile.artistName || ''}
                   onChange={e => setProfile({ ...profile, artistName: e.target.value })}
-                  placeholder="es. Leonardo Rossi"
+                  placeholder={language === 'en' ? 'e.g. Leonardo Rossi' : 'es. Leonardo Rossi'}
                   required
                 />
               </div>
@@ -75,39 +81,39 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               <div className="col-8 form-group">
                 <label className="form-label">
                   <MapPin size={14} color="#d4af37" />
-                  Indirizzo Studio / Bottega
+                  {language === 'en' ? 'Studio Address' : 'Indirizzo Studio / Bottega'}
                 </label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={profile.address || ''}
                   onChange={e => setProfile({ ...profile, address: e.target.value })}
-                  placeholder="es. Via dei Pittori, 12"
+                  placeholder={language === 'en' ? 'e.g. 12 Painter St.' : 'es. Via dei Pittori, 12'}
                 />
               </div>
 
               <div className="col-4 form-group">
-                <label className="form-label">Città</label>
+                <label className="form-label">{language === 'en' ? 'City' : 'Città'}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={profile.city || ''}
                   onChange={e => setProfile({ ...profile, city: e.target.value })}
-                  placeholder="es. Firenze"
+                  placeholder={language === 'en' ? 'e.g. Florence' : 'es. Firenze'}
                 />
               </div>
 
               <div className="col-6 form-group">
                 <label className="form-label">
                   <Phone size={14} color="#d4af37" />
-                  Telefono / WhatsApp
+                  {language === 'en' ? 'Phone / WhatsApp' : 'Telefono / WhatsApp'}
                 </label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={profile.phone || ''}
                   onChange={e => setProfile({ ...profile, phone: e.target.value })}
-                  placeholder="es. +39 333 1234567"
+                  placeholder={language === 'en' ? 'e.g. +39 333 1234567' : 'es. +39 333 1234567'}
                 />
               </div>
 
@@ -128,21 +134,21 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
               <div className="col-8 form-group">
                 <label className="form-label">
                   <Globe size={14} color="#d4af37" />
-                  Sito Web o Profilo Instagram
+                  {language === 'en' ? 'Website or Instagram Profile' : 'Sito Web o Profilo Instagram'}
                 </label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={profile.website || ''}
                   onChange={e => setProfile({ ...profile, website: e.target.value })}
-                  placeholder="es. www.artistarossi.it / @rossi_art"
+                  placeholder={language === 'en' ? 'e.g. www.artiststudio.com / @artist_name' : 'es. www.artistarossi.it / @rossi_art'}
                 />
               </div>
 
               <div className="col-4 form-group">
                 <label className="form-label">
                   <Hash size={14} color="#d4af37" />
-                  Prefisso Codice Opere
+                  {language === 'en' ? 'Catalog Code Prefix' : 'Prefisso Codice Opere'}
                 </label>
                 <input 
                   type="text" 
@@ -162,11 +168,11 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
             </div>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
               <button type="button" className="btn btn-secondary" onClick={onClose}>
-                Annulla
+                {t('cancel')}
               </button>
               <button type="submit" className="btn btn-primary" id="btn-save-profile">
                 <Check size={18} />
-                <span>Salva Impostazioni</span>
+                <span>{language === 'en' ? 'Save Settings' : 'Salva Impostazioni'}</span>
               </button>
             </div>
           </div>

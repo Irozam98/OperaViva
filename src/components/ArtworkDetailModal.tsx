@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Printer, Edit3, Trash2, MapPin, Crop } from 'lucide-react';
 import { Artwork, ArtworkStatus } from '../types/artwork';
 import { ImageEditorModal } from './ImageEditorModal';
+import { useI18n } from '../i18n';
 
 interface ArtworkDetailModalProps {
   artwork: Artwork;
@@ -14,14 +15,6 @@ interface ArtworkDetailModalProps {
   onUpdateImage: (artwork: Artwork, newImage: string, imageIndex: number) => void;
 }
 
-const statusLabels: Record<ArtworkStatus, { label: string; className: string }> = {
-  bottega: { label: 'In Bottega / Studio', className: 'badge-bottega' },
-  mostra: { label: 'In Mostra / Galleria', className: 'badge-mostra' },
-  venduto: { label: 'Venduto', className: 'badge-venduto' },
-  prestito: { label: 'In Prestito', className: 'badge-prestito' },
-  in_corso: { label: 'In Lavorazione', className: 'badge-in_corso' }
-};
-
 export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
   artwork,
   onClose,
@@ -32,21 +25,45 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
   onQuickUpdateLocation,
   onUpdateImage
 }) => {
+  const { t, language } = useI18n();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isEditingLocation, setIsEditingLocation] = useState(false);
   const [newLocationText, setNewLocationText] = useState(artwork.location || '');
   const [isImageEditorOpen, setIsImageEditorOpen] = useState(false);
 
-  const statusInfo = statusLabels[artwork.status] || { label: artwork.status, className: 'badge-bottega' };
+  const statusMap: Record<ArtworkStatus, { label: string; className: string }> = {
+    bottega: {
+      label: language === 'en' ? 'In Studio' : 'In Bottega / Studio',
+      className: 'badge-bottega'
+    },
+    mostra: {
+      label: language === 'en' ? 'In Exhibition' : 'In Mostra / Galleria',
+      className: 'badge-mostra'
+    },
+    venduto: {
+      label: language === 'en' ? 'Sold / Private' : 'Venduto',
+      className: 'badge-venduto'
+    },
+    prestito: {
+      label: language === 'en' ? 'On Loan' : 'In Prestito',
+      className: 'badge-prestito'
+    },
+    in_corso: {
+      label: language === 'en' ? 'Work in Progress' : 'In Lavorazione',
+      className: 'badge-in_corso'
+    }
+  };
 
-  const formattedPrice = new Intl.NumberFormat('it-IT', {
+  const statusInfo = statusMap[artwork.status] || { label: artwork.status, className: 'badge-bottega' };
+
+  const formattedPrice = new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', {
     style: 'currency',
     currency: 'EUR',
     maximumFractionDigits: 0
   }).format(artwork.price || 0);
 
   const formattedMinPrice = artwork.minPrice 
-    ? new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(artwork.minPrice)
+    ? new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(artwork.minPrice)
     : null;
 
   const images = artwork.images && artwork.images.length > 0 ? artwork.images : [];
@@ -168,9 +185,9 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
                 marginTop: '0.5rem'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--gold-400)', fontWeight: 600, fontSize: '0.9rem' }}>
-                    <MapPin size={17} />
-                    <span>Dov'è presente l'opera</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--gold-400)', fontWeight: 600, fontSize: '0.85rem' }}>
+                    <MapPin size={16} />
+                    <span>{language === 'en' ? 'Current Physical Location' : "Dov'è presente l'opera"}</span>
                   </div>
                   {!isEditingLocation ? (
                     <button 
@@ -181,7 +198,7 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
                       }}
                       style={{ padding: '0.2rem 0.5rem', fontSize: '0.78rem' }}
                     >
-                      Sposta opera
+                      {language === 'en' ? 'Relocate' : 'Sposta opera'}
                     </button>
                   ) : null}
                 </div>
@@ -193,20 +210,20 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
                       className="form-input" 
                       value={newLocationText}
                       onChange={e => setNewLocationText(e.target.value)}
-                      placeholder="Nuova collocazione..."
+                      placeholder={language === 'en' ? 'New location...' : 'Nuova collocazione...'}
                       autoFocus
                     />
                     <button className="btn btn-primary btn-sm" onClick={handleSaveLocation}>
-                      Salva
+                      {language === 'en' ? 'Save' : 'Salva'}
                     </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => setIsEditingLocation(false)}>
-                      Annulla
+                      {language === 'en' ? 'Cancel' : 'Annulla'}
                     </button>
                   </div>
                 ) : (
                   <div>
                     <div style={{ fontSize: '1rem', fontWeight: 700, color: '#fff' }}>
-                      {artwork.location || 'Posizione non definita'}
+                      {artwork.location || (language === 'en' ? 'Location not specified' : 'Posizione non definita')}
                     </div>
                     {artwork.locationNotes && (
                       <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
@@ -218,18 +235,20 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
 
                 {/* Cambio rapido di stato */}
                 <div style={{ marginTop: '0.85rem', paddingTop: '0.75rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>Aggiorna stato:</span>
+                  <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    {language === 'en' ? 'Update status:' : 'Aggiorna stato:'}
+                  </span>
                   <select 
                     className="filter-dropdown-select"
                     value={artwork.status}
                     onChange={e => onQuickUpdateStatus(artwork, e.target.value as ArtworkStatus)}
                     style={{ padding: '0.35rem 0.7rem' }}
                   >
-                    <option value="bottega">In Bottega / Studio</option>
-                    <option value="mostra">In Mostra / Galleria</option>
-                    <option value="venduto">Venduto</option>
-                    <option value="prestito">In Prestito</option>
-                    <option value="in_corso">In Lavorazione</option>
+                    <option value="bottega">{language === 'en' ? 'In Studio' : 'In Bottega / Studio'}</option>
+                    <option value="mostra">{language === 'en' ? 'In Exhibition' : 'In Mostra / Galleria'}</option>
+                    <option value="venduto">{language === 'en' ? 'Sold / Private' : 'Venduto'}</option>
+                    <option value="prestito">{language === 'en' ? 'On Loan' : 'In Prestito'}</option>
+                    <option value="in_corso">{language === 'en' ? 'Work in Progress' : 'In Lavorazione'}</option>
                   </select>
                 </div>
               </div>
@@ -251,29 +270,33 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
               }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                    {artwork.status === 'venduto' ? 'Prezzo di vendita' : 'Prezzo di listino'}
+                    {artwork.status === 'venduto' 
+                      ? (language === 'en' ? 'Sale Price' : 'Prezzo di vendita') 
+                      : (language === 'en' ? 'Declared Price' : 'Prezzo di listino')}
                   </div>
                   <div style={{ fontFamily: 'var(--font-serif)', fontSize: '2rem', fontWeight: 800, color: 'var(--gold-300)' }}>
                     {formattedPrice}
                   </div>
                   {formattedMinPrice && artwork.status !== 'venduto' && (
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                      Riservato min: <span style={{ color: '#fff', fontWeight: 600 }}>{formattedMinPrice}</span>
+                      {language === 'en' ? 'Reserve min:' : 'Riservato min:'} <span style={{ color: '#fff', fontWeight: 600 }}>{formattedMinPrice}</span>
                     </div>
                   )}
                 </div>
 
                 {artwork.status === 'venduto' && (
                   <div style={{ textAlign: 'right' }}>
-                    <div className="art-card-sold-tag" style={{ fontSize: '1.1rem' }}>VENDUTO</div>
+                    <div className="art-card-sold-tag" style={{ fontSize: '1.1rem' }}>
+                      {language === 'en' ? 'SOLD' : 'VENDUTO'}
+                    </div>
                     {artwork.buyerName && (
                       <div style={{ fontSize: '0.85rem', color: '#fff', marginTop: '4px' }}>
-                        Acquirente: {artwork.buyerName}
+                        {language === 'en' ? 'Buyer:' : 'Acquirente:'} {artwork.buyerName}
                       </div>
                     )}
                     {artwork.soldDate && (
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                        Data: {artwork.soldDate}
+                        {language === 'en' ? 'Date:' : 'Data:'} {artwork.soldDate}
                       </div>
                     )}
                   </div>
@@ -291,32 +314,42 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
                 gap: '0.85rem'
               }}>
                 <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '0.95rem', color: 'var(--gold-400)', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                  Dati Tecnici & Supporto
+                  {language === 'en' ? 'Technical Sheet & Support' : 'Dati Tecnici & Supporto'}
                 </h4>
 
                 <div className="technical-grid">
                   <div>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>Autore / Artista</span>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>
+                      {language === 'en' ? 'Artist / Author' : 'Autore / Artista'}
+                    </span>
                     <strong style={{ color: '#fff' }}>{artwork.artist || '-'}</strong>
                   </div>
 
                   <div>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>Anno di Creazione</span>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>
+                      {language === 'en' ? 'Year of Creation' : 'Anno di Creazione'}
+                    </span>
                     <strong style={{ color: '#fff' }}>{artwork.year || '-'}</strong>
                   </div>
 
                   <div>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>Tecnica</span>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>
+                      {language === 'en' ? 'Technique' : 'Tecnica'}
+                    </span>
                     <strong style={{ color: '#fff' }}>{artwork.technique || '-'}</strong>
                   </div>
 
                   <div>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>Supporto</span>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>
+                      {language === 'en' ? 'Support / Medium' : 'Supporto'}
+                    </span>
                     <strong style={{ color: '#fff' }}>{artwork.support || '-'}</strong>
                   </div>
 
                   <div>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>Dimensioni (H × L × P)</span>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>
+                      {language === 'en' ? 'Dimensions (H × W × D)' : 'Dimensioni (H × L × P)'}
+                    </span>
                     <strong style={{ color: '#fff' }}>
                       {artwork.dimensions?.height} × {artwork.dimensions?.width}
                       {artwork.dimensions?.depth ? ` × ${artwork.dimensions.depth}` : ''} cm
@@ -324,15 +357,21 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
                   </div>
 
                   <div>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>Cornice</span>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>
+                      {language === 'en' ? 'Framing' : 'Cornice'}
+                    </span>
                     <strong style={{ color: '#fff' }}>
-                      {artwork.framed ? `Sì (${artwork.frameDetails || 'Inclusa'})` : 'Senza cornice'}
+                      {artwork.framed 
+                        ? (language === 'en' ? `Yes (${artwork.frameDetails || 'Included'})` : `Sì (${artwork.frameDetails || 'Inclusa'})`)
+                        : (language === 'en' ? 'Unframed' : 'Senza cornice')}
                     </strong>
                   </div>
 
                   {artwork.certificateNumber && (
                     <div style={{ gridColumn: 'span 2' }}>
-                      <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>N. Certificato Autenticità / Archivio</span>
+                      <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.75rem' }}>
+                        {language === 'en' ? 'Certificate / Archive No.' : 'N. Certificato Autenticità / Archivio'}
+                      </span>
                       <strong style={{ color: 'var(--gold-300)' }}>{artwork.certificateNumber}</strong>
                     </div>
                   )}
@@ -348,7 +387,7 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
                   padding: '1.25rem'
                 }}>
                   <h4 style={{ fontFamily: 'var(--font-serif)', fontSize: '0.9rem', color: 'var(--gold-400)', marginBottom: '0.5rem', letterSpacing: '0.5px' }}>
-                    Note Artistiche & Descrizione
+                    {language === 'en' ? 'Artistic Notes & Critique' : 'Note Artistiche & Descrizione'}
                   </h4>
                   <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
                     {artwork.notes}
@@ -367,13 +406,16 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
             type="button" 
             className="btn btn-danger btn-sm"
             onClick={() => {
-              if (confirm(`Sei sicuro di voler eliminare definitivamente l'opera "${artwork.title}" dall'inventario?`)) {
+              const confirmMsg = language === 'en'
+                ? `Are you sure you want to permanently delete the artwork "${artwork.title}" from the catalog?`
+                : `Sei sicuro di voler eliminare definitivamente l'opera "${artwork.title}" dall'inventario?`;
+              if (confirm(confirmMsg)) {
                 onDelete(artwork.id);
               }
             }}
           >
             <Trash2 size={16} />
-            <span>Elimina Opera</span>
+            <span>{t('delete')}</span>
           </button>
 
           <div className="detail-modal-footer-actions">
@@ -382,10 +424,10 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
               className="btn btn-secondary"
               onClick={() => onPrintCertificate(artwork)}
               id="btn-print-certificate"
-              title="Stampa o salva in PDF la Scheda Tecnica e Certificato di Autenticità per gallerie o collezionisti"
+              title={language === 'en' ? 'Print or save to PDF the Technical Record & Certificate of Authenticity' : 'Stampa o salva in PDF la Scheda Tecnica e Certificato di Autenticità per gallerie o collezionisti'}
             >
               <Printer size={17} color="#d4af37" />
-              <span>Stampa Scheda / Certificato</span>
+              <span>{language === 'en' ? 'Print Sheet / Certificate' : 'Stampa Scheda / Certificato'}</span>
             </button>
 
             <button 
@@ -395,7 +437,7 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
               id="btn-edit-artwork"
             >
               <Edit3 size={17} />
-              <span>Modifica Scheda</span>
+              <span>{t('edit')}</span>
             </button>
           </div>
         </div>

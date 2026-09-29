@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { X, Upload, Camera, Check, Sparkles, Crop } from 'lucide-react';
 import { Artwork, ArtworkStatus, StudioProfile } from '../types/artwork';
 import { ImageEditorModal } from './ImageEditorModal';
+import { useI18n } from '../i18n';
 
 interface ArtworkModalProps {
   artworkToEdit?: Artwork | null;
@@ -11,7 +12,7 @@ interface ArtworkModalProps {
   onClose: () => void;
 }
 
-const COMMON_TECHNIQUES = [
+const COMMON_TECHNIQUES_IT = [
   'Olio su tela',
   'Acrilico su tela',
   'Acquerello su carta',
@@ -22,7 +23,18 @@ const COMMON_TECHNIQUES = [
   'Scultura in bronzo/marmo'
 ];
 
-const COMMON_LOCATIONS = [
+const COMMON_TECHNIQUES_EN = [
+  'Oil on canvas',
+  'Acrylic on canvas',
+  'Watercolor on paper',
+  'Mixed media & gold leaf',
+  'Oil on wood panel',
+  'India ink on paper',
+  'Wax pastel',
+  'Bronze / Marble sculpture'
+];
+
+const COMMON_LOCATIONS_IT = [
   'Bottega - Parete Principale',
   'Bottega - Cavalletto',
   'Bottega - Cassettiera Disegni',
@@ -32,6 +44,16 @@ const COMMON_LOCATIONS = [
   'Studio Privato'
 ];
 
+const COMMON_LOCATIONS_EN = [
+  'Studio - Main Wall',
+  'Studio - Easel',
+  'Studio - Flat File Drawer',
+  'Studio - Archive Storage',
+  'Fine Art Gallery',
+  'Solo Exhibition',
+  'Private Studio'
+];
+
 export const ArtworkModal: React.FC<ArtworkModalProps> = ({
   artworkToEdit,
   studioProfile,
@@ -39,7 +61,11 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
   onSave,
   onClose
 }) => {
+  const { t, language } = useI18n();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const commonTechniques = language === 'en' ? COMMON_TECHNIQUES_EN : COMMON_TECHNIQUES_IT;
+  const commonLocations = language === 'en' ? COMMON_LOCATIONS_EN : COMMON_LOCATIONS_IT;
 
   // Genera prossimo codice catalogo progressivo se nuova opera
   const generateNextCode = (): string => {
@@ -204,7 +230,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <Sparkles size={20} color="#d4af37" />
             <h2 className="modal-title">
-              {artworkToEdit ? 'Modifica Scheda Opera' : 'Registra Nuova Opera a Catalogo'}
+              {artworkToEdit ? t('modalEditTitle') : t('modalNewTitle')}
             </h2>
           </div>
           <button className="btn-icon" onClick={onClose}>
@@ -219,7 +245,9 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
               <label className="form-label">
                 <Camera size={16} color="#d4af37" />
-                Fotografie dell'Opera (Foto principale, dettagli pennellata, retro/firma)
+                {language === 'en'
+                  ? 'Artwork Photographs (Primary photo, brushwork details, back/signature)'
+                  : "Fotografie dell'Opera (Foto principale, dettagli pennellata, retro/firma)"}
               </label>
 
               <div 
@@ -229,10 +257,14 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                 <Upload size={32} color="#d4af37" />
                 <div>
                   <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.95rem' }}>
-                    {isProcessingImage ? 'Elaborazione immagine in corso...' : 'Clicca per caricare le foto o scatta dal dispositivo'}
+                    {isProcessingImage 
+                      ? (language === 'en' ? 'Processing image...' : 'Elaborazione immagine in corso...')
+                      : (language === 'en' ? 'Click to upload photos or capture from device camera' : 'Clicca per caricare le foto o scatta dal dispositivo')}
                   </div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '3px' }}>
-                    Formati supportati: JPG, PNG, WEBP (Ottimizzazione automatica risoluzione)
+                    {language === 'en'
+                      ? 'Supported formats: JPG, PNG, WEBP (Automatic lossless optimization)'
+                      : 'Formati supportati: JPG, PNG, WEBP (Ottimizzazione automatica risoluzione)'}
                   </div>
                 </div>
                 <input 
@@ -263,7 +295,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                           textAlign: 'center',
                           padding: '1px'
                         }}>
-                          PRINCIPALE
+                          {language === 'en' ? 'PRIMARY' : 'PRINCIPALE'}
                         </div>
                       )}
                       
@@ -271,7 +303,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setEditingImageIndex(idx)}
-                        title="Ritaglia, raddrizza o regola colore"
+                        title={language === 'en' ? 'Crop, straighten or adjust colors' : 'Ritaglia, raddrizza o regola colore'}
                         style={{
                           position: 'absolute',
                           bottom: idx === 0 ? '16px' : '3px',
@@ -294,7 +326,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                         type="button" 
                         className="image-preview-remove"
                         onClick={() => handleRemoveImage(idx)}
-                        title="Rimuovi foto"
+                        title={language === 'en' ? 'Remove photo' : 'Rimuovi foto'}
                       >
                         ×
                       </button>
@@ -309,7 +341,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
               
               {/* Codice Catalogo */}
               <div className="col-4 form-group">
-                <label className="form-label">Codice Inventario *</label>
+                <label className="form-label">{language === 'en' ? 'Inventory Code *' : 'Codice Inventario *'}</label>
                 <input 
                   type="text" 
                   className="form-input" 
@@ -322,32 +354,32 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
               {/* Titolo Opera */}
               <div className="col-8 form-group">
-                <label className="form-label">Titolo Quadro / Opera *</label>
+                <label className="form-label">{t('fieldTitle')}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={formData.title || ''}
                   onChange={e => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="es. Alba sulla laguna"
+                  placeholder={language === 'en' ? 'e.g. Sunrise over the Lagoon' : 'es. Alba sulla laguna'}
                   required
                 />
               </div>
 
               {/* Artista */}
               <div className="col-6 form-group">
-                <label className="form-label">Artista / Autore</label>
+                <label className="form-label">{t('fieldArtist')}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={formData.artist || ''}
                   onChange={e => setFormData({ ...formData, artist: e.target.value })}
-                  placeholder="Nome dell'artista"
+                  placeholder={language === 'en' ? "Artist's full name" : "Nome dell'artista"}
                 />
               </div>
 
               {/* Anno */}
               <div className="col-3 form-group">
-                <label className="form-label">Anno</label>
+                <label className="form-label">{t('year')} *</label>
                 <input 
                   type="number" 
                   className="form-input" 
@@ -358,7 +390,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
               {/* Certificato N. */}
               <div className="col-3 form-group">
-                <label className="form-label">N. Certificato / Archivio</label>
+                <label className="form-label">{language === 'en' ? 'Certificate / Archive No.' : 'N. Certificato / Archivio'}</label>
                 <input 
                   type="text" 
                   className="form-input" 
@@ -370,37 +402,37 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
               {/* Tecnica */}
               <div className="col-6 form-group">
-                <label className="form-label">Tecnica Esecutiva</label>
+                <label className="form-label">{t('fieldTechnique')}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   list="technique-list"
                   value={formData.technique || ''}
                   onChange={e => setFormData({ ...formData, technique: e.target.value })}
-                  placeholder="es. Olio su tela"
+                  placeholder={language === 'en' ? 'e.g. Oil on canvas' : 'es. Olio su tela'}
                 />
                 <datalist id="technique-list">
-                  {COMMON_TECHNIQUES.map((t, idx) => (
-                    <option key={idx} value={t} />
+                  {commonTechniques.map((tech, idx) => (
+                    <option key={idx} value={tech} />
                   ))}
                 </datalist>
               </div>
 
               {/* Supporto */}
               <div className="col-6 form-group">
-                <label className="form-label">Supporto / Materiale</label>
+                <label className="form-label">{t('fieldSupport')}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={formData.support || ''}
                   onChange={e => setFormData({ ...formData, support: e.target.value })}
-                  placeholder="es. Telaio in lino, Tavola in pioppo, Carta cotone 300g"
+                  placeholder={language === 'en' ? 'e.g. Linen canvas on stretcher, Poplar wood panel, 300g cotton paper' : 'es. Telaio in lino, Tavola in pioppo, Carta cotone 300g'}
                 />
               </div>
 
               {/* Dimensioni (Altezza, Larghezza, Profondità) */}
               <div className="col-4 form-group">
-                <label className="form-label">Altezza (cm) *</label>
+                <label className="form-label">{t('fieldHeight')} *</label>
                 <input 
                   type="number" 
                   step="0.5"
@@ -416,7 +448,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
               </div>
 
               <div className="col-4 form-group">
-                <label className="form-label">Larghezza (cm) *</label>
+                <label className="form-label">{t('fieldWidth')} *</label>
                 <input 
                   type="number" 
                   step="0.5"
@@ -432,7 +464,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
               </div>
 
               <div className="col-4 form-group">
-                <label className="form-label">Profondità / Spessore (cm)</label>
+                <label className="form-label">{t('fieldDepth')}</label>
                 <input 
                   type="number" 
                   step="0.5"
@@ -442,7 +474,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                     ...formData, 
                     dimensions: { ...formData.dimensions, depth: parseFloat(e.target.value) || undefined, height: formData.dimensions?.height || 0, width: formData.dimensions?.width || 0 } 
                   })}
-                  placeholder="es. 3.5 (opzionale)"
+                  placeholder={language === 'en' ? 'e.g. 3.5 (optional)' : 'es. 3.5 (opzionale)'}
                 />
               </div>
 
@@ -455,25 +487,25 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                     onChange={e => setFormData({ ...formData, framed: e.target.checked })}
                     style={{ width: '18px', height: '18px', accentColor: 'var(--gold-400)' }}
                   />
-                  <span style={{ fontSize: '0.9rem', color: '#fff' }}>Opera con cornice</span>
+                  <span style={{ fontSize: '0.9rem', color: '#fff' }}>{t('fieldFramed')}</span>
                 </label>
               </div>
 
               <div className="col-8 form-group">
-                <label className="form-label">Descrizione Cornice (se presente)</label>
+                <label className="form-label">{t('fieldFrameDetails')}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={formData.frameDetails || ''}
                   onChange={e => setFormData({ ...formData, frameDetails: e.target.value })}
-                  placeholder="es. Cornice a cassetta dorata, pass-partout museale"
+                  placeholder={language === 'en' ? 'e.g. Floating gilded wood frame, museum glass' : 'es. Cornice a cassetta dorata, pass-partout museale'}
                   disabled={!formData.framed}
                 />
               </div>
 
               {/* Prezzo Listino & Prezzo Riserva */}
               <div className="col-6 form-group">
-                <label className="form-label">Prezzo di Listino (€) *</label>
+                <label className="form-label">{t('fieldPrice')} *</label>
                 <input 
                   type="number" 
                   step="10"
@@ -486,59 +518,59 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
               </div>
 
               <div className="col-6 form-group">
-                <label className="form-label">Prezzo Minimo Riservato (€)</label>
+                <label className="form-label">{t('fieldMinPrice')}</label>
                 <input 
                   type="number" 
                   step="10"
                   className="form-input" 
                   value={formData.minPrice ?? ''}
                   onChange={e => setFormData({ ...formData, minPrice: parseFloat(e.target.value) || undefined })}
-                  placeholder="Trattativa confidenziale (es. 1200)"
+                  placeholder={language === 'en' ? 'Confidential reserve (e.g. 1200)' : 'Trattativa confidenziale (es. 1200)'}
                 />
               </div>
 
               {/* DOV'È PRESENTE: Stato & Collocazione */}
               <div className="col-4 form-group">
-                <label className="form-label">Stato dell'Opera</label>
+                <label className="form-label">{t('fieldStatus')}</label>
                 <select 
                   className="form-select"
                   value={formData.status || 'bottega'}
                   onChange={e => setFormData({ ...formData, status: e.target.value as ArtworkStatus })}
                 >
-                  <option value="bottega">In Bottega / Studio</option>
-                  <option value="mostra">In Mostra / Galleria</option>
-                  <option value="venduto">Venduto</option>
-                  <option value="prestito">In Prestito</option>
-                  <option value="in_corso">In Lavorazione</option>
+                  <option value="bottega">{language === 'en' ? 'In Studio' : 'In Bottega / Studio'}</option>
+                  <option value="mostra">{language === 'en' ? 'In Exhibition' : 'In Mostra / Galleria'}</option>
+                  <option value="venduto">{language === 'en' ? 'Sold / Private' : 'Venduto'}</option>
+                  <option value="prestito">{language === 'en' ? 'On Loan' : 'In Prestito'}</option>
+                  <option value="in_corso">{language === 'en' ? 'Work in Progress' : 'In Lavorazione'}</option>
                 </select>
               </div>
 
               <div className="col-8 form-group">
-                <label className="form-label">Dov'è presente (Collocazione esatta) *</label>
+                <label className="form-label">{t('fieldLocation')}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   list="locations-list"
                   value={formData.location || ''}
                   onChange={e => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="es. Bottega - Parete Nord, Cavalletto 2, Galleria Borghese"
+                  placeholder={language === 'en' ? 'e.g. Studio - North Wall, Easel 2, Gallery Exhibition' : 'es. Bottega - Parete Nord, Cavalletto 2, Galleria Borghese'}
                   required
                 />
                 <datalist id="locations-list">
-                  {COMMON_LOCATIONS.map((loc, idx) => (
+                  {commonLocations.map((loc, idx) => (
                     <option key={idx} value={loc} />
                   ))}
                 </datalist>
               </div>
 
               <div className="col-12 form-group">
-                <label className="form-label">Dettagli Collocazione / Note Logistiche</label>
+                <label className="form-label">{language === 'en' ? 'Location Details & Logistics Notes' : 'Dettagli Collocazione / Note Logistiche'}</label>
                 <input 
                   type="text" 
                   className="form-input" 
                   value={formData.locationNotes || ''}
                   onChange={e => setFormData({ ...formData, locationNotes: e.target.value })}
-                  placeholder="es. Esposto nella sala 2 fino al 10 novembre; cassa di trasporto n. 4"
+                  placeholder={language === 'en' ? 'e.g. On display in room 2 until Nov 10; transit crate no. 4' : 'es. Esposto nella sala 2 fino al 10 novembre; cassa di trasporto n. 4'}
                 />
               </div>
 
@@ -546,29 +578,29 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
               {formData.status === 'venduto' && (
                 <>
                   <div className="col-6 form-group">
-                    <label className="form-label">Nome Acquirente / Galleria</label>
+                    <label className="form-label">{language === 'en' ? 'Buyer / Gallery Name' : 'Nome Acquirente / Galleria'}</label>
                     <input 
                       type="text" 
                       className="form-input" 
                       value={formData.buyerName || ''}
                       onChange={e => setFormData({ ...formData, buyerName: e.target.value })}
-                      placeholder="es. Collezionista Rossi / Galleria"
+                      placeholder={language === 'en' ? 'e.g. Collector Smith / Fine Arts Gallery' : 'es. Collezionista Rossi / Galleria'}
                     />
                   </div>
 
                   <div className="col-3 form-group">
-                    <label className="form-label">Contatto Acquirente</label>
+                    <label className="form-label">{language === 'en' ? 'Buyer Contact' : 'Contatto Acquirente'}</label>
                     <input 
                       type="text" 
                       className="form-input" 
                       value={formData.buyerContact || ''}
                       onChange={e => setFormData({ ...formData, buyerContact: e.target.value })}
-                      placeholder="Email o Telefono"
+                      placeholder="Email / Tel"
                     />
                   </div>
 
                   <div className="col-3 form-group">
-                    <label className="form-label">Data Vendita</label>
+                    <label className="form-label">{language === 'en' ? 'Sale Date' : 'Data Vendita'}</label>
                     <input 
                       type="date" 
                       className="form-input" 
@@ -581,12 +613,12 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
               {/* Note e descrizione artistica */}
               <div className="col-12 form-group">
-                <label className="form-label">Note Critiche & Descrizione Artistica</label>
+                <label className="form-label">{t('fieldNotes')}</label>
                 <textarea 
                   className="form-textarea" 
                   value={formData.notes || ''}
                   onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Descrizione del soggetto, ispirazione, significato dell'opera..."
+                  placeholder={language === 'en' ? 'Subject matter description, inspiration, artistic intent...' : "Descrizione del soggetto, ispirazione, significato dell'opera..."}
                 />
               </div>
 
@@ -595,11 +627,11 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Annulla
+              {t('cancel')}
             </button>
             <button type="submit" className="btn btn-primary" id="btn-save-artwork">
               <Check size={18} />
-              <span>{artworkToEdit ? 'Aggiorna Scheda Opera' : 'Salva nel Catalogo'}</span>
+              <span>{artworkToEdit ? (language === 'en' ? 'Update Artwork Record' : 'Aggiorna Scheda Opera') : t('saveArtwork')}</span>
             </button>
           </div>
         </form>

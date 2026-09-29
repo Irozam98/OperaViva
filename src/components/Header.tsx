@@ -1,6 +1,7 @@
 import React from 'react';
 import { Palette, Plus, Download, BarChart3, Settings } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
+import { useI18n } from '../i18n';
 
 interface HeaderProps {
   artworks: Artwork[];
@@ -19,6 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBackupModal,
   onOpenProfileModal,
 }) => {
+  const { language, setLanguage, t } = useI18n();
+
   // Statistiche rapide calcolate in tempo reale
   const totalArtworks = artworks.length;
   const inBottega = artworks.filter(a => a.status === 'bottega').length;
@@ -30,39 +33,56 @@ export const Header: React.FC<HeaderProps> = ({
     .filter(a => a.status === 'bottega' || a.status === 'mostra')
     .reduce((sum, a) => sum + (Number(a.price) || 0), 0);
 
-  const formattedValue = new Intl.NumberFormat('it-IT', {
+  const formattedValue = new Intl.NumberFormat(language === 'it' ? 'it-IT' : 'en-US', {
     style: 'currency',
-    currency: 'EUR',
+    currency: studioProfile.currency || 'EUR',
     maximumFractionDigits: 0
   }).format(availableValue);
+
+  // Bottone unificato lingua solo con bandierina italiana e inglese che cambia al click
+  const renderLangSwitch = (extraClass = '') => (
+    <button
+      type="button"
+      className={`btn-lang-unified ${extraClass}`}
+      onClick={() => setLanguage(language === 'it' ? 'en' : 'it')}
+      title={language === 'it' ? 'Lingua: Italiano (clicca per passare in Inglese)' : 'Language: English (click to switch to Italian)'}
+      aria-label="Cambia Lingua"
+    >
+      <span className="flag-icon">{language === 'en' ? '🇬🇧' : '🇮🇹'}</span>
+    </button>
+  );
 
   return (
     <>
       <header className="header-bar">
         <div className="header-content">
           <div className="header-brand-wrap">
-            <div className="logo-section" onClick={onOpenProfileModal} title="Clicca per modificare i dati della bottega o dell'artista">
+            <div className="logo-section" onClick={onOpenProfileModal} title={t('profileSettings')}>
               <div className="logo-icon-wrapper">
                 <Palette size={22} color="#c5a059" />
               </div>
               <div className="logo-text">
-                <h1>OPERAVIVA</h1>
+                <h1>{t('brandTitle')}</h1>
                 <p>
-                  {[studioProfile.studioName, studioProfile.artistName].filter(Boolean).join(' • ') || "ARCHIVIO PERSONALE D'ARTE"}
+                  {[studioProfile.studioName, studioProfile.artistName].filter(Boolean).join(' • ') || t('defaultArchiveTitle')}
                 </p>
               </div>
             </div>
 
-            {/* Pulsante Impostazioni dedicato per mobile in alto a destra */}
-            <button 
-              className="btn-icon header-settings-btn mobile-only-btn"
-              onClick={onOpenProfileModal}
-              id="btn-profile-mobile"
-              title="Impostazioni Bottega & Artista"
-              aria-label="Impostazioni Bottega & Artista"
-            >
-              <Settings size={18} />
-            </button>
+            {/* Controlli rapidi mobile: Switch lingua a scorrimento + Impostazioni */}
+            <div className="mobile-header-tools">
+              {renderLangSwitch('mobile-switch')}
+
+              <button 
+                className="btn-icon header-settings-btn mobile-only-btn"
+                onClick={onOpenProfileModal}
+                id="btn-profile-mobile"
+                title={t('profileSettings')}
+                aria-label={t('profileSettings')}
+              >
+                <Settings size={18} />
+              </button>
+            </div>
           </div>
 
           <div className="header-actions">
@@ -70,39 +90,42 @@ export const Header: React.FC<HeaderProps> = ({
               className="btn btn-primary btn-add-main"
               onClick={onOpenNewArtworkModal}
               id="btn-add-artwork"
-              title="Aggiungi una nuova opera all'inventario"
+              title={t('newArtwork')}
             >
               <Plus size={17} />
-              <span>Nuova Opera</span>
+              <span>{t('newArtwork')}</span>
             </button>
 
             <button 
               className="btn btn-secondary header-btn-secondary"
               onClick={onOpenStatsModal}
               id="btn-stats"
-              title="Riepilogo statistiche bottega e valore economico"
+              title={t('stats')}
             >
               <BarChart3 size={15} />
-              <span>Statistiche</span>
+              <span>{t('stats')}</span>
             </button>
 
             <button 
               className="btn btn-secondary header-btn-secondary"
               onClick={onOpenBackupModal}
               id="btn-backup"
-              title="Esporta o importa catalogo completo con foto (.artvault / CSV)"
+              title={t('backup')}
             >
               <Download size={15} />
-              <span>Archivio & Backup</span>
+              <span>{t('backup')}</span>
             </button>
+
+            {/* Switch Lingua a scorrimento con bandierine su desktop */}
+            {renderLangSwitch('desktop-only-switch')}
 
             {/* Pulsante Impostazioni visibile su desktop */}
             <button 
               className="btn-icon header-settings-btn desktop-only-btn"
               onClick={onOpenProfileModal}
               id="btn-profile"
-              title="Impostazioni Bottega & Artista"
-              aria-label="Impostazioni Bottega & Artista"
+              title={t('profileSettings')}
+              aria-label={t('profileSettings')}
             >
               <Settings size={17} />
             </button>
@@ -110,24 +133,24 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </header>
 
-      {/* Fascia Curatoriale d'Atelier (Sostituisce il look da dashboard AI) */}
+      {/* Fascia Curatoriale d'Atelier */}
       <div className="curator-summary-bar">
         <div className="curator-counts">
-          <span className="curator-label">Archivio Generale:</span>
-          <strong>{totalArtworks} opere</strong>
+          <span className="curator-label">{t('archiveGeneral')}:</span>
+          <strong>{totalArtworks} {totalArtworks === 1 ? t('operaSingular') : t('opereCount')}</strong>
           <span className="curator-sep">/</span>
-          <span>{inBottega} in bottega</span>
+          <span>{inBottega} {t('inBottega')}</span>
           <span className="curator-sep">/</span>
-          <span>{inMostra} in esposizione</span>
+          <span>{inMostra} {t('inMostra')}</span>
           {vendute > 0 && (
             <>
               <span className="curator-sep">/</span>
-              <span>{vendute} in collezioni private</span>
+              <span>{vendute} {t('inCollezioniPrivate')}</span>
             </>
           )}
         </div>
         <div className="curator-value">
-          <span>Stima opere disponibili:</span>
+          <span>{t('valoreDisponibili')}</span>
           <strong>{formattedValue}</strong>
         </div>
       </div>

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { X, Download, Upload, FileSpreadsheet, Trash2, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { exportCatalogBackup, importCatalogBackup, exportCatalogToCSV } from '../services/backup';
 import { clearAllArtworks } from '../services/db';
+import { useI18n } from '../i18n';
 
 interface BackupModalProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface BackupModalProps {
 }
 
 export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged, onOpenSiteImporter }) => {
+  const { t, language } = useI18n();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
   const [isImporting, setIsImporting] = useState(false);
@@ -20,20 +22,24 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
       await exportCatalogBackup();
     } catch (e) {
       console.error(e);
-      alert('Errore durante l\'esportazione del backup');
+      alert(language === 'en' ? 'Error exporting backup archive' : 'Errore durante l\'esportazione del backup');
     }
   };
 
   const handleExportCSV = async () => {
     try {
       const res = await exportCatalogToCSV();
-      setCsvStatus(`File "${res.filename}" scaricato! Trovi il file nella cartella Download del PC.`);
+      setCsvStatus(
+        language === 'en'
+          ? `File "${res.filename}" downloaded! Check your PC Downloads folder.`
+          : `File "${res.filename}" scaricato! Trovi il file nella cartella Download del PC.`
+      );
       setTimeout(() => {
         setCsvStatus(null);
       }, 7000);
     } catch (e) {
       console.error(e);
-      alert('Errore durante l\'esportazione del file CSV');
+      alert(language === 'en' ? 'Error exporting CSV spreadsheet' : 'Errore durante l\'esportazione del file CSV');
     }
   };
 
@@ -41,22 +47,32 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const mode = confirm('Vuoi SOSTITUIRE completamente l\'inventario attuale con i dati del file?\n\n- Premi OK per Sostituire completamente\n- Premi ANNULLA per Unire (mantenere le opere esistenti ed aggiungere quelle nuove)')
-      ? 'replace'
-      : 'merge';
+    const confirmMsg = language === 'en'
+      ? 'Do you want to completely REPLACE the current inventory with the backup data?\n\n- Click OK to Replace completely\n- Click CANCEL to Merge (keep existing artworks and add new ones)'
+      : 'Vuoi SOSTITUIRE completamente l\'inventario attuale con i dati del file?\n\n- Premi OK per Sostituire completamente\n- Premi ANNULLA per Unire (mantenere le opere esistenti ed aggiungere quelle nuove)';
+
+    const mode = confirm(confirmMsg) ? 'replace' : 'merge';
 
     setIsImporting(true);
-    setImportStatus('Importazione opere e foto in corso...');
+    setImportStatus(language === 'en' ? 'Importing artworks and photographs...' : 'Importazione opere e foto in corso...');
     try {
       const result = await importCatalogBackup(file, mode);
-      setImportStatus(`Successo! Importate ${result.count} opere.`);
+      setImportStatus(
+        language === 'en'
+          ? `Success! Imported ${result.count} artworks.`
+          : `Successo! Importate ${result.count} opere.`
+      );
       onDataChanged();
       setTimeout(() => {
         setImportStatus(null);
       }, 3000);
     } catch (err: any) {
       console.error(err);
-      alert(`Errore nell'importazione: ${err.message || 'File non valido'}`);
+      alert(
+        language === 'en'
+          ? `Import error: ${err.message || 'Invalid file'}`
+          : `Errore nell'importazione: ${err.message || 'File non valido'}`
+      );
       setImportStatus(null);
     } finally {
       setIsImporting(false);
@@ -64,12 +80,15 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
     }
   };
 
-
   const handleClearAll = async () => {
-    if (confirm('ATTENZIONE: Sei sicuro di voler cancellare TUTTE le opere dal catalogo?\nAssicurati di aver scaricato un backup prima di procedere!')) {
+    const clearPrompt = language === 'en'
+      ? 'WARNING: Are you sure you want to permanently erase ALL artworks from the catalog?\nMake sure you have downloaded a backup before proceeding!'
+      : 'ATTENZIONE: Sei sicuro di voler cancellare TUTTE le opere dal catalogo?\nAssicurati di aver scaricato un backup prima di procedere!';
+      
+    if (confirm(clearPrompt)) {
       await clearAllArtworks();
       onDataChanged();
-      alert('Inventario svuotato. Puoi ora inserire le tue opere.');
+      alert(language === 'en' ? 'Inventory cleared. You can now add fresh artworks.' : 'Inventario svuotato. Puoi ora inserire le tue opere.');
       onClose();
     }
   };
@@ -80,7 +99,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <ShieldCheck size={20} color="#c5a059" />
-            <h2 className="modal-title">Archivio & Backup</h2>
+            <h2 className="modal-title">{t('backupModalTitle')}</h2>
           </div>
           <button className="btn-icon" onClick={onClose}>
             <X size={20} />
@@ -103,10 +122,10 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
           }}>
             <div>
               <h4 style={{ color: 'var(--text-primary)', fontSize: '0.92rem', marginBottom: '0.2rem' }}>
-                Importa da Cartella Locale
+                {t('backupLocalImportTitle')}
               </h4>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', margin: 0 }}>
-                Catalogazione automatica e offline da una cartella o gruppo di foto sul computer.
+                {t('backupLocalImportDesc')}
               </p>
             </div>
             <button 
@@ -117,7 +136,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
                 onOpenSiteImporter();
               }}
             >
-              <span>Apri Importatore Locale</span>
+              <span>{t('backupOpenLocalImporter')}</span>
             </button>
           </div>
 
@@ -155,16 +174,16 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--gold-400)', fontWeight: 600, fontSize: '1rem' }}>
                   <Download size={18} />
-                  <span>Esporta Backup Completo</span>
+                  <span>{t('backupExportVault')}</span>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.4rem', lineHeight: 1.4 }}>
-                  Genera un singolo file <code style={{ color: 'var(--gold-300)' }}>.artvault</code> contenente l'intero inventario con tutte le foto ad alta risoluzione.
+                  {t('backupExportVaultDesc')}
                 </p>
               </div>
 
               <button className="btn btn-primary" onClick={handleExport} id="btn-export-backup">
                 <Download size={16} />
-                <span>Scarica File Backup</span>
+                <span>{language === 'en' ? 'Download Archive (.artvault)' : 'Scarica File Backup'}</span>
               </button>
             </div>
 
@@ -182,10 +201,10 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--gold-400)', fontWeight: 600, fontSize: '1rem' }}>
                   <Upload size={18} />
-                  <span>Ripristina o Unisci</span>
+                  <span>{t('backupImportVault')}</span>
                 </div>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.4rem', lineHeight: 1.4 }}>
-                  Carica un file di backup precedente o un catalogo esportato da un altro dispositivo (PC o smartphone).
+                  {t('backupImportVaultDesc')}
                 </p>
               </div>
 
@@ -203,7 +222,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
                 id="btn-import-backup"
               >
                 <Upload size={16} />
-                <span>{isImporting ? 'Caricamento...' : 'Seleziona File .artvault'}</span>
+                <span>{isImporting ? (language === 'en' ? 'Importing...' : 'Caricamento...') : (language === 'en' ? 'Select .artvault File' : 'Seleziona File .artvault')}</span>
               </button>
             </div>
 
@@ -229,16 +248,16 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontWeight: 600, fontSize: '0.95rem' }}>
                   <FileSpreadsheet size={18} />
-                  <span>Esporta Foglio Excel / CSV</span>
+                  <span>{t('backupExportCsv')}</span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                  Tabella completa con prezzi, dimensioni, collocazione e note, per contabilità o elenchi mostre.
+                  {t('backupExportCsvDesc')}
                 </div>
               </div>
 
               <button className="btn btn-secondary btn-sm" onClick={handleExportCSV} id="btn-export-csv">
                 <FileSpreadsheet size={15} />
-                <span>Scarica CSV</span>
+                <span>{language === 'en' ? 'Download CSV' : 'Scarica CSV'}</span>
               </button>
             </div>
 
@@ -264,7 +283,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
           <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <button className="btn-danger btn-sm" onClick={handleClearAll} style={{ fontSize: '0.8rem' }}>
               <Trash2 size={14} />
-              <span>Svuota Catalogo</span>
+              <span>{language === 'en' ? 'Erase Entire Catalog' : 'Svuota Catalogo'}</span>
             </button>
           </div>
 
@@ -272,7 +291,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
 
         <div className="modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>
-            Chiudi
+            {t('close')}
           </button>
         </div>
       </div>

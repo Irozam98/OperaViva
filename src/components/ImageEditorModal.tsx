@@ -4,6 +4,7 @@ import {
   RotateCcw as ResetIcon, Sparkles, Sun, Contrast, Palette, Frame, 
   Grid
 } from 'lucide-react';
+import { useI18n } from '../i18n';
 
 interface ImageEditorModalProps {
   imageUrl: string;
@@ -18,6 +19,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
   onSave,
   onClose
 }) => {
+  const { t, language } = useI18n();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
 
@@ -354,20 +356,22 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
             <Sliders size={22} color="#d4af37" />
             <div>
               <h2 className="modal-title" style={{ fontSize: '1.25rem' }}>
-                Laboratorio Fotografico Dipinti
+                {language === 'en' ? 'Artwork Photo Darkroom & Lab' : 'Laboratorio Fotografico Dipinti'}
               </h2>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0 }}>
-                Raddrizzamento millimetrico, taglio bordi cavalletto, regolazione pigmenti e cornici
+                {language === 'en' 
+                  ? 'Tilt straightening, easel edge trimming, pigment adjustments and gallery frames' 
+                  : 'Raddrizzamento millimetrico, taglio bordi cavalletto, regolazione pigmenti e cornici'}
               </p>
             </div>
           </div>
 
           <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
-            <button className="btn btn-secondary btn-sm" onClick={handleReset} title="Ripristina valori originali">
+            <button className="btn btn-secondary btn-sm" onClick={handleReset} title={language === 'en' ? 'Reset to original values' : 'Ripristina valori originali'}>
               <ResetIcon size={15} />
-              <span>Ripristina</span>
+              <span>{language === 'en' ? 'Reset' : 'Ripristina'}</span>
             </button>
-            <button className="btn-icon" onClick={onClose}>
+            <button className="btn-icon" onClick={onClose} title={t('close')}>
               <X size={18} />
             </button>
           </div>
@@ -412,26 +416,26 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
               alignItems: 'center',
               flexWrap: 'wrap'
             }}>
-              <button className="btn-ghost btn-sm" onClick={() => setRotation(r => (r - 90 + 360) % 360)} title="Ruota 90° a sinistra">
+              <button className="btn-ghost btn-sm" onClick={() => setRotation(r => (r - 90 + 360) % 360)} title={language === 'en' ? 'Rotate 90° CCW' : 'Ruota 90° a sinistra'}>
                 <RotateCcw size={15} />
                 <span>-90°</span>
               </button>
 
-              <button className="btn-ghost btn-sm" onClick={() => setRotation(r => (r + 90) % 360)} title="Ruota 90° a destra">
+              <button className="btn-ghost btn-sm" onClick={() => setRotation(r => (r + 90) % 360)} title={language === 'en' ? 'Rotate 90° CW' : 'Ruota 90° a destra'}>
                 <RotateCw size={15} />
                 <span>+90°</span>
               </button>
 
               <div style={{ color: 'var(--border-medium)' }}>|</div>
 
-              <button className="btn-ghost btn-sm" onClick={() => setFlipH(f => !f)} title="Specchia orizzontale">
+              <button className="btn-ghost btn-sm" onClick={() => setFlipH(f => !f)} title={language === 'en' ? 'Mirror horizontally' : 'Specchia orizzontale'}>
                 <FlipHorizontal size={15} />
-                <span>Specchia</span>
+                <span>{language === 'en' ? 'Mirror' : 'Specchia'}</span>
               </button>
 
-              <button className="btn-ghost btn-sm" onClick={() => setFlipV(f => !f)} title="Capovolgi verticale">
+              <button className="btn-ghost btn-sm" onClick={() => setFlipV(f => !f)} title={language === 'en' ? 'Flip vertically' : 'Capovolgi verticale'}>
                 <FlipVertical size={15} />
-                <span>Capovolgi</span>
+                <span>{language === 'en' ? 'Flip' : 'Capovolgi'}</span>
               </button>
 
               <div style={{ color: 'var(--border-medium)' }}>|</div>
@@ -439,11 +443,11 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
               <button 
                 className={`btn-ghost btn-sm ${showGrid ? 'active' : ''}`} 
                 onClick={() => setShowGrid(g => !g)} 
-                title="Griglia guida a terzi per allineare i bordi"
+                title={language === 'en' ? 'Rule-of-thirds grid for alignment' : 'Griglia guida a terzi per allineare i bordi'}
                 style={{ color: showGrid ? 'var(--gold-400)' : 'var(--text-secondary)' }}
               >
                 <Grid size={15} />
-                <span>Griglia</span>
+                <span>{language === 'en' ? 'Grid' : 'Griglia'}</span>
               </button>
             </div>
           </div>
@@ -458,35 +462,35 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                 style={{ flex: 1, textAlign: 'center', padding: '0.4rem 0.5rem', fontSize: '0.8rem' }}
                 onClick={() => setActiveTab('adjust')}
               >
-                Luce & Colori
+                {language === 'en' ? 'Light & Color' : 'Luce & Colori'}
               </button>
               <button 
                 className={`filter-tab ${activeTab === 'crop' ? 'active' : ''}`}
                 style={{ flex: 1, textAlign: 'center', padding: '0.4rem 0.5rem', fontSize: '0.8rem' }}
                 onClick={() => setActiveTab('crop')}
               >
-                Ritaglio
+                {language === 'en' ? 'Crop' : 'Ritaglio'}
               </button>
               <button 
                 className={`filter-tab ${activeTab === 'frame' ? 'active' : ''}`}
                 style={{ flex: 1, textAlign: 'center', padding: '0.4rem 0.5rem', fontSize: '0.8rem' }}
                 onClick={() => setActiveTab('frame')}
               >
-                Cornici
+                {language === 'en' ? 'Frames' : 'Cornici'}
               </button>
               <button 
                 className={`filter-tab ${activeTab === 'filters' ? 'active' : ''}`}
                 style={{ flex: 1, textAlign: 'center', padding: '0.4rem 0.5rem', fontSize: '0.8rem' }}
                 onClick={() => setActiveTab('filters')}
               >
-                Filtri
+                {language === 'en' ? 'Filters' : 'Filtri'}
               </button>
               <button 
                 className={`filter-tab ${activeTab === 'watermark' ? 'active' : ''}`}
                 style={{ flex: 1, textAlign: 'center', padding: '0.4rem 0.5rem', fontSize: '0.8rem' }}
                 onClick={() => setActiveTab('watermark')}
               >
-                Firma/Logo
+                {language === 'en' ? 'Watermark' : 'Firma/Logo'}
               </button>
             </div>
 
@@ -498,7 +502,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                 <div className="form-group" style={{ background: 'rgba(212,175,55,0.06)', padding: '0.85rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-gold)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem' }}>
                     <label className="form-label" style={{ margin: 0, color: 'var(--gold-400)' }}>
-                      📐 Raddrizza Inclinazione Tela
+                      {language === 'en' ? '📐 Straighten Canvas Angle' : '📐 Raddrizza Inclinazione Tela'}
                     </label>
                     <span style={{ color: 'var(--gold-300)', fontWeight: 700 }}>
                       {fineAngle > 0 ? `+${fineAngle}°` : `${fineAngle}°`}
@@ -514,7 +518,9 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     style={{ width: '100%', accentColor: 'var(--gold-400)', cursor: 'pointer', marginTop: '6px' }}
                   />
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    Raddrizza di precisione quando la foto al quadro è scattata leggermente inclinata.
+                    {language === 'en'
+                      ? 'Fine tilt straightening when painting photos are shot at a slight angle.'
+                      : 'Raddrizza di precisione quando la foto al quadro è scattata leggermente inclinata.'}
                   </div>
                 </div>
 
@@ -523,7 +529,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem' }}>
                     <label className="form-label" style={{ margin: 0 }}>
                       <Sun size={15} color="#d4af37" />
-                      Luminosità
+                      {language === 'en' ? 'Brightness' : 'Luminosità'}
                     </label>
                     <span style={{ color: 'var(--gold-300)', fontWeight: 600 }}>{brightness}%</span>
                   </div>
@@ -542,7 +548,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem' }}>
                     <label className="form-label" style={{ margin: 0 }}>
                       <Contrast size={15} color="#d4af37" />
-                      Contrasto Materico Tela
+                      {language === 'en' ? 'Texture Contrast' : 'Contrasto Materico Tela'}
                     </label>
                     <span style={{ color: 'var(--gold-300)', fontWeight: 600 }}>{contrast}%</span>
                   </div>
@@ -561,7 +567,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem' }}>
                     <label className="form-label" style={{ margin: 0 }}>
                       <Palette size={15} color="#d4af37" />
-                      Saturazione Pigmenti
+                      {language === 'en' ? 'Pigment Saturation' : 'Saturazione Pigmenti'}
                     </label>
                     <span style={{ color: 'var(--gold-300)', fontWeight: 600 }}>{saturate}%</span>
                   </div>
@@ -579,10 +585,14 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                 <div className="form-group">
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem' }}>
                     <label className="form-label" style={{ margin: 0 }}>
-                      🌡️ Temperatura Luce (Caldo / Freddo)
+                      {language === 'en' ? '🌡️ Light Temperature (Warm / Cool)' : '🌡️ Temperatura Luce (Caldo / Freddo)'}
                     </label>
                     <span style={{ color: warmth > 0 ? '#f59e0b' : warmth < 0 ? '#38bdf8' : 'var(--text-muted)', fontWeight: 600 }}>
-                      {warmth > 0 ? `+${warmth} (Ambra Calda)` : warmth < 0 ? `${warmth} (Luce Neutra/Fredda)` : 'Neutro'}
+                      {warmth > 0 
+                        ? (language === 'en' ? `+${warmth} (Warm Amber)` : `+${warmth} (Ambra Calda)`)
+                        : warmth < 0 
+                        ? (language === 'en' ? `${warmth} (Cool Studio Daylight)` : `${warmth} (Luce Neutra/Fredda)`)
+                        : (language === 'en' ? 'Neutral' : 'Neutro')}
                     </span>
                   </div>
                   <input 
@@ -603,35 +613,37 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
                 <div>
                   <label className="form-label" style={{ marginBottom: '0.5rem' }}>
-                    Proporzioni Standard Quadri (Aspetto Rapido)
+                    {language === 'en' ? 'Standard Artwork Aspect Ratios' : 'Proporzioni Standard Quadri (Aspetto Rapido)'}
                   </label>
                   <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                     <button className="btn btn-secondary btn-sm" onClick={() => applyCropAspect('1:1')}>
-                      1:1 Quadrato
+                      {language === 'en' ? '1:1 Square' : '1:1 Quadrato'}
                     </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => applyCropAspect('4:3')}>
-                      4:3 Classico
+                      {language === 'en' ? '4:3 Classic' : '4:3 Classico'}
                     </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => applyCropAspect('3:2')}>
-                      3:2 Reflex
+                      {language === 'en' ? '3:2 Reflex' : '3:2 Reflex'}
                     </button>
                     <button className="btn btn-secondary btn-sm" onClick={() => applyCropAspect('16:9')}>
-                      16:9 Panoramico
+                      {language === 'en' ? '16:9 Panoramic' : '16:9 Panoramico'}
                     </button>
                     <button className="btn btn-ghost btn-sm" onClick={() => applyCropAspect('reset')} style={{ color: '#f87171' }}>
-                      Ripristina Taglio
+                      {language === 'en' ? 'Reset Crop' : 'Ripristina Taglio'}
                     </button>
                   </div>
                 </div>
 
                 <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                    Rifila i bordi per eliminare il cavalletto o la parete circostante:
+                    {language === 'en'
+                      ? 'Trim borders to remove easel clamps or surrounding studio walls:'
+                      : 'Rifila i bordi per eliminare il cavalletto o la parete circostante:'}
                   </p>
 
                   <div className="form-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-                      <span>Rifila Lato Superiore</span>
+                      <span>{language === 'en' ? 'Trim Top Edge' : 'Rifila Lato Superiore'}</span>
                       <span style={{ color: 'var(--gold-300)' }}>{cropTop}%</span>
                     </div>
                     <input 
@@ -646,7 +658,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
 
                   <div className="form-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-                      <span>Rifila Lato Inferiore (es. barra cavalletto)</span>
+                      <span>{language === 'en' ? 'Trim Bottom Edge (e.g. easel clamp)' : 'Rifila Lato Inferiore (es. barra cavalletto)'}</span>
                       <span style={{ color: 'var(--gold-300)' }}>{cropBottom}%</span>
                     </div>
                     <input 
@@ -661,7 +673,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
 
                   <div className="form-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-                      <span>Rifila Lato Sinistro</span>
+                      <span>{language === 'en' ? 'Trim Left Edge' : 'Rifila Lato Sinistro'}</span>
                       <span style={{ color: 'var(--gold-300)' }}>{cropLeft}%</span>
                     </div>
                     <input 
@@ -676,7 +688,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
 
                   <div className="form-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.82rem' }}>
-                      <span>Rifila Lato Destro</span>
+                      <span>{language === 'en' ? 'Trim Right Edge' : 'Rifila Lato Destro'}</span>
                       <span style={{ color: 'var(--gold-300)' }}>{cropRight}%</span>
                     </div>
                     <input 
@@ -697,7 +709,9 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
             {activeTab === 'frame' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
-                  Applica una cornice virtuale realistica per mostrare al cliente o gallerista l'opera già ambientata:
+                  {language === 'en'
+                    ? 'Apply a realistic virtual gallery frame to show collectors or galleries the artwork ready-hung:'
+                    : 'Applica una cornice virtuale realistica per mostrare al cliente o gallerista l\'opera già ambientata:'}
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
@@ -706,7 +720,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     onClick={() => setFrameType('none')}
                     style={{ padding: '0.85rem' }}
                   >
-                    Bordi a Giorno (Nessuna Cornice)
+                    {language === 'en' ? 'Gallery Wrap (Frameless)' : 'Bordi a Giorno (Nessuna Cornice)'}
                   </button>
 
                   <button 
@@ -714,7 +728,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     onClick={() => setFrameType('gold')}
                     style={{ padding: '0.85rem' }}
                   >
-                    👑 Cornice Dorata Barocca
+                    {language === 'en' ? '👑 Baroque Gold Frame' : '👑 Cornice Dorata Barocca'}
                   </button>
 
                   <button 
@@ -722,7 +736,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     onClick={() => setFrameType('black')}
                     style={{ padding: '0.85rem' }}
                   >
-                    ⬛ Cornice Nera Contemporanea
+                    {language === 'en' ? '⬛ Contemporary Black Frame' : '⬛ Cornice Nera Contemporanea'}
                   </button>
 
                   <button 
@@ -730,7 +744,7 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     onClick={() => setFrameType('wood')}
                     style={{ padding: '0.85rem' }}
                   >
-                    🪵 Cornice Noce / Legno Caldo
+                    {language === 'en' ? '🪵 Warm Walnut Wood Frame' : '🪵 Cornice Noce / Legno Caldo'}
                   </button>
 
                   <button 
@@ -738,12 +752,17 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     onClick={() => setFrameType('passepartout')}
                     style={{ gridColumn: 'span 2', padding: '0.85rem' }}
                   >
-                    🖼️ Passe-partout Avorio Museale + Bordo Legno
+                    {language === 'en' 
+                      ? '🖼️ Museum Ivory Passe-partout + Wood Edge' 
+                      : '🖼️ Passe-partout Avorio Museale + Bordo Legno'}
                   </button>
                 </div>
 
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.4, background: 'rgba(255,255,255,0.03)', padding: '0.75rem', borderRadius: 'var(--radius-sm)' }}>
-                  ✨ <em>Nota:</em> Salvando l'immagine con una cornice attiva, la cornice verrà inclusa nel file salvato e comparirà anche nelle schede stampabili e nel catalogo!
+                  ✨ <em>{language === 'en' ? 'Note:' : 'Nota:'}</em>{' '}
+                  {language === 'en'
+                    ? 'Saving the image with a frame active will preserve it into the saved file, appearing in printable certificates and catalog views.'
+                    : 'Salvando l\'immagine con una cornice attiva, la cornice verrà inclusa nel file salvato e comparirà anche nelle schede stampabili e nel catalogo!'}
                 </div>
               </div>
             )}
@@ -757,8 +776,10 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   style={{ flexDirection: 'column', padding: '1rem', height: 'auto', gap: '0.3rem' }}
                 >
                   <Sparkles size={20} color="#f59e0b" />
-                  <span style={{ fontWeight: 600 }}>Colori Vivi & Brillanti</span>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>+Contrasto e risalto tinte</span>
+                  <span style={{ fontWeight: 600 }}>{language === 'en' ? 'Vivid & Radiant Colors' : 'Colori Vivi & Brillanti'}</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {language === 'en' ? '+Contrast and vibrant pigment boost' : '+Contrasto e risalto tinte'}
+                  </span>
                 </button>
 
                 <button 
@@ -767,8 +788,10 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   style={{ flexDirection: 'column', padding: '1rem', height: 'auto', gap: '0.3rem' }}
                 >
                   <Sun size={20} color="#38bdf8" />
-                  <span style={{ fontWeight: 600 }}>Luce Chiara Studio</span>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Chiarifica dipinti opachi</span>
+                  <span style={{ fontWeight: 600 }}>{language === 'en' ? 'Bright Studio Daylight' : 'Luce Chiara Studio'}</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {language === 'en' ? 'Clarifies dim or flat artwork photos' : 'Chiarifica dipinti opachi'}
+                  </span>
                 </button>
 
                 <button 
@@ -777,8 +800,10 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   style={{ flexDirection: 'column', padding: '1rem', height: 'auto', gap: '0.3rem' }}
                 >
                   <Palette size={20} color="#d4af37" />
-                  <span style={{ fontWeight: 600 }}>Tonalità Galleria Calda</span>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Atmosfera classica ambrata</span>
+                  <span style={{ fontWeight: 600 }}>{language === 'en' ? 'Warm Gallery Lighting' : 'Tonalità Galleria Calda'}</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {language === 'en' ? 'Classic warm amber atmosphere' : 'Atmosfera classica ambrata'}
+                  </span>
                 </button>
 
                 <button 
@@ -787,8 +812,10 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   style={{ flexDirection: 'column', padding: '1rem', height: 'auto', gap: '0.3rem' }}
                 >
                   <Contrast size={20} color="#e2e8f0" />
-                  <span style={{ fontWeight: 600 }}>Monocromo Fine Art</span>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Disegni, carboncini e chine</span>
+                  <span style={{ fontWeight: 600 }}>{language === 'en' ? 'Fine Art Monochrome' : 'Monocromo Fine Art'}</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {language === 'en' ? 'Ideal for charcoal, pencil and ink works' : 'Disegni, carboncini e chine'}
+                  </span>
                 </button>
 
                 <button 
@@ -797,8 +824,10 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                   style={{ gridColumn: 'span 2', flexDirection: 'column', padding: '1rem', height: 'auto', gap: '0.3rem' }}
                 >
                   <Frame size={20} color="#c29929" />
-                  <span style={{ fontWeight: 600 }}>Patina d'Epoca Sec. XIX</span>
-                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Ideale per restauri antichi e tele storiche</span>
+                  <span style={{ fontWeight: 600 }}>{language === 'en' ? '19th Century Antique Patina' : "Patina d'Epoca Sec. XIX"}</span>
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                    {language === 'en' ? 'Ideal for historical oils, antique canvas and restorations' : 'Ideale per restauri antichi e tele storiche'}
+                  </span>
                 </button>
               </div>
             )}
@@ -814,25 +843,29 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                     style={{ width: '18px', height: '18px', accentColor: 'var(--gold-400)' }}
                   />
                   <span style={{ fontSize: '0.92rem', color: '#fff', fontWeight: 600 }}>
-                    Applica firma o filigrana discreta in basso a destra
+                    {language === 'en' 
+                      ? 'Apply subtle signature or watermark at bottom-right' 
+                      : 'Applica firma o filigrana discreta in basso a destra'}
                   </span>
                 </label>
 
                 <div className="form-group">
-                  <label className="form-label">Testo Filigrana</label>
+                  <label className="form-label">{language === 'en' ? 'Watermark Text' : 'Testo Filigrana'}</label>
                   <input 
                     type="text" 
                     className="form-input" 
                     value={watermarkText}
                     onChange={e => setWatermarkText(e.target.value)}
-                    placeholder="es. © Nome Artista / Bottega"
+                    placeholder={language === 'en' ? 'e.g. © Artist Name / Studio' : 'es. © Nome Artista / Bottega'}
                     disabled={!useWatermark}
                   />
                 </div>
 
                 <div className="form-group">
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem' }}>
-                    <label className="form-label" style={{ margin: 0 }}>Trasparenza Filigrana</label>
+                    <label className="form-label" style={{ margin: 0 }}>
+                      {language === 'en' ? 'Watermark Opacity' : 'Trasparenza Filigrana'}
+                    </label>
                     <span style={{ color: 'var(--gold-300)' }}>{watermarkOpacity}%</span>
                   </div>
                   <input 
@@ -847,7 +880,9 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
                 </div>
 
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                  🛡️ Protegge le immagini delle tue opere dal download non autorizzato quando le condividi sui social o con intermediari.
+                  {language === 'en'
+                    ? '🛡️ Protects your artwork photographs against unauthorized downloads when sharing on social media or with brokers.'
+                    : '🛡️ Protegge le immagini delle tue opere dal download non autorizzato quando le condividi sui social o con intermediari.'}
                 </div>
               </div>
             )}
@@ -859,11 +894,11 @@ export const ImageEditorModal: React.FC<ImageEditorModalProps> = ({
         {/* Footer Modal */}
         <div className="modal-footer editor-modal-footer">
           <button className="btn btn-secondary" onClick={onClose}>
-            Annulla
+            {t('cancel')}
           </button>
           <button className="btn btn-primary" onClick={handleSave} id="btn-save-edited-image">
             <Check size={18} />
-            <span>Applica & Salva Foto</span>
+            <span>{language === 'en' ? 'Apply & Save Photo' : 'Applica & Salva Foto'}</span>
           </button>
         </div>
 

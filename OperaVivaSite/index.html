@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OperaViva | L'Atelier Digitale & Archivio Personale per Artisti</title>
+  
+  <!-- Meta SEO -->
+  <meta name="description" content="OperaViva è il software d'archivio personale e gestione bottega per artisti, pittori e scultori. 100% offline, privacy assoluta, certificati di autenticità, backup con foto e riepilogo del valore economico delle opere.">
+  <meta name="keywords" content="archivio arte, catalogo opere d'arte, software artisti, certificato di autenticità, gestione atelier, bottega arte, inventario quadri">
+  <meta name="author" content="Marzio Sparla">
+  
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OperaViva — L'Archivio d'Arte per il tuo Atelier">
+  <meta property="og:description" content="Catalogazione opere, certificati d'autenticità, monitoraggio collocazione e backup sicuro. 100% locale, zero abbonamenti.">
+  
+  <!-- Google Fonts: Cinzel Decorative / Cormorant Garamond & Plus Jakarta Sans -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glows -->
+  <div class="glow-bg glow-top"></div>
+  <div class="glow-bg glow-middle"></div>
+
+  <!-- Header Navigazione -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2Z"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">OPERAVIVA</span>
+          <span class="brand-subtitle">IL MIO ATELIER</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <a href="#filosofia" class="nav-link" data-i18n="navFilosofia">Filosofia</a>
+        <a href="#funzionalita" class="nav-link" data-i18n="navFunzionalita">Funzionalità</a>
+        <a href="#certificati" class="nav-link" data-i18n="navCertificati">Certificati</a>
+        <a href="#importatore" class="nav-link" data-i18n="navImportatore">Importatore</a>
+        <a href="#piattaforme" class="nav-link" data-i18n="navPiattaforme">Piattaforme</a>
+        <a href="#faq" class="nav-link" data-i18n="navFaq">FAQ</a>
+        
+        <div class="mobile-lang-row">
+          <button type="button" class="btn-lang-mobile" id="langToggleBtnMobile" title="Cambia lingua (IT / EN)" aria-label="Cambia Lingua">
+            <span class="flag-icon" id="langFlagMobile">🇮🇹</span>
+            <span class="lang-text" id="langCodeMobile">IT</span>
+          </button>
+        </div>
+
+        <a href="#piattaforme" class="btn-gold nav-mobile-cta" data-i18n="ctaDownloadNav">Scarica Applicazione</a>
+      </nav>
+
+      <div class="header-cta">
+        <button type="button" class="btn-lang-unified" id="langToggleBtn" title="Cambia lingua (IT / EN)" aria-label="Cambia Lingua">
+          <span class="flag-icon" id="langFlag">🇮🇹</span>
+        </button>
+        <a href="#piattaforme" class="btn-gold-sm" data-i18n="ctaStart">Scarica Ora</a>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Menu di navigazione">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-container">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span data-i18n="heroBadge">Software di Gestione & Catalogazione per Artisti Indipendenti</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span data-i18n="heroTitleLine1">L'Archivio d'Autore</span> <br>
+        <span class="gold-gradient" data-i18n="heroTitleLine2">per il tuo Atelier.</span>
+      </h1>
+
+      <p class="hero-description" data-i18n-html="heroDescription">
+        Custodisci la memoria e il valore del tuo percorso artistico. 
+        <strong>OperaViva</strong> è il programma professionale progettato per catalogare quadri, sculture e opere d'arte: 
+        <strong>100% offline</strong>, zero abbonamenti, con emissione di certificati di autenticità, calcolo del valore totale dell'inventario e tutela assoluta della tua riservatezza.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#funzionalita" class="btn-gold">
+          <span data-i18n="heroBtnExplore">Scopri le Caratteristiche</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+        <a href="#piattaforme" class="btn-glass">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="heroBtnPlatforms">Piattaforme Disponibili</span>
+        </a>
+      </div>
+
+      <!-- Highlights Pills -->
+      <div class="hero-pills">
+        <div class="pill-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span data-i18n="pillOffline">100% Offline & Riservato</span>
+        </div>
+        <div class="pill-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          <span data-i18n="pillNoSub">Nessun Canone Mensile</span>
+        </div>
+        <div class="pill-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+          <span data-i18n="pillCert">Certificati di Autenticità Stampabili</span>
+        </div>
+        <div class="pill-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 17 4 4 4-4"/></svg>
+          <span data-i18n="pillVault">Backup Portatile .artvault</span>
+        </div>
+      </div>
+
+      <!-- App Interface Preview Card -->
+      <div class="preview-stage">
+        <div class="preview-window">
+          <div class="window-bar">
+            <div class="window-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="window-title" data-i18n="windowTitle">OperaViva — Archivio Personale d'Arte • Bottega & Atelier</div>
+            <div class="window-status"><span class="status-indicator"></span> <span data-i18n="windowStatus">Database Locale Attivo</span></div>
+          </div>
+          <div class="preview-content">
+            <div class="mockup-header">
+              <div class="mockup-logo">
+                <span class="gold-icon">🎨</span>
+                <div>
+                  <strong>OPERAVIVA</strong>
+                  <small>IL MIO ATELIER • MARZIO SPARLA</small>
+                </div>
+              </div>
+              <div class="mockup-actions">
+                <span class="mock-btn mock-primary" data-i18n="mockNewArtwork">+ Nuova Opera</span>
+                <span class="mock-btn" data-i18n="mockStats">📊 Statistiche</span>
+                <span class="mock-btn" data-i18n="mockBackup">💾 Archivio & Backup</span>
+                <span class="mock-btn">⚙</span>
+              </div>
+            </div>
+
+            <div class="mockup-curator-bar">
+              <div data-i18n-html="mockCuratorCounts">ARCHIVIO GENERALE: <strong>11 opere</strong> / 6 in bottega / 1 in esposizione / 2 in collezioni private</div>
+              <div class="mockup-val" data-i18n-html="mockCuratorVal">Valore opere disponibili: <strong class="gold-text">16.650 €</strong></div>
+            </div>
+
+            <div class="mockup-grid">
+              <div class="mock-card">
+                <div class="mock-thumb art-bg-1">
+                  <span class="card-status in-bottega" data-i18n="statusInBottega">In Bottega</span>
+                </div>
+                <div class="mock-info">
+                  <h4 data-i18n="mockTitle1">Tramonto sulla Laguna</h4>
+                  <p data-i18n="mockSub1">Olio su tela • 80 × 60 cm (2024)</p>
+                  <div class="mock-footer">
+                    <span class="mock-code">OPV-001</span>
+                    <span class="mock-price">1.800 €</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mock-card">
+                <div class="mock-thumb art-bg-2">
+                  <span class="card-status in-mostra" data-i18n="statusInMostra">In Esposizione</span>
+                </div>
+                <div class="mock-info">
+                  <h4 data-i18n="mockTitle2">Studio per Figura Sospesa</h4>
+                  <p data-i18n="mockSub2">Acrilico e foglia oro • 50 × 70 cm (2025)</p>
+                  <div class="mock-footer">
+                    <span class="mock-code">OPV-002</span>
+                    <span class="mock-price">2.400 €</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mock-card">
+                <div class="mock-thumb art-bg-3">
+                  <span class="card-status venduto" data-i18n="statusVenduto">Collezione Privata</span>
+                </div>
+                <div class="mock-info">
+                  <h4 data-i18n="mockTitle3">Melodia d'Autunno</h4>
+                  <p data-i18n="mockSub3">Tecnica mista su tavola • 100 × 80 cm (2023)</p>
+                  <div class="mock-footer">
+                    <span class="mock-code">OPV-003</span>
+                    <span class="mock-price">3.200 €</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Filosofia & Valori -->
+  <section class="section-padding" id="filosofia">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="whyTag">Perché OperaViva</span>
+        <h2 class="section-title"><span data-i18n="whyTitleLine1">Nato per le Reali Esigenze</span> <br><span class="gold-gradient" data-i18n="whyTitleLine2">di chi crea Arte.</span></h2>
+        <p class="section-subtitle" data-i18n="whySubtitle">
+          I tradizionali software gestionali sono pensati per magazzini commerciali o gallerie con canoni mensili esorbitanti. 
+          OperaViva è concepito dal punto di vista dell'artista, con un'interfaccia elegante, intuitiva e rispettosa della tua opera.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3 data-i18n="card1Title">100% Locale & Sovranità dei Dati</h3>
+          <p data-i18n="card1Desc">
+            Le foto delle tue opere, i clienti, i prezzi e le note private risiedono solo sul tuo dispositivo. 
+            Nessun server esterno legge i tuoi dati, garantendo segretezza e indipendenza totale dalla connessione internet.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3 data-i18n="card2Title">Emissione Certificato di Autenticità</h3>
+          <p data-i18n="card2Desc">
+            Genera in un istante il Certificato Ufficiale d'Autore pronto per la stampa o PDF: 
+            completo di foto, dati tecnici, codice inventario, dichiarazione di autenticità, timbro e firma dell'artista.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          </div>
+          <h3 data-i18n="card3Title">Backup Conservativo .artvault</h3>
+          <p data-i18n="card3Desc">
+            Esporta il tuo intero patrimonio con un solo clic in un singolo archivio protetto. 
+            Include tutte le fotografie in alta risoluzione e la cronologia, pronto da custodire su chiavetta USB o hard disk esterno.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><path d="M20 12v8H4v-8"/><path d="m4 4 16 0"/><path d="M4 4v4h16V4"/></svg>
+          </div>
+          <h3 data-i18n="card4Title">Tracciamento Collocazione & Stato</h3>
+          <p data-i18n="card4Desc">
+            Non perdere mai più di vista un'opera: scopri al volo cosa si trova nel tuo studio, 
+            quali quadri sono affidati a mostre e gallerie, e quali fanno parte di collezioni private.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <h3 data-i18n="card5Title">Valore del Patrimonio Artistico</h3>
+          <p data-i18n="card5Desc">
+            Calcola all'istante la somma economica complessiva delle opere disponibili in bottega o vendute, 
+            basandosi sui prezzi e sulle quotazioni impostate da te per ogni singolo pezzo (nessuna perizia automatica).
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          </div>
+          <h3 data-i18n="card6Title">Editor Fotografico & Ritaglio</h3>
+          <p data-i18n="card6Desc">
+            Ritaglia e raddrizza le foto delle tele scattate con smartphone o macchina fotografica direttamente nel programma, 
+            senza dover ricorrere a complessi software di fotoritocco.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sezione Funzionalità Approfondite -->
+  <section class="section-padding bg-alt" id="funzionalita">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="archTag">Architettura Atelier</span>
+        <h2 class="section-title"><span data-i18n="archTitleLine1">Ogni dettaglio pensato</span> <br><span class="gold-gradient" data-i18n="archTitleLine2">per la vita di bottega.</span></h2>
+      </div>
+
+      <!-- Feature Block 1: Scheda Opera -->
+      <div class="split-feature">
+        <div class="split-text">
+          <div class="split-pill" data-i18n="f1Pill">Catalogazione Professionale</div>
+          <h3 data-i18n="f1Title">La Scheda d'Opera Completa</h3>
+          <p data-i18n="f1Desc">
+            Ogni creazione merita un passaporto identificativo inequivocabile. Con OperaViva assegni a ciascuna tela o scultura:
+          </p>
+          <ul class="check-list">
+            <li data-i18n-html="f1Item1"><strong>Codice Univoco d'Inventario</strong> (es. OPV-001, OPV-002) generato automaticamente.</li>
+            <li data-i18n-html="f1Item2"><strong>Specifiche Tecniche</strong>: Tecnica pittorica, supporto (lino, cotone, tavola, bronzo), dimensioni esatte (L × A × P).</li>
+            <li data-i18n-html="f1Item3"><strong>Anno di Realizzazione & Serie/Collezione</strong> tematica.</li>
+            <li data-i18n-html="f1Item4"><strong>Collocazione fisica puntuale</strong> (es. Cavalletto Studio, Cassettiera 2, Galleria Borghese).</li>
+            <li data-i18n-html="f1Item5"><strong>Prezzo di vendita / valore assegnato dall'artista</strong> e note critiche d'autore per conservare aneddoti ed emozioni legate alla creazione.</li>
+          </ul>
+        </div>
+        <div class="split-visual">
+          <div class="visual-card">
+            <div class="visual-card-header">
+              <span class="badge-gold">Scheda Tecnica</span>
+              <span class="visual-code">OPV-014</span>
+            </div>
+            <div class="visual-body">
+              <h4 class="visual-title">Sinfonia Notturna in Blu</h4>
+              <div class="visual-specs-grid">
+                <div class="spec-cell">
+                  <span class="spec-label">Tecnica</span>
+                  <span class="spec-val">Olio su tela</span>
+                </div>
+                <div class="spec-cell">
+                  <span class="spec-label">Dimensioni</span>
+                  <span class="spec-val">120 × 90 cm</span>
+                </div>
+                <div class="spec-cell">
+                  <span class="spec-label">Anno</span>
+                  <span class="spec-val">2025</span>
+                </div>
+                <div class="spec-cell">
+                  <span class="spec-label">Stato</span>
+                  <span class="spec-val status-tag-bottega">● In Bottega</span>
+                </div>
+                <div class="spec-cell col-span-2">
+                  <span class="spec-label">Collocazione</span>
+                  <span class="spec-val">Parete Espositiva Nord • Atelier Principale</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Block 2: Certificato di Autenticità -->
+      <div class="split-feature reverse" id="certificati">
+        <div class="split-text">
+          <div class="split-pill" data-i18n="f2Pill">Certificazione d'Autore</div>
+          <h3 data-i18n="f2Title">Certificato di Autenticità Immediato</h3>
+          <p data-i18n-html="f2Desc">
+            Quando un collezionista acquista una tua opera, l'autorevolezza del documento è fondamentale. 
+            OperaViva impagina in automatico un <strong>Certificato di Autenticità d'Atelier</strong> conforme agli standard internazionali:
+          </p>
+          <ul class="check-list">
+            <li data-i18n-html="f2Item1"><strong>Fronte d'Autore con Cornice d'Epoca</strong> e caratteri tipografici curatoriali.</li>
+            <li data-i18n-html="f2Item2"><strong>Riproduzione Fotografica</strong> dell'opera ad alta fedeltà.</li>
+            <li data-i18n-html="f2Item3"><strong>Dati di Bottega & Artista</strong> personalizzabili (nome atelier, firma, contatti).</li>
+            <li data-i18n-html="f2Item4"><strong>Dichiarazione Legale di Autenticità</strong>: <em>"L'artista certifica che l'opera descritta è un pezzo originale e unico..."</em>.</li>
+            <li data-i18n-html="f2Item5"><strong>Pulsante di Stampa Diretta</strong> o salvataggio in formato PDF ad alta definizione.</li>
+          </ul>
+        </div>
+        <div class="split-visual">
+          <div class="cert-mockup">
+            <div class="cert-border">
+              <div class="cert-header">
+                <div class="cert-logo">⚜</div>
+                <h5>CERTIFICATO DI AUTENTICITÀ</h5>
+                <small>CERTIFICATE OF AUTHENTICITY</small>
+              </div>
+              <div class="cert-content">
+                <div class="cert-thumb"></div>
+                <div class="cert-details">
+                  <p class="cert-artwork-title">"Sinfonia Notturna in Blu"</p>
+                  <p class="cert-line">Tecnica: Olio su tela</p>
+                  <p class="cert-line">Dimensioni: 120 × 90 cm</p>
+                  <p class="cert-line">Anno: 2025</p>
+                  <p class="cert-line">Archivio: OPV-014</p>
+                </div>
+              </div>
+              <div class="cert-footer">
+                <div class="cert-seal">
+                  <span>TIMBRO</span>
+                  <small>ATELIER</small>
+                </div>
+                <div class="cert-sign">
+                  <span class="sign-script">Marzio Sparla</span>
+                  <small>Firma dell'Autore</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Block 3: Importatore da Cartella Locale -->
+      <div class="split-feature" id="importatore">
+        <div class="split-text">
+          <div class="split-pill" data-i18n="f3Pill">Velocità & Semplicità</div>
+          <h3 data-i18n="f3Title">Importatore Intelligente da Cartella Locale</h3>
+          <p data-i18n-html="f3Desc">
+            Hai già decine o centinaia di foto delle tue opere sul computer? Non perdere ore a inserirle a mano! 
+            Con l'<strong>Importatore Locale di OperaViva</strong> basta selezionare i file o l'intera cartella.
+          </p>
+          <div class="naming-guide-box">
+            <div class="guide-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c5a059" stroke-width="2"><path d="m16.5 3.5 4 4L7 21l-4 1 1-4L16.5 3.5z"/></svg>
+              <span data-i18n="f3GuideTitle">Convenzione Intelligente nel nome del file:</span>
+            </div>
+            <code>Titolo - Tecnica - Dimensioni.jpg</code>
+            <p class="guide-sample" data-i18n-html="f3GuideSample">
+              Esempio: <em>"Alba sul Mare - Olio su tela - 80x60 cm.jpg"</em>
+            </p>
+            <p class="guide-note" data-i18n="f3GuideNote">
+              OperaViva estrae da solo il titolo, la tecnica pittorica e le misure, creando subito la scheda e ottimizzando la foto!
+            </p>
+          </div>
+        </div>
+        <div class="split-visual">
+          <div class="import-mockup">
+            <div class="dropzone-mock">
+              <div class="drop-icon">📁</div>
+              <h4 data-i18n="dropTitle">Trascina le foto dell'Atelier qui</h4>
+              <p data-i18n="dropSubtitle">oppure clicca per selezionare dal tuo computer</p>
+              <div class="import-badges">
+                <span class="ibadge" data-i18n="dropBadge1">Riconoscimento Automatico Misure</span>
+                <span class="ibadge" data-i18n="dropBadge2">Compressione Immagini Senza Perdita</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Block 4: Multi-Selezione -->
+      <div class="split-feature reverse">
+        <div class="split-text">
+          <div class="split-pill" data-i18n="f4Pill">Gestione Massiva</div>
+          <h3 data-i18n="f4Title">Selezione Multipla & Eliminazioni in Blocco</h3>
+          <p data-i18n-html="f4Desc">
+            Quando riorganizzi il tuo catalogo o elimini bozze e vecchie prove, puoi attivare la <strong>Selezione Multipla</strong>:
+          </p>
+          <ul class="check-list">
+            <li data-i18n="f4Item1">Seleziona più opere con un semplice tocco o clic.</li>
+            <li data-i18n-html="f4Item2">Tasto rapido <em>"Seleziona Tutte le Opere Visibili"</em>.</li>
+            <li data-i18n="f4Item3">Barra fluttuante elegante con conteggio e cancellazione protetta da conferma.</li>
+            <li data-i18n="f4Item4">Filtri rapidi per collocazione, tecnica e ordine cronologico.</li>
+          </ul>
+        </div>
+        <div class="split-visual">
+          <div class="batch-mockup">
+            <div class="floating-batch-card">
+              <div class="batch-count">
+                <span class="badge-num">3</span>
+                <span data-i18n="batchSelected">Opere Selezionate</span>
+              </div>
+              <div class="batch-buttons">
+                <span class="batch-btn batch-del" data-i18n="batchDelete">🗑 Elimina Opere</span>
+                <span class="batch-btn batch-cancel" data-i18n="batchCancel">Annulla</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Piattaforme & Modalità di Utilizzo -->
+  <section class="section-padding" id="piattaforme">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="platTag">Installazione & Libertà</span>
+        <h2 class="section-title"><span data-i18n="platTitleLine1">Disponibile su tutti</span> <br><span class="gold-gradient" data-i18n="platTitleLine2">i tuoi dispositivi.</span></h2>
+        <p class="section-subtitle" data-i18n="platSubtitle">
+          OperaViva è architettato per funzionare senza compromessi su PC fisso, notebook da viaggio, smartphone e tablet.
+        </p>
+      </div>
+
+      <div class="platforms-grid" id="platformsGrid">
+        <!-- Card 1: Windows -->
+        <div class="platform-card highlight-card" data-platform="windows">
+          <div class="platform-badge" data-i18n="platWinBadge">Consigliato PC & Studio</div>
+          <div class="platform-icon">💻</div>
+          <div class="platform-info">
+            <h3 data-i18n="platWinTitle">Windows Desktop</h3>
+            <p data-i18n="platWinDesc">
+              L'applicazione professionale per computer di studio e archiviazione a lungo termine. 
+              Disponibile con installatore classico o in versione Portable da eseguire senza installazione, anche da chiavetta USB.
+            </p>
+          </div>
+          <div class="platform-downloads">
+            <a href="https://github.com/tuo-profilo/operaviva/releases/latest" target="_blank" rel="noopener" class="btn-download btn-download-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span data-i18n="platWinBtn1">Scarica Portable (.exe)</span>
+            </a>
+            <a href="https://github.com/tuo-profilo/operaviva/releases/latest" target="_blank" rel="noopener" class="btn-download btn-download-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 12 2 2 4-4"/></svg>
+              <span data-i18n="platWinBtn2">Scarica Installer (.exe)</span>
+            </a>
+          </div>
+          <ul class="platform-specs">
+            <li data-i18n="platWinSpec1">✔ 100% Offline: zero connessioni, zero cloud, privacy sovrana</li>
+            <li data-i18n="platWinSpec2">✔ Versione Portable: portala ovunque su chiavetta USB</li>
+            <li data-i18n="platWinSpec3">✔ Compatibile con Windows 10 e Windows 11 (64-bit)</li>
+          </ul>
+        </div>
+
+        <!-- Card 2: Android -->
+        <div class="platform-card" data-platform="android">
+          <div class="platform-badge" data-i18n="platAndBadge">In Bottega & Mostra</div>
+          <div class="platform-icon">📱</div>
+          <div class="platform-info">
+            <h3 data-i18n="platAndTitle">Android App (.apk)</h3>
+            <p data-i18n="platAndDesc">
+              L'applicazione nativa per smartphone e tablet Android. Fotografa i quadri appena completati sul cavalletto 
+              con la fotocamera integrata e consulta l'intero catalogo durante fiere, mostre o collezioni.
+            </p>
+          </div>
+          <div class="platform-downloads">
+            <a href="https://github.com/tuo-profilo/operaviva/releases/latest" target="_blank" rel="noopener" class="btn-download btn-download-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span data-i18n="platAndBtn1">Scarica Pacchetto (.apk)</span>
+            </a>
+            <a href="#faq" class="btn-download btn-download-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              <span data-i18n="platAndBtn2">Guida Installazione Android</span>
+            </a>
+          </div>
+          <ul class="platform-specs">
+            <li data-i18n="platAndSpec1">✔ Fotocamera ad alta definizione con ritocco foto integrato</li>
+            <li data-i18n="platAndSpec2">✔ Interfaccia touch ottimizzata per smartphone e tablet</li>
+            <li data-i18n="platAndSpec3">✔ 100% Offline: nessun traffico dati, funziona senza rete</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Domande Frequenti (FAQ) -->
+  <section class="section-padding bg-alt" id="faq">
+    <div class="container faq-container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="faqTag">Chiarezza & Riservatezza</span>
+        <h2 class="section-title" data-i18n-html="faqTitle">Domande <span class="gold-gradient">Frequenti.</span></h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item active">
+          <button class="faq-question">
+            <span data-i18n="faqQ1">Dove vengono memorizzate le foto e i dati delle mie opere?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA1">
+              Tutti i dati e le immagini sono conservati <strong>esclusivamente all'interno del tuo dispositivo</strong> 
+              (nel database locale crittografato dell'applicazione Windows o Android). 
+              Nessun server, nessun cloud e nessun dato scambiato online: la tua arte, le foto in alta definizione e i dati economici rimangono al 100% tuoi e offline.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faqQ2">Posso fare il backup per non perdere mai nulla se cambio computer?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA2">
+              Certamente! OperaViva dispone di un sistema di backup proprietario: con un clic sul pulsante <strong>"Archivio & Backup"</strong> 
+              puoi generare un file compatto con estensione <code>.artvault</code> contenente l'intero inventario e tutte le fotografie ad alta definizione. 
+              Puoi anche esportare il catalogo in formato <code>.CSV</code> per consultarlo con Microsoft Excel o Fogli Google.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faqQ3">Come funziona la stampa del Certificato di Autenticità?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA3">
+              Aprendo la scheda di qualsiasi opera e cliccando su <em>"Certificato di Autenticità"</em>, 
+              il programma prepara una pagina impaginata con stile curatoriale ad alta eleganza. 
+              Puoi stamparla direttamente su carta pergamena o pregiata, oppure salvarla in PDF per inviarla via email al collezionista.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faqQ4">L'applicazione richiede un collegamento a Internet?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA4">
+              No, OperaViva è progettato con architettura <strong>Offline-First</strong>. 
+              Funziona perfettamente in totale assenza di rete internet, in baite isolate, gallerie sotterranee o capannoni industriali privi di segnale Wi-Fi.
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faqQ5">Come posso nominare i file fotografici per velocizzare l'importazione?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA5">
+              Puoi usare il formato raccomandato: <code>Titolo - Tecnica - Dimensioni.jpg</code> (ad esempio: <em>"Luce del Mattino - Acrilico su tela - 70x50.jpg"</em>). 
+              L'importatore automatico analizzerà il nome e popolerà i campi corrispondenti senza che tu debba digitarli a mano!
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span data-i18n="faqQ6">OperaViva fa perizie o stime automatiche sul valore delle mie opere?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p data-i18n-html="faqA6">
+              <strong>Assolutamente no.</strong> OperaViva rispetta la tua professionalità: non esistono algoritmi fittizi che pretendono di valutare l'arte al posto tuo. 
+              Il programma si limita a <strong>sommare e riepilogare con precisione contabile</strong> i prezzi e le quotazioni che inserisci tu stesso per ciascuna opera, 
+              fornendoti in tempo reale il controvalore totale delle opere attualmente disponibili in bottega o affidate alle mostre.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Finale d'Atelier -->
+  <section class="section-padding cta-section">
+    <div class="container cta-container">
+      <div class="cta-card">
+        <div class="cta-glow"></div>
+        <span class="section-tag" data-i18n="ctaTag">Inizia Oggi</span>
+        <h2><span data-i18n="ctaTitleLine1">Dai alla tua arte</span> <br><span class="gold-gradient" data-i18n="ctaTitleLine2">l'ordine che merita.</span></h2>
+        <p data-i18n="ctaDesc">
+          Smetti di affidarti a fogli sparsi o cartelle caotiche sul desktop. 
+          OperaViva è lo scrigno d'autore che protegge e valorizza la tua produzione artistica per sempre.
+        </p>
+        <div class="cta-buttons">
+          <a href="#piattaforme" class="btn-gold btn-lg" data-i18n="ctaBottomBtn">Accedi a OperaViva</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer di Pregio -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <div class="brand">
+          <div class="brand-icon">🎨</div>
+          <div class="brand-text">
+            <span class="brand-title">OPERAVIVA</span>
+            <span class="brand-subtitle" data-i18n="headerSubtitle">ARCHIVIO PERSONALE D'ARTE</span>
+          </div>
+        </div>
+        <p class="footer-desc" data-i18n="footerDesc">
+          Software dedicato a pittori, scultori, fotografi d'arte e curatori per la gestione indipendente della bottega artistica.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <div class="f-col">
+          <h4 data-i18n="footerColProg">Programma</h4>
+          <a href="#filosofia" data-i18n="navFilosofia">Filosofia</a>
+          <a href="#funzionalita" data-i18n="navFunzionalita">Funzionalità</a>
+          <a href="#certificati" data-i18n="navCertificati">Certificati</a>
+          <a href="#importatore" data-i18n="navImportatore">Importatore Foto</a>
+        </div>
+        <div class="f-col">
+          <h4 data-i18n="footerColRes">Risorse</h4>
+          <a href="#piattaforme" data-i18n="navPiattaforme">Piattaforme</a>
+          <a href="#faq" data-i18n="navFaq">Domande Frequenti</a>
+          <a href="#" data-i18n="footerGuideLink">Guida all'Atelier</a>
+        </div>
+        <div class="f-col">
+          <h4 data-i18n="footerColPriv">Privacy</h4>
+          <p class="footer-privacy-note" data-i18n="footerPrivacyText">
+            100% Locale. Nessun cookie di tracciamento o profilazione di terze parti.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container bottom-container">
+        <p data-i18n-html="footerRights">© 2026 OperaViva • Ideato & Creato da <strong>Marzio Sparla</strong>. Tutti i diritti riservati.</p>
+        <p class="atelier-motto" data-i18n="footerMotto">"L'Arte vive nella memoria di chi la custodisce."</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="translations.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

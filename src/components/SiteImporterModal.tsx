@@ -3,6 +3,7 @@ import { X, FolderOpen, FolderDown, Image as ImageIcon, Check, CheckSquare, Squa
 import { ScannedArtworkCandidate, scanFolderFiles, convertCandidatesToArtworks } from '../services/siteImporter';
 import { StudioProfile } from '../types/artwork';
 import { db } from '../services/db';
+import { useI18n } from '../i18n';
 
 interface SiteImporterModalProps {
   studioProfile: StudioProfile;
@@ -15,6 +16,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
   onClose,
   onSuccess
 }) => {
+  const { t, language } = useI18n();
   const folderInputRef = useRef<HTMLInputElement>(null);
   const imagesInputRef = useRef<HTMLInputElement>(null);
   
@@ -32,20 +34,32 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
     if (filesArray.length === 0) return;
 
     setIsScanning(true);
-    setImportStatusMessage(`Scansione di ${filesArray.length} file in corso...`);
+    setImportStatusMessage(
+      language === 'en'
+        ? `Scanning ${filesArray.length} files...`
+        : `Scansione di ${filesArray.length} file in corso...`
+    );
 
     try {
-      const artistName = studioProfile.artistName || "Artista Bottega";
+      const artistName = studioProfile.artistName || (language === 'en' ? 'Studio Artist' : 'Artista Bottega');
       const scanned = await scanFolderFiles(filesArray, artistName);
 
       if (scanned.length === 0) {
-        alert("Nessuna immagine d'opera d'arte rilevata tra i file selezionati. Assicurati di selezionare file immagine (JPG, PNG, WEBP, JFIF).");
+        alert(
+          language === 'en'
+            ? 'No artwork image files found in the selection. Please ensure you select image files (JPG, PNG, WEBP, JFIF).'
+            : "Nessuna immagine d'opera d'arte rilevata tra i file selezionati. Assicurati di selezionare file immagine (JPG, PNG, WEBP, JFIF)."
+        );
       } else {
         setCandidates(scanned);
       }
     } catch (err: any) {
       console.error('Errore durante la scansione:', err);
-      alert(`Errore durante la scansione: ${err.message || 'Errore sconosciuto'}`);
+      alert(
+        language === 'en'
+          ? `Error during scan: ${err.message || 'Unknown error'}`
+          : `Errore durante la scansione: ${err.message || 'Errore sconosciuto'}`
+      );
     } finally {
       setIsScanning(false);
       setImportStatusMessage(null);
@@ -116,18 +130,22 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
   const executeImport = async (mode: 'merge' | 'replace') => {
     const selectedCandidates = candidates.filter(c => c.selected);
     if (selectedCandidates.length === 0) {
-      alert('Seleziona almeno un\'opera da importare!');
+      alert(language === 'en' ? 'Please select at least one artwork to import!' : 'Seleziona almeno un\'opera da importare!');
       return;
     }
 
     const confirmMsg = mode === 'replace'
-      ? `ATTENZIONE: Stai per SOSTITUIRE completamente l'inventario attuale con le ${selectedCandidates.length} nuove opere scansionate.\n\nVuoi procedere?`
-      : `Vuoi aggiungere ${selectedCandidates.length} nuove opere al tuo inventario attuale?`;
+      ? (language === 'en'
+          ? `WARNING: You are about to REPLACE your entire current catalog with the ${selectedCandidates.length} newly scanned artworks.\n\nDo you want to proceed?`
+          : `ATTENZIONE: Stai per SOSTITUIRE completamente l'inventario attuale con le ${selectedCandidates.length} nuove opere scansionate.\n\nVuoi procedere?`)
+      : (language === 'en'
+          ? `Add ${selectedCandidates.length} new artworks to your current catalog?`
+          : `Vuoi aggiungere ${selectedCandidates.length} nuove opere al tuo inventario attuale?`);
 
     if (!confirm(confirmMsg)) return;
 
     setIsScanning(true);
-    setImportStatusMessage("Salvataggio nell'archivio locale in corso...");
+    setImportStatusMessage(language === 'en' ? 'Saving to local studio database...' : "Salvataggio nell'archivio locale in corso...");
 
     try {
       const artworksToSave = convertCandidatesToArtworks(selectedCandidates);
@@ -139,12 +157,14 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
       // Inserisci o aggiorna in blocco in Dexie
       await db.artworks.bulkPut(artworksToSave);
 
-      alert(`Successo! Importate ${artworksToSave.length} opere nel tuo inventario OperaViva.`);
+      alert(language === 'en'
+        ? `Success! Imported ${artworksToSave.length} artworks into your OperaViva studio inventory.`
+        : `Successo! Importate ${artworksToSave.length} opere nel tuo inventario OperaViva.`);
       onSuccess();
       onClose();
     } catch (err: any) {
       console.error('Errore durante il salvataggio:', err);
-      alert(`Errore durante il salvataggio: ${err.message || 'Errore database'}`);
+      alert((language === 'en' ? 'Error during database save: ' : 'Errore durante il salvataggio: ') + (err.message || 'Database error'));
     } finally {
       setIsScanning(false);
       setImportStatusMessage(null);
@@ -163,9 +183,11 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
             <FolderOpen size={20} color="#c5a059" />
-            <h2 className="modal-title">Importa da Cartella Locale</h2>
+            <h2 className="modal-title">
+              {language === 'en' ? 'Import from Local Folder' : 'Importa da Cartella Locale'}
+            </h2>
           </div>
-          <button className="btn-icon" onClick={onClose} title="Chiudi">
+          <button className="btn-icon" onClick={onClose} title={t('close')}>
             <X size={20} />
           </button>
         </div>
@@ -186,9 +208,19 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                 color: 'var(--text-secondary)',
                 lineHeight: 1.55
               }}>
-                Catalogazione rapida <strong>100% locale e offline</strong> direttamente dal tuo computer.
-                Clicca sull'area sottostante per selezionare una o più foto (o un'intera cartella).
-                OperaViva estrarrà le immagini, ricaverà titoli e proporzioni e le predisporrà per il catalogo.
+                {language === 'en' ? (
+                  <>
+                    Fast cataloging <strong>100% local and offline</strong> directly on your computer.
+                    Click the dropzone below to select photos or an entire folder.
+                    OperaViva will parse filenames, automatically infer titles and aspect ratios, and stage them for your archive.
+                  </>
+                ) : (
+                  <>
+                    Catalogazione rapida <strong>100% locale e offline</strong> direttamente dal tuo computer.
+                    Clicca sull'area sottostante per selezionare una o più foto (o un'intera cartella).
+                    OperaViva estrarrà le immagini, ricaverà titoli e proporzioni e le predisporrà per il catalogo.
+                  </>
+                )}
               </div>
 
               {/* Box Guida Convenzione Nomi File: titolo - tecnica - dimensione */}
@@ -205,10 +237,16 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--gold-400)', fontWeight: 600 }}>
                   <Info size={16} />
-                  <span>Regola per la compilazione automatica dei dati nel catalogo</span>
+                  <span>
+                    {language === 'en'
+                      ? 'Smart File Naming Convention for auto-filling catalog fields'
+                      : 'Regola per la compilazione automatica dei dati nel catalogo'}
+                  </span>
                 </div>
                 <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
-                  Per permettere all'importatore di valorizzare automaticamente tutti i campi, nomina i file separando gli elementi con un trattino <strong>"-"</strong>:
+                  {language === 'en'
+                    ? 'To let the importer populate fields automatically, separate parts with a hyphen "-":'
+                    : 'Per permettere all\'importatore di valorizzare automaticamente tutti i campi, nomina i file separando gli elementi con un trattino "-":'}
                 </p>
                 <div style={{ 
                   background: 'var(--bg-card)', 
@@ -220,10 +258,16 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                   fontSize: '0.88rem',
                   fontWeight: 600
                 }}>
-                  titolo - tecnica - dimensione.jpg
+                  {language === 'en' ? 'title - technique - dimensions.jpg' : 'titolo - tecnica - dimensione.jpg'}
                 </div>
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  <em>Esempio:</em> <strong style={{ color: 'var(--text-primary)' }}>Tramonto a Venezia - Olio su tela - 80x60.jpg</strong> (oppure con anno: <em>Tramonto a Venezia - Olio su tela - 80x60 - 2024.jpg</em>).
+                  <em>{language === 'en' ? 'Example:' : 'Esempio:'}</em>{' '}
+                  <strong style={{ color: 'var(--text-primary)' }}>
+                    {language === 'en'
+                      ? 'Sunset in Venice - Oil on canvas - 80x60.jpg'
+                      : 'Tramonto a Venezia - Olio su tela - 80x60.jpg'}
+                  </strong>{' '}
+                  ({language === 'en' ? 'or with year: Sunset in Venice - Oil on canvas - 80x60 - 2024.jpg' : 'oppure con anno: Tramonto a Venezia - Olio su tela - 80x60 - 2024.jpg'}).
                 </div>
               </div>
 
@@ -248,7 +292,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                title="Clicca per selezionare una o più foto"
+                title={language === 'en' ? 'Click to select photo files' : 'Clicca per selezionare una o più foto'}
               >
                 <div style={{
                   width: '58px',
@@ -265,10 +309,14 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
 
                 <div>
                   <h3 style={{ fontSize: '1.08rem', color: 'var(--text-primary)', marginBottom: '0.35rem' }}>
-                    Clicca qui per selezionare una foto o trascinala dentro
+                    {language === 'en'
+                      ? 'Click here to select studio photos or drag and drop files'
+                      : 'Clicca qui per selezionare una foto o trascinala dentro'}
                   </h3>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>
-                    Supporta tutti i formati: JPG, JPEG, PNG, WEBP, JFIF
+                    {language === 'en'
+                      ? 'Supported formats: JPG, JPEG, PNG, WEBP, JFIF'
+                      : 'Supporta tutti i formati: JPG, JPEG, PNG, WEBP, JFIF'}
                   </p>
                 </div>
 
@@ -284,7 +332,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                     disabled={isScanning}
                   >
                     <ImageIcon size={17} />
-                    <span>Scegli Foto (Singola o Multiple)</span>
+                    <span>{language === 'en' ? 'Choose Photos (Single or Multiple)' : 'Scegli Foto (Singola o Multiple)'}</span>
                   </button>
 
                   {/* Pulsante Secondario: Sfoglia Intera Cartella */}
@@ -296,10 +344,10 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                       folderInputRef.current?.click();
                     }}
                     disabled={isScanning}
-                    title="Seleziona una cartella contenente più immagini"
+                    title={language === 'en' ? 'Select an entire folder containing artwork photos' : 'Seleziona una cartella contenente più immagini'}
                   >
                     <FolderOpen size={17} />
-                    <span>Sfoglia Intera Cartella</span>
+                    <span>{language === 'en' ? 'Browse Entire Folder' : 'Sfoglia Intera Cartella'}</span>
                   </button>
                 </div>
 
@@ -357,10 +405,14 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
                 <div>
                   <h3 style={{ fontSize: '1.1rem', color: 'var(--text-primary)' }}>
-                    Rilevate {candidates.length} Opere Pronte
+                    {language === 'en'
+                      ? `Found ${candidates.length} Ready Artworks`
+                      : `Rilevate ${candidates.length} Opere Pronte`}
                   </h3>
                   <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-                    {selectedCount} di {candidates.length} selezionate per l'importazione
+                    {language === 'en'
+                      ? `${selectedCount} of ${candidates.length} selected for import`
+                      : `${selectedCount} di ${candidates.length} selezionate per l'importazione`}
                   </p>
                 </div>
 
@@ -370,14 +422,14 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                     className="btn btn-secondary btn-sm"
                     onClick={() => toggleSelectAll(true)}
                   >
-                    Seleziona Tutte
+                    {language === 'en' ? 'Select All' : 'Seleziona Tutte'}
                   </button>
                   <button 
                     type="button" 
                     className="btn btn-secondary btn-sm"
                     onClick={() => toggleSelectAll(false)}
                   >
-                    Deseleziona
+                    {language === 'en' ? 'Deselect All' : 'Deseleziona'}
                   </button>
                 </div>
               </div>
@@ -432,17 +484,17 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                           outline: 'none',
                           padding: '0.15rem 0'
                         }}
-                        title="Clicca per modificare il titolo prima di salvare"
+                        title={language === 'en' ? 'Click to edit title before saving' : 'Clicca per modificare il titolo prima di salvare'}
                       />
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                         <span>{cand.technique}</span>
                         <span>•</span>
                         <span>{cand.dimensions.height} × {cand.dimensions.width} cm</span>
                         <span>•</span>
-                        <span>Anno: {cand.year || '-'}</span>
+                        <span>{language === 'en' ? 'Year' : 'Anno'}: {cand.year || '-'}</span>
                       </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                        File originale: {cand.originalFileName}
+                        {language === 'en' ? 'Original file' : 'File originale'}: {cand.originalFileName}
                       </div>
                     </div>
 
@@ -465,7 +517,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                   className="btn btn-secondary"
                   onClick={() => setCandidates([])}
                 >
-                  Indietro (Nuova Scansione)
+                  {language === 'en' ? 'Back (New Scan)' : 'Indietro (Nuova Scansione)'}
                 </button>
 
                 <div style={{ display: 'flex', gap: '0.65rem' }}>
@@ -473,18 +525,18 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                     type="button" 
                     className="btn btn-secondary"
                     onClick={() => executeImport('replace')}
-                    title="Svuota l'inventario e carica solo queste opere"
+                    title={language === 'en' ? 'Clear inventory and load only these artworks' : "Svuota l'inventario e carica solo queste opere"}
                   >
-                    Sostituisci Tutto
+                    {language === 'en' ? 'Replace All' : 'Sostituisci Tutto'}
                   </button>
                   <button 
                     type="button" 
                     className="btn btn-primary"
                     onClick={() => executeImport('merge')}
-                    title="Aggiungi queste opere a quelle già esistenti"
+                    title={language === 'en' ? 'Append these artworks to existing ones' : 'Aggiungi queste opere a quelle già esistenti'}
                   >
                     <Check size={18} />
-                    <span>Aggiungi all'Inventario ({selectedCount})</span>
+                    <span>{language === 'en' ? `Add to Inventory (${selectedCount})` : `Aggiungi all'Inventario (${selectedCount})`}</span>
                   </button>
                 </div>
               </div>
