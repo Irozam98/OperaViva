@@ -20,9 +20,10 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
     window.print();
   };
 
+  const artCurrency = /^[A-Z]{3}$/.test(artwork.currency ?? '') ? artwork.currency : 'EUR';
   const formattedPrice = new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', {
     style: 'currency',
-    currency: 'EUR',
+    currency: artCurrency,
     maximumFractionDigits: 0
   }).format(artwork.price || 0);
 

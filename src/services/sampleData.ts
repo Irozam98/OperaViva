@@ -8,7 +8,7 @@ export const DEFAULT_STUDIO_PROFILE: StudioProfile = {
   email: "bottega@atelier-arte.it",
   phone: "+39 055 1234567",
   website: "www.atelier-arte.it",
-  currency: "€",
+  currency: "EUR",
   catalogPrefix: "OPV-"
 };
 

@@ -47,9 +47,7 @@ export function App() {
 
   const loadData = async () => {
     try {
-      await initializeDatabase();
-      const list = await getAllArtworks();
-      const profile = await getStudioProfile();
+      const [list, profile] = await Promise.all([getAllArtworks(), getStudioProfile()]);
       setArtworks(list);
       setStudioProfile(profile);
     } catch (err) {
@@ -640,6 +638,7 @@ export function App() {
       {isStatsModalOpen && (
         <StatsModal 
           artworks={artworks}
+          studioProfile={studioProfile}
           onClose={() => setIsStatsModalOpen(false)}
         />
       )}

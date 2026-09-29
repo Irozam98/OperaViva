@@ -41,7 +41,7 @@ export interface StudioProfile {
   website?: string;
   city?: string;
   address?: string;
-  currency: string;             // default "€"
+  currency: string;             // ISO 4217 code, e.g. "EUR", "USD"
   catalogPrefix: string;        // default "ART-"
 }
 

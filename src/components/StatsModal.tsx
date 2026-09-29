@@ -1,14 +1,15 @@
 import React from 'react';
 import { X, BarChart3, MapPin, Palette } from 'lucide-react';
-import { Artwork } from '../types/artwork';
+import { Artwork, StudioProfile } from '../types/artwork';
 import { useI18n } from '../i18n';
 
 interface StatsModalProps {
   artworks: Artwork[];
+  studioProfile: StudioProfile;
   onClose: () => void;
 }
 
-export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => {
+export const StatsModal: React.FC<StatsModalProps> = ({ artworks, studioProfile, onClose }) => {
   const { t, language } = useI18n();
   const total = artworks.length;
   const inBottega = artworks.filter(a => a.status === 'bottega');
@@ -37,10 +38,11 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
     locationCounts[loc] = (locationCounts[loc] || 0) + 1;
   });
 
-  const formatEuro = (val: number) =>
+  const studioCurrency = /^[A-Z]{3}$/.test(studioProfile.currency ?? '') ? studioProfile.currency : 'EUR';
+  const formatCurrency = (val: number) =>
     new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', {
       style: 'currency',
-      currency: 'EUR',
+      currency: studioCurrency,
       maximumFractionDigits: 0
     }).format(val);
 
@@ -69,7 +71,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
                 {language === 'en' ? 'Artworks in Studio' : 'Valore Opere in Bottega'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--gold-400)', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
-                {formatEuro(valBottega)}
+                {formatCurrency(valBottega)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 {inBottega.length} {language === 'en' ? 'available now' : 'opere disponibili subito'}
@@ -81,7 +83,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
                 {language === 'en' ? 'Artworks in Exhibition' : 'Valore Opere in Mostra'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#60a5fa', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
-                {formatEuro(valMostra)}
+                {formatCurrency(valMostra)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 {inMostra.length} {language === 'en' ? 'on exhibition' : 'opere esposte in galleria'}
@@ -93,7 +95,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
                 {language === 'en' ? 'Total Sold Artworks' : 'Incasso Opere Vendute'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#c084fc', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
-                {formatEuro(valVendute)}
+                {formatCurrency(valVendute)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 {vendute.length} {language === 'en' ? 'artworks sold' : 'opere vendute'}
@@ -105,7 +107,7 @@ export const StatsModal: React.FC<StatsModalProps> = ({ artworks, onClose }) => 
                 {language === 'en' ? 'Average Price' : 'Prezzo Medio ad Opera'}
               </div>
               <div style={{ fontSize: '1.65rem', fontWeight: 800, color: '#f8fafc', fontFamily: 'var(--font-serif)', marginTop: '4px' }}>
-                {formatEuro(avgPrice)}
+                {formatCurrency(avgPrice)}
               </div>
               <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 {language === 'en' ? `Out of ${total} total artworks` : `Su ${total} opere totali`}

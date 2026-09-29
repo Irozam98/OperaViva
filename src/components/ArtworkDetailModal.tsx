@@ -56,14 +56,16 @@ export const ArtworkDetailModal: React.FC<ArtworkDetailModalProps> = ({
 
   const statusInfo = statusMap[artwork.status] || { label: artwork.status, className: 'badge-bottega' };
 
+  const artCurrency = /^[A-Z]{3}$/.test(artwork.currency ?? '') ? artwork.currency : 'EUR';
+
   const formattedPrice = new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', {
     style: 'currency',
-    currency: 'EUR',
+    currency: artCurrency,
     maximumFractionDigits: 0
   }).format(artwork.price || 0);
 
   const formattedMinPrice = artwork.minPrice 
-    ? new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(artwork.minPrice)
+    ? new Intl.NumberFormat(language === 'en' ? 'en-US' : 'it-IT', { style: 'currency', currency: artCurrency, maximumFractionDigits: 0 }).format(artwork.minPrice)
     : null;
 
   const images = artwork.images && artwork.images.length > 0 ? artwork.images : [];

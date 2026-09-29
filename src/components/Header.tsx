@@ -33,9 +33,13 @@ export const Header: React.FC<HeaderProps> = ({
     .filter(a => a.status === 'bottega' || a.status === 'mostra')
     .reduce((sum, a) => sum + (Number(a.price) || 0), 0);
 
+  // Sanitize currency: Intl.NumberFormat needs ISO 4217 codes (EUR, USD…), not symbols (€, $…)
+  const isoCurrency = /^[A-Z]{3}$/.test(studioProfile.currency ?? '') 
+    ? studioProfile.currency 
+    : 'EUR';
   const formattedValue = new Intl.NumberFormat(language === 'it' ? 'it-IT' : 'en-US', {
     style: 'currency',
-    currency: studioProfile.currency || 'EUR',
+    currency: isoCurrency,
     maximumFractionDigits: 0
   }).format(availableValue);
 

@@ -1,3 +1,18 @@
+﻿/* Font locali offline-safe (inclusi nel bundle Electron via @fontsource) */
+@import '@fontsource/playfair-display/400.css';
+@import '@fontsource/playfair-display/400-italic.css';
+@import '@fontsource/playfair-display/500.css';
+@import '@fontsource/playfair-display/600.css';
+@import '@fontsource/playfair-display/700.css';
+@import '@fontsource/plus-jakarta-sans/300.css';
+@import '@fontsource/plus-jakarta-sans/400.css';
+@import '@fontsource/plus-jakarta-sans/500.css';
+@import '@fontsource/plus-jakarta-sans/600.css';
+@import '@fontsource/plus-jakarta-sans/700.css';
+@import '@fontsource/cinzel/500.css';
+@import '@fontsource/cinzel/600.css';
+@import '@fontsource/cinzel/700.css';
+
 /* ==========================================================================
    ArtVault Bottega - Design System & Atelier Theme
    ========================================================================== */
@@ -996,6 +1011,14 @@ html, body {
   background: rgba(212, 175, 55, 0.08);
   border-color: var(--gold-300);
 }
+/* Stato drag-over: bordo pieno oro brillante + lieve scala */
+.image-upload-zone.drag-over {
+  background: rgba(212, 175, 55, 0.13);
+  border-color: #f0d060;
+  border-style: solid;
+  transform: scale(1.01);
+  box-shadow: 0 0 0 3px rgba(240, 208, 96, 0.18), inset 0 0 20px rgba(212, 175, 55, 0.06);
+}
 
 .image-preview-strip {
   display: flex;
@@ -1598,6 +1621,8 @@ html, body {
     justify-content: space-between;
   }
 }
+
+
 
 
 

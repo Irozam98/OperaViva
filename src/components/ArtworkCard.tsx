@@ -39,9 +39,10 @@ export const ArtworkCard: React.FC<ArtworkCardProps> = ({
 
   const statusInfo = getStatusInfo(artwork.status);
   
+  const artCurrency = /^[A-Z]{3}$/.test(artwork.currency ?? '') ? artwork.currency : 'EUR';
   const formattedPrice = new Intl.NumberFormat(language === 'it' ? 'it-IT' : 'en-US', {
     style: 'currency',
-    currency: artwork.currency || 'EUR',
+    currency: artCurrency,
     maximumFractionDigits: 0
   }).format(artwork.price || 0);
 

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, dialog } = require('electron');
 const path = require('path');
 
 // Se siamo in modalità Portable (Windows .exe portatile), salva tutti i dati
@@ -23,7 +23,10 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: true
+      // CRITICO: sandbox:true blocca IndexedDB/Dexie → schermata nera
+      sandbox: false,
+      // Permette il caricamento di risorse locali (font, css) dall'asar
+      webSecurity: false,
     },
     show: false
   });
@@ -31,15 +34,51 @@ function createWindow() {
   // Rimuovi barra menu nativa standard per look moderno da atelier
   Menu.setApplicationMenu(null);
 
-  const isDev = process.env.NODE_ENV === 'development';
+  // In produzione usare app.isPackaged è più affidabile di process.env.NODE_ENV
+  const isDev = !app.isPackaged;
+
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
+    mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    const indexPath = path.join(__dirname, '../dist/index.html');
+    mainWindow.loadFile(indexPath).catch(err => {
+      console.error('Errore caricamento app:', err);
+      dialog.showErrorBox('Errore avvio OperaViva',
+        "Impossibile caricare l'applicazione.\n\nPercorso: " + indexPath + '\nErrore: ' + err.message);
+    });
   }
 
+  // Mostra la finestra solo quando è pronta (evita flash bianco)
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+    mainWindow.focus();
+  });
+
+  // Fallback: se il renderer non si avvia entro 12 secondi, mostra comunque la finestra
+  const showTimeout = setTimeout(() => {
+    if (mainWindow && !mainWindow.isVisible()) {
+      mainWindow.show();
+    }
+  }, 12000);
+
+  mainWindow.once('show', () => clearTimeout(showTimeout));
+
+  // Log e dialogo errori renderer
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+    console.error('Renderer failed:', errorCode, errorDescription, validatedURL);
+    if (!isDev) {
+      clearTimeout(showTimeout);
+      mainWindow.show();
+      dialog.showErrorBox('Errore caricamento OperaViva',
+        'Codice errore: ' + errorCode + '\n' + errorDescription + '\nURL: ' + validatedURL);
+    }
+  });
+
+  mainWindow.webContents.on('render-process-gone', (event, details) => {
+    console.error('Render process gone:', details);
+    dialog.showErrorBox('OperaViva si è arrestata',
+      'Il processo di rendering si è interrotto.\nMotivo: ' + details.reason);
   });
 
   mainWindow.on('closed', () => {

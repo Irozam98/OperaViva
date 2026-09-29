@@ -97,7 +97,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
       frameDetails: '',
       price: 1000,
       minPrice: 850,
-      currency: 'EUR',
+      currency: studioProfile.currency || 'EUR',
       status: 'bottega' as ArtworkStatus,
       location: 'Bottega - Cavalletto',
       locationNotes: '',
@@ -111,6 +111,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
 
   const [isProcessingImage, setIsProcessingImage] = useState(false);
   const [editingImageIndex, setEditingImageIndex] = useState<number | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   // Funzione per comprimere le foto caricate per ottimizzare performance & database
   const compressImage = (file: File): Promise<string> => {
@@ -150,18 +151,18 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
     });
   };
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
+  // Funzione comune per processare file da click o drag & drop
+  const processFiles = async (files: FileList | File[]) => {
+    const fileArray = Array.from(files).filter(f => f.type.startsWith('image/'));
+    if (fileArray.length === 0) return;
 
     setIsProcessingImage(true);
     try {
       const newImages: string[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const compressedBase64 = await compressImage(files[i]);
+      for (const file of fileArray) {
+        const compressedBase64 = await compressImage(file);
         newImages.push(compressedBase64);
       }
-
       setFormData(prev => ({
         ...prev,
         images: [...(prev.images || []), ...newImages]
@@ -172,6 +173,44 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
     } finally {
       setIsProcessingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    await processFiles(files);
+  };
+
+  // Handler Drag & Drop — funziona sia in browser che in Electron desktop
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = 'copy';
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Ignora dragLeave se si entra in un elemento figlio
+    if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+    setIsDragOver(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      await processFiles(files);
     }
   };
 
@@ -251,15 +290,21 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
               </label>
 
               <div 
-                className="image-upload-zone"
-                onClick={() => fileInputRef.current?.click()}
+                className={`image-upload-zone${isDragOver ? ' drag-over' : ''}`}
+                onClick={() => !isProcessingImage && fileInputRef.current?.click()}
+                onDragEnter={handleDragEnter}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
               >
-                <Upload size={32} color="#d4af37" />
+                <Upload size={32} color={isDragOver ? '#f0d060' : '#d4af37'} />
                 <div>
-                  <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.95rem' }}>
+                  <div style={{ fontWeight: 600, color: isDragOver ? '#f0d060' : '#fff', fontSize: '0.95rem' }}>
                     {isProcessingImage 
                       ? (language === 'en' ? 'Processing image...' : 'Elaborazione immagine in corso...')
-                      : (language === 'en' ? 'Click to upload photos or capture from device camera' : 'Clicca per caricare le foto o scatta dal dispositivo')}
+                      : isDragOver
+                        ? (language === 'en' ? 'Release to add photos' : 'Rilascia per aggiungere le foto')
+                        : (language === 'en' ? 'Drag photos here or click to browse' : 'Trascina le foto qui oppure clicca per sfogliarle')}
                   </div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '3px' }}>
                     {language === 'en'
@@ -503,8 +548,8 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                 />
               </div>
 
-              {/* Prezzo Listino & Prezzo Riserva */}
-              <div className="col-6 form-group">
+              {/* Prezzo Listino, Prezzo Riserva & Valuta */}
+              <div className="col-4 form-group">
                 <label className="form-label">{t('fieldPrice')} *</label>
                 <input 
                   type="number" 
@@ -517,7 +562,7 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                 />
               </div>
 
-              <div className="col-6 form-group">
+              <div className="col-4 form-group">
                 <label className="form-label">{t('fieldMinPrice')}</label>
                 <input 
                   type="number" 
@@ -527,6 +572,19 @@ export const ArtworkModal: React.FC<ArtworkModalProps> = ({
                   onChange={e => setFormData({ ...formData, minPrice: parseFloat(e.target.value) || undefined })}
                   placeholder={language === 'en' ? 'Confidential reserve (e.g. 1200)' : 'Trattativa confidenziale (es. 1200)'}
                 />
+              </div>
+
+              <div className="col-4 form-group">
+                <label className="form-label">{language === 'en' ? 'Currency' : 'Valuta'}</label>
+                <select
+                  className="form-select"
+                  value={formData.currency || 'EUR'}
+                  onChange={e => setFormData({ ...formData, currency: e.target.value })}
+                >
+                  <option value="EUR">€ Euro</option>
+                  <option value="USD">$ Dollaro USA</option>
+                  <option value="GBP">£ Sterlina UK</option>
+                </select>
               </div>
 
               {/* DOV'È PRESENTE: Stato & Collocazione */}

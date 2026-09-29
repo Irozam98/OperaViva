@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Settings, Check, Building, User, Mail, Phone, Globe, MapPin, Hash } from 'lucide-react';
+import { X, Settings, Check, Building, User, Mail, Phone, Globe, MapPin, Hash, DollarSign } from 'lucide-react';
 import { StudioProfile } from '../types/artwork';
 import { useI18n } from '../i18n';
 
@@ -143,6 +143,22 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({
                   onChange={e => setProfile({ ...profile, website: e.target.value })}
                   placeholder={language === 'en' ? 'e.g. www.artiststudio.com / @artist_name' : 'es. www.artistarossi.it / @rossi_art'}
                 />
+              </div>
+
+              <div className="col-4 form-group">
+                <label className="form-label">
+                  <DollarSign size={14} color="#d4af37" />
+                  {language === 'en' ? 'Default Currency' : 'Valuta Predefinita'}
+                </label>
+                <select
+                  className="form-select"
+                  value={profile.currency || 'EUR'}
+                  onChange={e => setProfile({ ...profile, currency: e.target.value })}
+                >
+                  <option value="EUR">€ Euro (EUR)</option>
+                  <option value="USD">$ Dollaro USA (USD)</option>
+                  <option value="GBP">£ Sterlina UK (GBP)</option>
+                </select>
               </div>
 
               <div className="col-4 form-group">
