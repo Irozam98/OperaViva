@@ -1,8 +1,10 @@
 import os
 from PIL import Image
 
-SRC_IMG = r"C:\Users\sparl\.gemini\antigravity-ide\brain\ecf59172-9809-45d9-964a-705544e73604\operaviva_app_icon_1790600054082.jpg"
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+SRC_IMG = os.path.join(ROOT_DIR, "assets", "icon_master.jpg")
+if not os.path.exists(SRC_IMG):
+    SRC_IMG = os.path.join(ROOT_DIR, "build", "icon.png")
 
 def generate():
     im = Image.open(SRC_IMG).convert("RGBA")

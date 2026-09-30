@@ -29,7 +29,8 @@ call gradlew assembleRelease
 cd ..
 
 if exist "android\app\build\outputs\apk\release\app-release.apk" (
-    copy /y "android\app\build\outputs\apk\release\app-release.apk" "%~dp0OperaViva.apk"
+    if not exist "%~dp0..\apk" mkdir "%~dp0..\apk"
+    copy /y "android\app\build\outputs\apk\release\app-release.apk" "%~dp0..\apk\OperaViva.apk"
     if not exist "release\Android_APK" mkdir "release\Android_APK"
     copy /y "android\app\build\outputs\apk\release\app-release.apk" "release\Android_APK\OperaViva.apk"
     echo.
