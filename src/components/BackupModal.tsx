@@ -154,7 +154,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
           )}
 
           {/* Opzioni di Backup */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+          <div className="backup-cards-grid">
             
             {/* Esporta Backup */}
             <div style={{
@@ -177,7 +177,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
                 </p>
               </div>
 
-              <button className="btn btn-primary" onClick={handleExport} id="btn-export-backup">
+              <button className="btn btn-primary" onClick={handleExport} id="btn-export-backup" style={{ width: '100%' }}>
                 <Download size={16} />
                 <span>{language === 'en' ? 'Download Archive (.artvault)' : 'Scarica File Backup'}</span>
               </button>
@@ -216,6 +216,7 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isImporting}
                 id="btn-import-backup"
+                style={{ width: '100%' }}
               >
                 <Upload size={16} />
                 <span>{isImporting ? (language === 'en' ? 'Importing...' : 'Caricamento...') : (language === 'en' ? 'Select .artvault File' : 'Seleziona File .artvault')}</span>
@@ -275,18 +276,14 @@ export const BackupModal: React.FC<BackupModalProps> = ({ onClose, onDataChanged
             )}
           </div>
 
-          {/* Gestione Catalogo */}
-          <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-            <button className="btn-danger btn-sm" onClick={() => setIsClearConfirmOpen(true)} style={{ fontSize: '0.8rem' }}>
-              <Trash2 size={14} />
-              <span>{language === 'en' ? 'Erase Entire Catalog' : 'Svuota Catalogo'}</span>
-            </button>
-          </div>
-
         </div>
 
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>
+        <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', gap: '0.75rem' }}>
+          <button className="btn-danger btn-sm" onClick={() => setIsClearConfirmOpen(true)} style={{ fontSize: '0.8rem', padding: '0.45rem 0.8rem' }}>
+            <Trash2 size={14} />
+            <span>{language === 'en' ? 'Erase Catalog' : 'Svuota Catalogo'}</span>
+          </button>
+          <button className="btn btn-secondary" onClick={onClose} style={{ minWidth: '90px' }}>
             {t('close')}
           </button>
         </div>

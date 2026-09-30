@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Printer, BookOpen, Save, Eye, Check, ExternalLink } from 'lucide-react';
+import { X, Printer, BookOpen, Save, Eye, Check, ExternalLink, ChevronDown, Layers } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
 import { useI18n } from '../i18n';
+import { AtelierActionSheet, SelectOption } from './AtelierActionSheet';
 
 interface CatalogPrintModalProps {
   artworks: Artwork[];
@@ -31,6 +32,30 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [savedSuccessPath, setSavedSuccessPath] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [isScopeSheetOpen, setIsScopeSheetOpen] = useState(false);
+
+  const availableCount = useMemo(() => {
+    return artworks.filter(a => a.status === 'bottega' || a.status === 'mostra').length;
+  }, [artworks]);
+
+  const scopeOptions: SelectOption[] = useMemo(() => [
+    {
+      value: 'all',
+      label: language === 'en' ? `All artworks (${artworks.length})` : `Tutte le opere (${artworks.length})`
+    },
+    {
+      value: 'available',
+      label: language === 'en' ? `Available only (${availableCount})` : `Solo disponibili (${availableCount})`
+    },
+    ...(selectedArtworkIds.length > 0 ? [{
+      value: 'selected',
+      label: language === 'en' ? `Selected only (${selectedArtworkIds.length})` : `Solo selezionate (${selectedArtworkIds.length})`
+    }] : [])
+  ], [artworks.length, availableCount, selectedArtworkIds.length, language]);
+
+  const currentScopeLabel = useMemo(() => {
+    return scopeOptions.find(o => o.value === scope)?.label || (language === 'en' ? 'All artworks' : 'Tutte le opere');
+  }, [scopeOptions, scope, language]);
 
   const handlePrint = async () => {
     if (window.electronAPI?.print) {
@@ -625,11 +650,11 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
         >
           {/* Header Modale con Controlli */}
           <div className="modal-header" style={{ borderBottom: '1px solid var(--border-subtle)', padding: '0.85rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexShrink: 0 }}>
-              <BookOpen size={22} color="#d4af37" />
-              <div>
-                <h3 className="modal-title" style={{ fontSize: '1.15rem', margin: 0, whiteSpace: 'nowrap' }}>
-                  {language === 'en' ? 'A4 Art Archive Catalog' : 'Catalogo A4 dell\'Archivio'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', minWidth: 0 }}>
+              <BookOpen size={22} color="#d4af37" style={{ flexShrink: 0 }} />
+              <div style={{ minWidth: 0 }}>
+                <h3 className="modal-title" style={{ fontSize: '1.15rem', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {language === 'en' ? 'A4 Art Catalog' : 'Catalogo A4 dell\'Archivio'}
                 </h3>
                 <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
                   {filteredArtworks.length} {language === 'en' ? 'artworks' : 'opere'} • {pages.length + (includeCover ? 1 : 0) + (includeColophon ? 1 : 0)} {language === 'en' ? 'A4 sheets' : 'fogli A4'}
@@ -637,53 +662,55 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               </div>
             </div>
 
-            {/* Pulsanti Azione Principali */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'nowrap', flexShrink: 0 }}>
-              {/* Anteprima PDF in Windows */}
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-action-pill"
-                onClick={handlePreviewPDF}
-                title={language === 'en' ? 'Open real PDF preview in Windows' : 'Apri anteprima PDF reale in Windows'}
-                id="btn-preview-catalog"
-              >
-                <span className="icon-circle" style={{ background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa' }}>
-                  <Eye size={15} />
-                </span>
-                <span>{language === 'en' ? 'PDF Preview' : 'Anteprima PDF'}</span>
-              </button>
+            {/* Pulsanti Azione (Desktop in testata, su mobile sono nel footer) + Tasto Chiudi */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexShrink: 0 }}>
+              <div className="desktop-header-actions">
+                {/* Anteprima PDF in Windows */}
+                <button 
+                  type="button" 
+                  className="btn btn-secondary btn-action-pill"
+                  onClick={handlePreviewPDF}
+                  title={language === 'en' ? 'Open real PDF preview in Windows' : 'Apri anteprima PDF reale in Windows'}
+                  id="btn-preview-catalog"
+                >
+                  <span className="icon-circle" style={{ background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa' }}>
+                    <Eye size={15} />
+                  </span>
+                  <span>{language === 'en' ? 'PDF Preview' : 'Anteprima PDF'}</span>
+                </button>
 
-              {/* Pallino stampante */}
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-action-pill"
-                onClick={handlePrint}
-                title={language === 'en' ? 'Print A4 Catalog' : 'Stampa Catalogo A4'}
-                id="btn-print-catalog"
-              >
-                <span className="icon-circle icon-circle-print">
-                  <Printer size={15} />
-                </span>
-                <span>{language === 'en' ? 'Print' : 'Stampa'}</span>
-              </button>
+                {/* Pallino stampante */}
+                <button 
+                  type="button" 
+                  className="btn btn-secondary btn-action-pill"
+                  onClick={handlePrint}
+                  title={language === 'en' ? 'Print A4 Catalog' : 'Stampa Catalogo A4'}
+                  id="btn-print-catalog"
+                >
+                  <span className="icon-circle icon-circle-print">
+                    <Printer size={15} />
+                  </span>
+                  <span>{language === 'en' ? 'Print' : 'Stampa'}</span>
+                </button>
 
-              {/* Pallino floppy per salvare PDF */}
-              <button 
-                type="button" 
-                className="btn btn-secondary btn-action-pill"
-                onClick={handleSavePDF}
-                disabled={isSaving}
-                title={language === 'en' ? 'Save as PDF (prompts save location)' : 'Salva Catalogo in PDF (scegli cartella di destinazione)'}
-                id="btn-save-pdf-catalog"
-              >
-                <span className="icon-circle icon-circle-save">
-                  <Save size={15} />
-                </span>
-                <span>{isSaving ? '...' : (language === 'en' ? 'Save PDF' : 'Salva PDF')}</span>
-              </button>
+                {/* Pallino floppy per salvare PDF */}
+                <button 
+                  type="button" 
+                  className="btn btn-secondary btn-action-pill"
+                  onClick={handleSavePDF}
+                  disabled={isSaving}
+                  title={language === 'en' ? 'Save as PDF (prompts save location)' : 'Salva Catalogo in PDF (scegli cartella di destinazione)'}
+                  id="btn-save-pdf-catalog"
+                >
+                  <span className="icon-circle icon-circle-save">
+                    <Save size={15} />
+                  </span>
+                  <span>{isSaving ? '...' : (language === 'en' ? 'Save PDF' : 'Salva PDF')}</span>
+                </button>
+              </div>
 
               <button className="btn-icon" onClick={onClose} title={language === 'en' ? 'Close' : 'Chiudi'}>
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
           </div>
@@ -732,116 +759,85 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
           )}
 
           {/* Barra Strumenti di Configurazione Impaginazione */}
-          <div style={{
-            background: 'rgba(10, 12, 16, 0.65)',
-            borderBottom: '1px solid var(--border-subtle)',
-            padding: '0.75rem 1.25rem',
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '1rem',
-            fontSize: '0.85rem'
-          }}>
-            {/* Scelta Layout Pagine A4 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: 'var(--gold-400)', fontWeight: 600 }}>Impaginazione:</span>
-              <div style={{ display: 'flex', background: '#13161f', padding: '2px', borderRadius: '6px', border: '1px solid var(--border-subtle)' }}>
-                <button
-                  type="button"
-                  onClick={() => setLayout('1')}
-                  style={{
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '4px',
-                    border: 'none',
-                    background: layout === '1' ? 'var(--gold-500)' : 'transparent',
-                    color: layout === '1' ? '#12141a' : 'var(--text-secondary)',
-                    fontWeight: layout === '1' ? 700 : 500,
-                    cursor: 'pointer',
-                    fontSize: '0.8rem'
-                  }}
+          <div className="catalog-toolbar">
+            <div className="catalog-toolbar-grid">
+              {/* Scelta Layout Pagine A4 */}
+              <div className="catalog-toolbar-row">
+                <span className="catalog-toolbar-label">
+                  {language === 'en' ? 'Layout:' : 'Impaginazione:'}
+                </span>
+                <div className="catalog-layout-segmented">
+                  <button
+                    type="button"
+                    onClick={() => setLayout('1')}
+                    className={`catalog-layout-btn ${layout === '1' ? 'active' : ''}`}
+                  >
+                    {language === 'en' ? '1 per page' : '1 per foglio'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLayout('2')}
+                    title="2 opere per foglio (Consigliato)"
+                    className={`catalog-layout-btn ${layout === '2' ? 'active' : ''}`}
+                  >
+                    {language === 'en' ? '2 per page' : '2 per foglio'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setLayout('4')}
+                    className={`catalog-layout-btn ${layout === '4' ? 'active' : ''}`}
+                  >
+                    {language === 'en' ? '4 per page' : '4 per foglio'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Opzioni Filtro Opere con Atelier Action Sheet */}
+              <div className="catalog-toolbar-row">
+                <span className="catalog-toolbar-label">
+                  {language === 'en' ? 'Include:' : 'Includi:'}
+                </span>
+                <div 
+                  className="catalog-scope-selector"
+                  onClick={() => setIsScopeSheetOpen(true)}
+                  role="button"
+                  tabIndex={0}
                 >
-                  1 per foglio
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLayout('2')}
-                  style={{
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '4px',
-                    border: 'none',
-                    background: layout === '2' ? 'var(--gold-500)' : 'transparent',
-                    color: layout === '2' ? '#12141a' : 'var(--text-secondary)',
-                    fontWeight: layout === '2' ? 700 : 500,
-                    cursor: 'pointer',
-                    fontSize: '0.8rem'
-                  }}
-                >
-                  2 per foglio (Consigliato)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLayout('4')}
-                  style={{
-                    padding: '0.25rem 0.65rem',
-                    borderRadius: '4px',
-                    border: 'none',
-                    background: layout === '4' ? 'var(--gold-500)' : 'transparent',
-                    color: layout === '4' ? '#12141a' : 'var(--text-secondary)',
-                    fontWeight: layout === '4' ? 700 : 500,
-                    cursor: 'pointer',
-                    fontSize: '0.8rem'
-                  }}
-                >
-                  4 per foglio
-                </button>
+                  <span className="catalog-scope-text">
+                    {currentScopeLabel}
+                  </span>
+                  <ChevronDown size={14} className="select-chevron-icon" style={{ color: 'var(--gold-400)', flexShrink: 0 }} />
+                </div>
               </div>
             </div>
 
-            {/* Opzioni Filtro Opere */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: 'var(--text-muted)' }}>Includi:</span>
-              <select 
-                className="form-select" 
-                value={scope} 
-                onChange={e => setScope(e.target.value as any)}
-                style={{ padding: '0.25rem 0.6rem', fontSize: '0.8rem', width: 'auto' }}
-              >
-                <option value="all">Tutte le opere ({artworks.length})</option>
-                <option value="available">Solo disponibili ({artworks.filter(a => a.status === 'bottega' || a.status === 'mostra').length})</option>
-                {selectedArtworkIds.length > 0 && (
-                  <option value="selected">Solo selezionate ({selectedArtworkIds.length})</option>
-                )}
-              </select>
-            </div>
-
             {/* Toggles Copertina, Prezzi, Colophon */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+            <div className="catalog-toolbar-checkboxes">
+              <label className="catalog-toolbar-checkbox">
                 <input 
                   type="checkbox" 
                   checked={showPrices} 
                   onChange={e => setShowPrices(e.target.checked)} 
                 />
-                <span>Mostra Prezzi</span>
+                <span>{language === 'en' ? 'Show Prices' : 'Mostra Prezzi'}</span>
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              <label className="catalog-toolbar-checkbox">
                 <input 
                   type="checkbox" 
                   checked={includeCover} 
                   onChange={e => setIncludeCover(e.target.checked)} 
                 />
-                <span>Copertina d'Arte</span>
+                <span>{language === 'en' ? 'Art Cover' : 'Copertina d\'Arte'}</span>
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', cursor: 'pointer', color: 'var(--text-secondary)' }}>
+              <label className="catalog-toolbar-checkbox">
                 <input 
                   type="checkbox" 
                   checked={includeColophon} 
                   onChange={e => setIncludeColophon(e.target.checked)} 
                 />
-                <span>Pagina Contatti</span>
+                <span>{language === 'en' ? 'Contact Page' : 'Pagina Contatti'}</span>
               </label>
             </div>
           </div>
@@ -887,12 +883,12 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
           </div>
 
           {/* Footer Modale */}
-          <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <button className="btn btn-secondary" onClick={onClose}>
+          <div className="modal-footer catalog-modal-footer">
+            <button className="btn btn-secondary btn-close" onClick={onClose}>
               {language === 'en' ? 'Close' : 'Chiudi'}
             </button>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+            <div className="catalog-footer-actions">
               {/* Anteprima PDF */}
               <button 
                 type="button" 
@@ -922,7 +918,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               {/* Salva PDF */}
               <button 
                 type="button" 
-                className="btn btn-primary btn-action-pill"
+                className="btn btn-primary btn-action-pill btn-save-main"
                 onClick={handleSavePDF}
                 disabled={isSaving}
               >
@@ -939,6 +935,17 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
 
       {/* Montaggio Area Stampa all'esterno di .app-container tramite createPortal */}
       {typeof document !== 'undefined' && createPortal(printCatalogContent, document.body)}
+
+      {/* Atelier Action Sheet per Selettore Includi Opere */}
+      <AtelierActionSheet
+        isOpen={isScopeSheetOpen}
+        title={language === 'en' ? 'Include Artworks' : 'Opere da Includere'}
+        icon={<Layers size={20} />}
+        options={scopeOptions}
+        selectedValue={scope}
+        onSelect={val => setScope(val as any)}
+        onClose={() => setIsScopeSheetOpen(false)}
+      />
     </>
   );
 };

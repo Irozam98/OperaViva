@@ -14,6 +14,7 @@ import { ProfileModal } from './components/ProfileModal';
 import { SiteImporterModal } from './components/SiteImporterModal';
 import { ConfirmModal } from './components/ConfirmModal';
 import { CatalogPrintModal } from './components/CatalogPrintModal';
+import { AtelierActionSheet } from './components/AtelierActionSheet';
 import { useI18n } from './i18n';
 
 export function App() {
@@ -34,6 +35,7 @@ export function App() {
   const [isBulkDeleteConfirmOpen, setIsBulkDeleteConfirmOpen] = useState(false);
   const [isFirstRun, setIsFirstRun] = useState(false);
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
+  const [activeActionSheet, setActiveActionSheet] = useState<'location' | 'technique' | 'sort' | null>(null);
 
   // Multi-Selezione Opere per Eliminazione di Gruppo
   const [selectedArtworkIds, setSelectedArtworkIds] = useState<string[]>([]);
@@ -326,55 +328,55 @@ export function App() {
             {/* Raggruppamento Filtri Dropdown con Icone e Design Atelier */}
             <div className="filter-dropdowns-group">
               {/* Filtro Collocazione */}
-              <div className={`filter-select-box ${filters.location ? 'has-value' : ''}`} title={t('location')}>
+              <div 
+                className={`filter-select-box ${filters.location ? 'has-value' : ''}`} 
+                title={t('location')}
+                onClick={() => setActiveActionSheet('location')}
+                role="button"
+                tabIndex={0}
+                style={{ cursor: 'pointer' }}
+              >
                 <MapPin size={15} className="select-lead-icon" />
-                <select 
-                  className="filter-select-input"
-                  value={filters.location}
-                  onChange={e => setFilters({ ...filters, location: e.target.value })}
-                  id="filter-location"
-                >
-                  <option value="">{t('allLocations')}</option>
-                  {uniqueLocations.map((loc, idx) => (
-                    <option key={idx} value={loc}>{loc}</option>
-                  ))}
-                </select>
+                <span className="filter-select-input" style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {filters.location || t('allLocations')}
+                </span>
                 <ChevronDown size={14} className="select-chevron-icon" />
               </div>
 
               {/* Filtro Tecnica */}
-              <div className={`filter-select-box ${filters.technique ? 'has-value' : ''}`} title={t('technique')}>
+              <div 
+                className={`filter-select-box ${filters.technique ? 'has-value' : ''}`} 
+                title={t('technique')}
+                onClick={() => setActiveActionSheet('technique')}
+                role="button"
+                tabIndex={0}
+                style={{ cursor: 'pointer' }}
+              >
                 <Palette size={15} className="select-lead-icon" />
-                <select 
-                  className="filter-select-input"
-                  value={filters.technique}
-                  onChange={e => setFilters({ ...filters, technique: e.target.value })}
-                  id="filter-technique"
-                >
-                  <option value="">{t('allTechniques')}</option>
-                  {uniqueTechniques.map((tech, idx) => (
-                    <option key={idx} value={tech}>{tech}</option>
-                  ))}
-                </select>
+                <span className="filter-select-input" style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {filters.technique || t('allTechniques')}
+                </span>
                 <ChevronDown size={14} className="select-chevron-icon" />
               </div>
 
               {/* Ordinamento */}
-              <div className={`filter-select-box ${filters.sortBy !== 'date_desc' ? 'has-value' : ''}`} title="Ordina">
+              <div 
+                className={`filter-select-box ${filters.sortBy !== 'date_desc' ? 'has-value' : ''}`} 
+                title="Ordina"
+                onClick={() => setActiveActionSheet('sort')}
+                role="button"
+                tabIndex={0}
+                style={{ cursor: 'pointer' }}
+              >
                 <ArrowUpDown size={15} className="select-lead-icon" />
-                <select 
-                  className="filter-select-input"
-                  value={filters.sortBy}
-                  onChange={e => setFilters({ ...filters, sortBy: e.target.value as any })}
-                  id="filter-sort"
-                >
-                  <option value="date_desc">{t('sortLatest')}</option>
-                  <option value="date_asc">{t('sortOldest')}</option>
-                  <option value="price_desc">{t('sortPriceDesc')}</option>
-                  <option value="price_asc">{t('sortPriceAsc')}</option>
-                  <option value="title_asc">{t('sortTitleAsc')}</option>
-                  <option value="year_desc">{t('sortYearDesc')}</option>
-                </select>
+                <span className="filter-select-input" style={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {filters.sortBy === 'date_desc' ? t('sortLatest') :
+                   filters.sortBy === 'date_asc' ? t('sortOldest') :
+                   filters.sortBy === 'price_desc' ? t('sortPriceDesc') :
+                   filters.sortBy === 'price_asc' ? t('sortPriceAsc') :
+                   filters.sortBy === 'title_asc' ? t('sortTitleAsc') :
+                   filters.sortBy === 'year_desc' ? t('sortYearDesc') : t('sortLatest')}
+                </span>
                 <ChevronDown size={14} className="select-chevron-icon" />
               </div>
             </div>
@@ -432,7 +434,8 @@ export function App() {
 
             {(filters.searchQuery || filters.status !== 'all' || filters.location || filters.technique) && (
               <button 
-                className="btn-ghost btn-sm"
+                type="button"
+                className="btn-reset-filters"
                 onClick={() => setFilters({
                   searchQuery: '',
                   status: 'all',
@@ -443,9 +446,9 @@ export function App() {
                   sortBy: 'date_desc',
                   onlyFramed: false
                 })}
-                style={{ fontSize: '0.8rem', color: 'var(--gold-400)' }}
               >
-                {language === 'en' ? 'Reset filters' : 'Azzera filtri'}
+                <X size={13} style={{ strokeWidth: 2.5 }} />
+                <span>{language === 'en' ? 'Reset filters' : 'Azzera filtri'}</span>
               </button>
             )}
           </div>
@@ -743,6 +746,50 @@ export function App() {
           onClose={() => setIsCatalogModalOpen(false)}
         />
       )}
+
+      {/* Atelier Action Sheets per Filtri e Ordinamento (Mobile e Desktop) */}
+      <AtelierActionSheet
+        isOpen={activeActionSheet === 'location'}
+        title={t('location')}
+        icon={<MapPin size={20} />}
+        options={[
+          { value: '', label: t('allLocations') },
+          ...uniqueLocations.map(loc => ({ value: loc, label: loc }))
+        ]}
+        selectedValue={filters.location}
+        onSelect={val => setFilters(f => ({ ...f, location: val }))}
+        onClose={() => setActiveActionSheet(null)}
+      />
+
+      <AtelierActionSheet
+        isOpen={activeActionSheet === 'technique'}
+        title={t('technique')}
+        icon={<Palette size={20} />}
+        options={[
+          { value: '', label: t('allTechniques') },
+          ...uniqueTechniques.map(tech => ({ value: tech, label: tech }))
+        ]}
+        selectedValue={filters.technique}
+        onSelect={val => setFilters(f => ({ ...f, technique: val }))}
+        onClose={() => setActiveActionSheet(null)}
+      />
+
+      <AtelierActionSheet
+        isOpen={activeActionSheet === 'sort'}
+        title="Ordina Opere"
+        icon={<ArrowUpDown size={20} />}
+        options={[
+          { value: 'date_desc', label: t('sortLatest') },
+          { value: 'date_asc', label: t('sortOldest') },
+          { value: 'price_desc', label: t('sortPriceDesc') },
+          { value: 'price_asc', label: t('sortPriceAsc') },
+          { value: 'title_asc', label: t('sortTitleAsc') },
+          { value: 'year_desc', label: t('sortYearDesc') }
+        ]}
+        selectedValue={filters.sortBy}
+        onSelect={val => setFilters(f => ({ ...f, sortBy: val as any }))}
+        onClose={() => setActiveActionSheet(null)}
+      />
 
     </div>
   );

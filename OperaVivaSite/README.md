@@ -1,8 +1,14 @@
 # OperaViva — Sito Vetrina per Cloudflare Pages
+*Nota: Cloudflare è impiegato ESCLUSIVAMENTE per questo sito web di presentazione (`operaviva.pages.dev`). Non c'entra nulla con GitHub, con il codice dell'applicazione o con il programma desktop.*
 
 Questa cartella contiene il sito statico completo e autonomo di presentazione di **OperaViva**.
 
-## 🚀 Come caricarlo su Cloudflare Pages (Direct Upload / Drag & Drop)
+## 🚀 Come pubblicarlo con Wrangler o Dashboard
+Per pubblicare le modifiche su Cloudflare Pages tramite Wrangler, eseguire da questa cartella:
+```bash
+npx wrangler pages deploy .
+```
+Oppure tramite Direct Upload sulla dashboard:
 
 1. Accedi alla dashboard di **[Cloudflare](https://dash.cloudflare.com/)**.
 2. Vai nella sezione **Compute (Workers) > Workers & Pages** oppure **Pages**.

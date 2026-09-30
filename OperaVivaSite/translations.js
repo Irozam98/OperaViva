@@ -60,8 +60,8 @@ const siteTranslations = {
     card2Title: 'Emissione Certificato di Autenticità',
     card2Desc: 'Genera in un istante il Certificato Ufficiale d\'Autore pronto per la stampa o PDF: completo di foto, dati tecnici, codice inventario, dichiarazione di autenticità, timbro e firma dell\'artista.',
     
-    card3Title: 'Backup Conservativo .artvault',
-    card3Desc: 'Esporta il tuo intero patrimonio con un solo clic in un singolo archivio protetto. Include tutte le fotografie in alta risoluzione e la cronologia, pronto da custodire su chiavetta USB o hard disk esterno.',
+    card3Title: 'Backup Conservativo & Aggiornamenti Facili',
+    card3Desc: 'Esporta il tuo intero patrimonio con un solo clic in formato .artvault (con tutte le foto) o foglio .CSV. I software avranno nel tempo vari aggiornamenti: ti basterà estrarre il file di backup o CSV e reintegrarlo nella nuova versione dell\'app per ritrovare tutto all\'istante, senza dover ripetere alcun lavoro o reinserire le opere da zero.',
     
     card4Title: 'Tracciamento Collocazione & Stato',
     card4Desc: 'Non perdere mai più di vista un\'opera: scopri al volo cosa si trova nel tuo studio, quali quadri sono affidati a mostre e gallerie, e quali fanno parte di collezioni private.',
@@ -159,6 +159,10 @@ const siteTranslations = {
     platAndSpec2: "✔ Interfaccia touch ottimizzata per smartphone e tablet",
     platAndSpec3: "✔ 100% Offline: nessun traffico dati, funziona senza rete",
 
+    // Banner Aggiornamenti
+    updateBannerTitle: "Aggiornamenti Futuri & Migrazione Dati Senza Pensieri",
+    updateBannerDesc: "I nostri software avranno nel tempo <strong>continui aggiornamenti, ottimizzazioni ed evoluzioni</strong>. Passare a qualsiasi nuova versione è semplicissimo: ti basterà estrarre il <strong>file di backup (.artvault con foto o esportazione CSV del catalogo)</strong> dalla tua versione attuale e reintegrarlo nella nuova app con un solo clic. Ritroverai tutte le tue opere e fotografie all'istante, senza dover ripetere nulla!",
+
     // FAQ
     faqTag: "Chiarezza & Riservatezza",
     faqTitle: "Domande <span class=\"gold-gradient\">Frequenti.</span>",
@@ -166,6 +170,8 @@ const siteTranslations = {
     faqA1: "Tutti i dati e le immagini sono conservati <strong>esclusivamente all'interno del tuo dispositivo</strong> (nel database locale crittografato dell'applicazione Windows o Android). Nessun server, nessun cloud e nessun dato scambiato online: la tua arte, le foto in alta definizione e i dati economici rimangono al 100% tuoi e offline.",
     faqQ2: "Posso fare il backup per non perdere mai nulla se cambio computer?",
     faqA2: "Certamente! OperaViva dispone di un sistema di backup proprietario: con un clic sul pulsante <strong>\"Archivio & Backup\"</strong> puoi generare un file compatto con estensione <code>.artvault</code> contenente l'intero inventario e tutte le fotografie ad alta definizione. Puoi anche esportare il catalogo in formato <code>.CSV</code> per consultarlo con Microsoft Excel o Fogli Google.",
+    faqQ_Updates: "I software avranno aggiornamenti nel tempo? Come faccio per non ripetere tutto il lavoro?",
+    faqA_Updates: "Certamente! I software riceveranno nel tempo <strong>continui aggiornamenti e nuove funzionalità</strong>. La salvaguardia del tuo archivio è garantita al 100%: prima di passare alla nuova versione, ti basterà aprire <em>\"Archivio & Backup\"</em>, estrarre il tuo <strong>file di backup (.artvault / .zip con foto oppure esportare il file .CSV del catalogo)</strong> e poi reintegrarlo nella nuova versione dell'applicazione con un solo clic. Tutti i dati, le opere e le fotografie torneranno immediatamente al loro posto, <strong>senza dover ripetere alcun lavoro o reinserire nulla da capo</strong>!",
     faqQ3: "Come funziona la stampa del Certificato di Autenticità?",
     faqA3: "Aprendo la scheda di qualsiasi opera e cliccando su <em>\"Certificato di Autenticità\"</em>, il programma prepara una pagina impaginata con stile curatoriale ad alta eleganza. Puoi stamparla direttamente su carta pergamena o pregiata, oppure salvarla in PDF per inviarla via email al collezionista.",
     faqQ4: "L'applicazione richiede un collegamento a Internet?",
@@ -258,8 +264,8 @@ const siteTranslations = {
     card2Title: 'Certificate of Authenticity Issuance',
     card2Desc: 'Instantly generate an official Certificate of Authenticity ready for high-resolution printing or PDF export: complete with artwork photograph, technical specs, inventory code, legal authenticity statement, wax/studio seal, and author signature.',
     
-    card3Title: 'Preservation Backup .artvault',
-    card3Desc: 'Export your entire artistic heritage with a single click into a self-contained protected archive. Includes all high-resolution photos and history, ready for multi-decade archiving on USB flash drives or external drives.',
+    card3Title: 'Preservation Backup & Seamless Updates',
+    card3Desc: 'Export your entire artistic heritage with a single click into a protected .artvault archive (with all photos) or a .CSV spreadsheet. The software will receive continuous updates over time: simply export your backup or CSV and restore it into the new app version to instantly retrieve everything without re-entering anything.',
     
     card4Title: 'Location Tracking & Status',
     card4Desc: 'Never lose track of a canvas or sculpture again: immediately identify what remains in your atelier, which pieces are on loan to galleries or museums, and which belong to private collections.',
@@ -357,6 +363,10 @@ const siteTranslations = {
     platAndSpec2: '✔ Touch-optimized interface for phones and tablets',
     platAndSpec3: '✔ 100% Offline: zero cellular data, works without internet',
 
+    // Update Banner
+    updateBannerTitle: 'Future Updates & Effortless Data Preservation',
+    updateBannerDesc: 'Our software will receive <strong>continuous updates, optimizations, and new features</strong> over time. Upgrading is seamless: simply export your <strong>backup file (.artvault with photos or CSV catalog export)</strong> from your current version and restore it into the new app with one click. All artworks, photos, and valuations will be restored instantly without repeating any manual work!',
+
     // FAQ
     faqTag: 'Transparency & Privacy',
     faqTitle: 'Frequently <span class="gold-gradient">Asked Questions.</span>',
@@ -364,6 +374,8 @@ const siteTranslations = {
     faqA1: 'All records and high-definition images are stored <strong>strictly inside your device</strong> (in the high-performance local database of the Windows or Android application). Zero servers, zero third-party clouds, and zero data shared online: your art, photographs, and financial values remain 100% sovereign and offline.',
     faqQ2: 'Can I create backups to migrate to a new computer without losing anything?',
     faqA2: 'Absolutely! OperaViva incorporates a dedicated backup suite: clicking <strong>"Archive & Backup"</strong> generates a compact <code>.artvault</code> file encapsulating your entire catalog and all full-resolution photographs. You can also export to <code>.CSV</code> for spreadsheets.',
+    faqQ_Updates: 'Will the software receive updates over time? How do I ensure I won\'t lose or re-enter my data?',
+    faqA_Updates: 'Yes, absolutely! The software will receive <strong>continuous updates and enhancements</strong> over time. Safeguarding your archive is guaranteed: before moving to the new version, open <em>"Archive & Backup"</em>, export your <strong>backup file (.artvault with photos or .CSV catalog export)</strong>, and then re-import it into the new app version with a single click. All artwork sheets, records, and photographs will be restored immediately, <strong>without repeating any work or starting over</strong>!',
     faqQ3: 'How does Certificate of Authenticity printing work?',
     faqA3: 'Opening any artwork record and clicking <em>"Certificate of Authenticity"</em> renders an internationally standardized curatorial layout. You can print directly onto parchment/fine art paper or save as a pristine PDF to email collectors.',
     faqQ4: 'Does the application require an active internet connection?',

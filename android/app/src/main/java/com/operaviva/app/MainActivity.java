@@ -1,4 +1,4 @@
-package com.artvault.bottega;
+package com.operaviva.app;
 
 import com.getcapacitor.BridgeActivity;
 

@@ -27,8 +27,12 @@ dist-ssr
 release/
 *.exe
 *.apk
+*.aab
+*.jks
 **/OperaViva_Dati/
 android/app/build/
 android/.gradle/
 .gradle/
+.wrangler/
+google console/
 

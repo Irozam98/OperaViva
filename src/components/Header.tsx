@@ -155,13 +155,13 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="curator-counts">
           <span className="curator-label">{t('archiveGeneral')}:</span>
           <strong>{totalArtworks} {totalArtworks === 1 ? t('operaSingular') : t('opereCount')}</strong>
-          <span className="curator-sep">/</span>
+          <span className="curator-sep">•</span>
           <span>{inBottega} {t('inBottega')}</span>
-          <span className="curator-sep">/</span>
+          <span className="curator-sep">•</span>
           <span>{inMostra} {t('inMostra')}</span>
           {vendute > 0 && (
             <>
-              <span className="curator-sep">/</span>
+              <span className="curator-sep">•</span>
               <span>{vendute} {t('inCollezioniPrivate')}</span>
             </>
           )}

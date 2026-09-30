@@ -8,6 +8,15 @@
 
 ---
 
+> [!IMPORTANT]
+> ### 📌 NOTA ARCHITETTURALE FONDAMENTALE
+> **Cloudflare è impiegato ESCLUSIVAMENTE per il sito web di presentazione / vetrina dell'app (`OperaVivaSite/` ospitato su Cloudflare Pages).**
+> - **Non c'entra nulla con GitHub**: il codice sorgente e le versioni risiedono su GitHub.
+> - **Non c'entra nulla con l'app o il programma**: l'applicazione OperaViva (sia la versione desktop Windows `.exe` che l'app mobile Android `.apk`) è autonoma, funziona al 100% offline e memorizza tutti i dati in locale sul dispositivo.
+> - La sincronizzazione del sito web con Cloudflare avviene separatamente tramite Wrangler (`npx wrangler pages deploy .`) solo dalla cartella del sito vetrina.
+
+---
+
 **OperaViva** è una suite completa per la **catalogazione, gestione dell'archivio d'autore e inventario museale** concepita specificamente per **pittori, scultori, botteghe d'arte, gallerie e restauratori**. 
 
 Progettato con una filosofia **100% Locale e Offline**, OperaViva garantisce che nessuna informazione (immagini originali, quotazioni riservate, ubicazioni delle opere o dati dei collezionisti) venga mai trasmessa a server esterni o cloud terzi.
@@ -21,6 +30,12 @@ Progettato con una filosofia **100% Locale e Offline**, OperaViva garantisce che
 | **💼 Windows Portable (.exe)** | **Versione consigliata.** Non richiede installazione, perfetta per chiavette USB o dischi esterni. | Scarica `OperaViva_Portable.exe` ed eseguilo direttamente con un doppio clic. Tutti i dati e le foto rimangono nella cartella `OperaViva_Dati` accanto all'eseguibile. |
 | **🖥️ Windows Installer (.exe)** | Programma di installazione classico con icona sul Desktop e integrazione nel menu Start di Windows. | Esegui `OperaViva_Setup.exe` e segui la procedura guidata a schermo. |
 | **📱 Android App (.apk)** | Pacchetto per smartphone e tablet Android con accesso rapido alla fotocamera da atelier ed editor touch. | Installa `OperaViva.apk` sul tuo dispositivo abilitando l'installazione da origini note. |
+
+> [!NOTE]
+> **Riepilogo Ruoli dei Servizi:**
+> - **Cloudflare (Cloudflare Pages)**: Solo ed esclusivamente sito vetrina promozionale.
+> - **GitHub**: Repository del codice sorgente e distribuzione delle **Releases ufficiali** (`.exe` e `.apk`) per sincronizzare il lavoro su più PC.
+> - **App OperaViva**: Programma autonomo, 100% offline.
 
 > [!TIP]
 > **Gestione dei file binari su GitHub:**  
@@ -106,15 +121,10 @@ npm run dev
 # Compila l'interfaccia e genera sia l'installer NSIS che l'eseguibile Portable
 npm run electron:build
 ```
-I file compilati vengono salvati in `release/`, pronti per essere distribuiti tramite gli script batch dedicati:
-- `scripts/Compila_Nuovo_Portable.bat`
-- `scripts/Compila_Nuovo_Exe.bat`
-
-### Compilazione Pacchetto Android (.apk)
-```bash
-# Sincronizza i file web con il progetto Android e compila l'APK di debug
-npm run android:build
-```
+I file compilati e gli script pronti all'uso sono organizzati nelle rispettive cartelle:
+- 💻 **Windows**: `scripts/Compila_Nuovo_Portable.bat` e `scripts/Compila_Nuovo_Exe.bat` (output in `portable/`, `exe/` e `release/`)
+- 📱 **Android APK**: `apk/Compila_Nuovo_Apk.bat` (output in `apk/` e `release/Android_APK/`)
+- 🌐 **Google Play Console (AAB)**: `google console/Compila_Nuovo_AAB_GooglePlay.bat` (output in `google console/1_DA_CARICARE_IN_RELEASE_AAB/`)
 
 ---
 
