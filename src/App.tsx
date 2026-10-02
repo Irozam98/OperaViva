@@ -15,6 +15,7 @@ import { SiteImporterModal } from './components/SiteImporterModal';
 import { ConfirmModal } from './components/ConfirmModal';
 import { CatalogPrintModal } from './components/CatalogPrintModal';
 import { AtelierActionSheet } from './components/AtelierActionSheet';
+import { CloudSyncModal } from './components/CloudSyncModal';
 import { useI18n } from './i18n';
 
 export function App() {
@@ -35,6 +36,7 @@ export function App() {
   const [isBulkDeleteConfirmOpen, setIsBulkDeleteConfirmOpen] = useState(false);
   const [isFirstRun, setIsFirstRun] = useState(false);
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
+  const [isCloudModalOpen, setIsCloudModalOpen] = useState(false);
   const [activeActionSheet, setActiveActionSheet] = useState<'location' | 'technique' | 'sort' | null>(null);
 
   // Multi-Selezione Opere per Eliminazione di Gruppo
@@ -303,6 +305,7 @@ export function App() {
         onOpenBackupModal={() => setIsBackupModalOpen(true)}
         onOpenProfileModal={() => setIsProfileModalOpen(true)}
         onOpenCatalogModal={() => setIsCatalogModalOpen(true)}
+        onOpenCloudModal={() => setIsCloudModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -746,6 +749,15 @@ export function App() {
           onClose={() => setIsCatalogModalOpen(false)}
         />
       )}
+
+      {/* Modale OperaViva Cloud WebApp & 2FA Authenticator */}
+      <CloudSyncModal
+        isOpen={isCloudModalOpen}
+        onClose={() => setIsCloudModalOpen(false)}
+        artworks={artworks}
+        studioProfile={studioProfile}
+        onDataSynced={loadData}
+      />
 
       {/* Atelier Action Sheets per Filtri e Ordinamento (Mobile e Desktop) */}
       <AtelierActionSheet

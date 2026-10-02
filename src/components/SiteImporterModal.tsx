@@ -489,7 +489,7 @@ export const SiteImporterModal: React.FC<SiteImporterModalProps> = ({
                       <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
                         <span>{cand.technique}</span>
                         <span>•</span>
-                        <span>{cand.dimensions.height} × {cand.dimensions.width} cm</span>
+                        <span>{cand.dimensions?.height || 0} × {cand.dimensions?.width || 0} cm</span>
                         <span>•</span>
                         <span>{language === 'en' ? 'Year' : 'Anno'}: {cand.year || '-'}</span>
                       </div>

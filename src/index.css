@@ -2302,6 +2302,556 @@ html, body {
   margin-left: 0.75rem;
 }
 
+/* ==========================================================================
+   OperaViva Cloud WebApp & 2FA Authenticator Modal
+   ========================================================================== */
+.cloud-sync-modal {
+  background: var(--bg-secondary) !important;
+  border: 1px solid var(--border-gold) !important;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+  overflow: hidden;
+}
+
+.cloud-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.cloud-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.cloud-icon-pill {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: rgba(197, 160, 89, 0.12);
+  border: 1px solid var(--border-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.cloud-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.cloud-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.cloud-modal-body {
+  padding: 1.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Status Banner */
+.cloud-status-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.banner-success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10b981;
+}
+
+.banner-error {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  color: #ef4444;
+}
+
+.banner-info {
+  background: rgba(197, 160, 89, 0.12);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-300);
+}
+
+/* User Connected Card */
+.cloud-user-card {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.user-card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-card-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.badge-2fa-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.user-card-title {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.user-card-studio {
+  font-size: 0.85rem;
+  color: var(--gold-300);
+  margin: 0;
+}
+
+.user-card-email {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.btn-disconnect-cloud {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.btn-disconnect-cloud:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Cloudflare Free Box */
+.cloudflare-free-box {
+  background: rgba(197, 160, 89, 0.08);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.free-box-header {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--gold-300);
+  font-size: 0.88rem;
+}
+
+.cloudflare-free-box p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Sync Actions */
+.sync-action-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+}
+
+.action-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(197, 160, 89, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-info {
+  flex: 1;
+}
+
+.action-info h4 {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: 0.2rem;
+}
+
+.action-info p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Sync Progress */
+.sync-progress-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.progress-savings {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gold-gradient);
+  transition: width 0.2s ease;
+}
+
+/* Guide Card */
+.cloud-guide-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.guide-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guide-header h4 {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.guide-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+.guide-steps li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* Auth Tabs */
+.auth-tabs-row {
+  display: flex;
+  background: var(--bg-input);
+  border-radius: var(--radius-md);
+  padding: 4px;
+}
+
+.auth-pill-btn {
+  flex: 1;
+  padding: 0.6rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  text-align: center;
+}
+
+.auth-pill-btn.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.cloud-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.form-field input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color var(--trans-fast);
+}
+
+.form-field input:focus {
+  border-color: var(--gold-400);
+  box-shadow: 0 0 0 2px var(--gold-glow);
+}
+
+.cloud-security-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.btn-block-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+
+/* TOTP Setup Panel */
+.totp-setup-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+  text-align: center;
+}
+
+.setup-intro h3 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin: 0.4rem 0 0.3rem 0;
+}
+
+.setup-intro p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.qr-card-center {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  display: inline-block;
+}
+
+.qr-image-display {
+  display: block;
+  max-width: 190px;
+  height: auto;
+}
+
+.manual-key-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+}
+
+.key-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.key-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.key-code {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--gold-300);
+  letter-spacing: 1px;
+}
+
+.btn-copy-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.btn-copy-key:hover {
+  border-color: var(--border-gold);
+  color: var(--gold-300);
+}
+
+.pin-verification-block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.pin-prompt {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.pin-boxes-container {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.pin-digit-box {
+  width: 44px;
+  height: 52px;
+  background: var(--bg-input);
+  border: 2px solid var(--border-subtle);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: all var(--trans-fast);
+}
+
+.pin-digit-box:focus {
+  border-color: var(--gold-400);
+  box-shadow: 0 0 10px var(--gold-glow);
+  transform: translateY(-2px);
+}
+
+.pin-actions-row {
+  display: flex;
+  gap: 0.85rem;
+  width: 100%;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.btn-cloud-webapp-header {
+  border-color: var(--border-gold) !important;
+  color: var(--gold-300) !important;
+  background: rgba(197, 160, 89, 0.08) !important;
+}
+
+.btn-cloud-webapp-header:hover {
+  background: rgba(197, 160, 89, 0.18) !important;
+  border-color: var(--gold-400) !important;
+}
+
+
 
 
 

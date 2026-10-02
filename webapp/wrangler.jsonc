@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "operaviva-webapp",
+  "compatibility_date": "2026-09-29",
+  "pages_build_output_dir": "dist",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "operaviva-db",
+      "database_id": "INSERISCI_DATABASE_ID_D1_QUI"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES_BUCKET",
+      "bucket_name": "operaviva-images"
+    }
+  ],
+  "vars": {
+    "APP_NAME": "OperaViva Cloud",
+    "MAX_UPLOAD_SIZE_MB": "5"
+  }
+}

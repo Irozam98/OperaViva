@@ -1,0 +1,29 @@
+{
+  "name": "operaviva-webapp",
+  "private": true,
+  "version": "1.0.0",
+  "description": "OperaViva Cloud — WebApp per artisti su Cloudflare con 2FA Authenticator",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "pages:dev": "wrangler pages dev dist --d1=DB=operaviva-db --r2=IMAGES_BUCKET=operaviva-images"
+  },
+  "dependencies": {
+    "lucide-react": "^1.48.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.3.0",
+    "wrangler": "^3.114.0"
+  }
+}

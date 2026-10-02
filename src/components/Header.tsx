@@ -1,5 +1,4 @@
-import React from 'react';
-import { Palette, Plus, Download, BarChart3, Settings, BookOpen } from 'lucide-react';
+import { Palette, Plus, Download, BarChart3, Settings, BookOpen, Cloud } from 'lucide-react';
 import { Artwork, StudioProfile } from '../types/artwork';
 import { useI18n } from '../i18n';
 import { FlagIcon } from './FlagIcon';
@@ -12,6 +11,7 @@ interface HeaderProps {
   onOpenBackupModal: () => void;
   onOpenProfileModal: () => void;
   onOpenCatalogModal: () => void;
+  onOpenCloudModal: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,6 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBackupModal,
   onOpenProfileModal,
   onOpenCatalogModal,
+  onOpenCloudModal,
 }) => {
   const { language, setLanguage, t } = useI18n();
 
@@ -131,6 +132,16 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <BookOpen size={15} color="#d4af37" />
               <span>{t('catalog')}</span>
+            </button>
+
+            <button 
+              className="btn btn-secondary header-btn-secondary btn-cloud-webapp-header"
+              onClick={onOpenCloudModal}
+              id="btn-cloud"
+              title="OperaViva Cloud WebApp & 2FA"
+            >
+              <Cloud size={15} color="#d4af37" />
+              <span>Cloud & 2FA</span>
             </button>
 
             {/* Switch Lingua a scorrimento con bandierine su desktop */}

@@ -312,7 +312,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               <div><strong style={{ color: '#666' }}>Codice:</strong> <div>{art.code}</div></div>
               <div><strong style={{ color: '#666' }}>Anno:</strong> <div>{art.year || '—'}</div></div>
               <div><strong style={{ color: '#666' }}>Tecnica:</strong> <div>{art.technique}</div></div>
-              <div><strong style={{ color: '#666' }}>Dimensioni:</strong> <div>{art.dimensions.height} × {art.dimensions.width}{art.dimensions.depth ? ` × ${art.dimensions.depth}` : ''} cm</div></div>
+              <div><strong style={{ color: '#666' }}>Dimensioni:</strong> <div>{art.dimensions?.height || 0} × {art.dimensions?.width || 0}{art.dimensions?.depth ? ` × ${art.dimensions.depth}` : ''} cm</div></div>
               <div><strong style={{ color: '#666' }}>Supporto:</strong> <div>{art.support || '—'}</div></div>
               <div><strong style={{ color: '#666' }}>Incorniciatura:</strong> <div>{art.framed ? (art.frameDetails || 'Incorniciato') : 'Senza cornice'}</div></div>
               <div><strong style={{ color: '#666' }}>Stato:</strong> <div style={{ textTransform: 'capitalize' }}>{art.status}</div></div>
@@ -374,7 +374,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px', fontSize: '8pt', lineHeight: 1.3, color: '#333' }}>
                 <div><strong>Tecnica:</strong> {art.technique}</div>
                 <div><strong>Supporto:</strong> {art.support || '—'}</div>
-                <div><strong>Misure:</strong> {art.dimensions.height}×{art.dimensions.width}{art.dimensions.depth ? `×${art.dimensions.depth}` : ''} cm</div>
+                <div><strong>Misure:</strong> {art.dimensions?.height || 0}×{art.dimensions?.width || 0}{art.dimensions?.depth ? `×${art.dimensions.depth}` : ''} cm</div>
                 <div><strong>Cornice:</strong> {art.framed ? 'Sì' : 'No'}</div>
                 <div><strong>Collocazione:</strong> {art.location || 'In Bottega'}</div>
                 <div><strong>Stato:</strong> <span style={{ textTransform: 'capitalize' }}>{art.status}</span></div>
@@ -427,7 +427,7 @@ export const CatalogPrintModal: React.FC<CatalogPrintModalProps> = ({
             "{art.title}"
           </div>
           <div style={{ fontSize: '7.5pt', color: '#666', marginTop: '2px' }}>
-            {art.technique} • {art.dimensions.height}×{art.dimensions.width} cm • {art.year}
+            {art.technique} • {art.dimensions?.height || 0}×{art.dimensions?.width || 0} cm • {art.year}
           </div>
           {showPrices && (
             <div style={{ fontFamily: "'Cinzel', serif", fontSize: '8.5pt', fontWeight: 700, color: '#8c6d23', marginTop: '2px' }}>

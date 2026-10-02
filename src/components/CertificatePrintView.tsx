@@ -242,7 +242,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                   <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> {artwork.year}</div>
                   <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium:' : 'Tecnica:'}</strong> {artwork.technique}</div>
                   <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> {artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div>
-                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> {artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
+                  <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> {artwork.dimensions?.height || 0} × {artwork.dimensions?.width || 0} {artwork.dimensions?.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
                   <div><strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> {artwork.framed ? (language === 'en' ? `Framed (${artwork.frameDetails || 'Yes'})` : `Incorniciato (${artwork.frameDetails || 'Sì'})`) : (language === 'en' ? 'Unframed' : 'Senza cornice')}</div>
                   <div style={{ gridColumn: 'span 2' }}>
                     <strong style={{ color: '#666', fontSize: '7.5pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23', marginLeft: '4px' }}>{formattedPrice}</span>
@@ -360,7 +360,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
               <div><strong style={{ color: '#666', fontSize: '8pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> {artwork.year}</div>
               <div><strong style={{ color: '#666', fontSize: '8pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium / Technique:' : 'Tecnica:'}</strong> {artwork.technique}</div>
               <div><strong style={{ color: '#666', fontSize: '8pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> {artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div>
-              <div><strong style={{ color: '#666', fontSize: '8pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> {artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
+              <div><strong style={{ color: '#666', fontSize: '8pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> {artwork.dimensions?.height || 0} × {artwork.dimensions?.width || 0} {artwork.dimensions?.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
               <div><strong style={{ color: '#666', fontSize: '8pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> {artwork.framed ? (language === 'en' ? `Framed (${artwork.frameDetails || 'Yes'})` : `Incorniciato (${artwork.frameDetails || 'Sì'})`) : (language === 'en' ? 'Unframed' : 'Senza cornice')}</div>
               <div><strong style={{ color: '#666', fontSize: '8pt', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23' }}>{formattedPrice}</span></div>
             </div>
@@ -585,8 +585,8 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                           <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Year:' : 'Anno:'}</strong> <div>{artwork.year}</div></div>
                           <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Medium:' : 'Tecnica:'}</strong> <div>{artwork.technique}</div></div>
                           <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Support:' : 'Supporto:'}</strong> <div>{artwork.support || (language === 'en' ? 'Original Support' : 'Supporto originale')}</div></div>
-                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> <div>{artwork.dimensions.height} × {artwork.dimensions.width} cm</div></div>
-                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> <div>{artwork.framed ? 'Sì' : 'Senza cornice'}</div></div>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Dimensions:' : 'Dimensioni:'}</strong> <div>{artwork.dimensions?.height || 0} × {artwork.dimensions?.width || 0}{artwork.dimensions?.depth ? ` × ${artwork.dimensions.depth}` : ''} cm</div></div>
+                          <div><strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Framing:' : 'Incorniciatura:'}</strong> <div>{artwork.framed ? (language === 'en' ? `Framed (${artwork.frameDetails || 'Yes'})` : `Incorniciato (${artwork.frameDetails || 'Sì'})`) : (language === 'en' ? 'Unframed' : 'Senza cornice')}</div></div>
                           <div style={{ gridColumn: 'span 2' }}>
                             <strong style={{ color: '#666', fontSize: '9.5px', textTransform: 'uppercase' }}>{language === 'en' ? 'Declared Value:' : 'Valore Dichiarato / Prezzo:'}</strong> <span style={{ fontWeight: 700, color: '#8c6d23', marginLeft: '4px' }}>{formattedPrice}</span>
                           </div>
@@ -607,7 +607,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '6px' }}>
                       <div style={{ fontSize: '11px' }}>
                         <div>{language === 'en' ? 'Place & Date of Issue:' : 'Luogo e Data di rilascio:'}</div>
-                        <strong style={{ color: '#111' }}>{studioProfile.city || 'In Bottega'}, {today}</strong>
+                        <strong style={{ color: '#111' }}>{studioProfile.city || (language === 'en' ? 'In Studio' : 'In Bottega')}, {today}</strong>
                       </div>
 
                       <div style={{ textAlign: 'center', width: '220px' }}>
@@ -740,7 +740,7 @@ export const CertificatePrintView: React.FC<CertificatePrintViewProps> = ({
                         <strong style={{ color: '#666', fontSize: '11px', textTransform: 'uppercase' }}>
                           {language === 'en' ? 'Dimensions:' : 'Dimensioni:'}
                         </strong> 
-                        <div>{artwork.dimensions.height} × {artwork.dimensions.width} {artwork.dimensions.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
+                        <div>{artwork.dimensions?.height || 0} × {artwork.dimensions?.width || 0} {artwork.dimensions?.depth ? `× ${artwork.dimensions.depth}` : ''} cm</div>
                       </div>
                       <div>
                         <strong style={{ color: '#666', fontSize: '11px', textTransform: 'uppercase' }}>
