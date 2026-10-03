@@ -2300,3 +2300,418 @@ section[id] {
   font-style: normal;
 }
 
+
+/* ==========================================================================
+   OPERAVIVA CLOUD SECTION — Stili Nuova Sezione Web App
+   ========================================================================== */
+
+/* Nav link speciale per Cloud */
+.nav-link-cloud {
+  color: var(--gold-300) !important;
+  font-weight: 600;
+  position: relative;
+}
+.nav-link-cloud::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gold-gradient);
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.nav-link-cloud:hover::after,
+.nav-link-cloud:focus::after {
+  opacity: 1;
+}
+
+/* Sezione Cloud */
+.cloud-section {
+  background: linear-gradient(
+    180deg,
+    var(--bg-deep) 0%,
+    rgba(15, 18, 28, 0.98) 50%,
+    var(--bg-deep) 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+.cloud-section::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(ellipse at center, rgba(100, 160, 230, 0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+/* Layout a 2 colonne */
+.cloud-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 3.5rem;
+  align-items: center;
+  margin-bottom: 3rem;
+}
+
+/* Colonna info */
+.cloud-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.cloud-badge-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.cloud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.cloud-badge-new {
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.08));
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  color: var(--gold-300);
+}
+.cloud-badge-beta {
+  background: rgba(100, 130, 200, 0.12);
+  border: 1px solid rgba(100, 130, 200, 0.3);
+  color: #93b4f0;
+}
+
+/* Lista funzionalità cloud */
+.cloud-features-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.cloud-feat-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.cloud-feat-icon {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-400);
+}
+
+.cloud-feat-item strong {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+  font-family: var(--font-sans);
+}
+.cloud-feat-item p {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* CTA Group */
+.cloud-cta-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.btn-cloud-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  justify-content: center;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.75rem;
+}
+
+.cloud-cta-note {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin: 0;
+}
+
+/* Preview frame lato destro */
+.cloud-preview-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cloud-preview-frame {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.08),
+    0 25px 60px -15px rgba(0, 0, 0, 0.7),
+    0 0 40px -10px rgba(100, 160, 230, 0.08);
+  background: #0d0f18;
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+.cloud-preview-frame:hover {
+  border-color: rgba(212, 175, 55, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.15),
+    0 30px 70px -15px rgba(0, 0, 0, 0.8),
+    0 0 60px -10px rgba(100, 160, 230, 0.12);
+}
+
+/* Barra browser superiore */
+.cloud-browser-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  background: #0d1018;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  height: 36px;
+}
+
+.cloud-browser-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.cloud-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.cloud-dot.red    { background: #ff5f56; }
+.cloud-dot.yellow { background: #ffbd2e; }
+.cloud-dot.green  { background: #27c93f; }
+
+.cloud-browser-url {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-full);
+  padding: 0.2rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.cloud-browser-actions {
+  flex-shrink: 0;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.cloud-browser-actions:hover { opacity: 1; }
+
+/* Container iframe */
+.cloud-iframe-container {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  overflow: hidden;
+}
+
+.cloud-iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: #0a0c10;
+  /* Scala leggermente per mostrare più contenuto in meno spazio */
+  transform-origin: top left;
+}
+
+/* Overlay sopra l'iframe */
+.cloud-iframe-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 12, 20, 0.55) 0%,
+    rgba(10, 12, 20, 0.35) 100%
+  );
+  backdrop-filter: blur(1px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.3s ease, backdrop-filter 0.3s;
+  z-index: 10;
+}
+.cloud-iframe-overlay:hover {
+  background: linear-gradient(
+    135deg,
+    rgba(10, 12, 20, 0.65) 0%,
+    rgba(10, 12, 20, 0.45) 100%
+  );
+}
+
+.cloud-overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem 2.5rem;
+  background: rgba(15, 18, 30, 0.85);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.cloud-iframe-overlay:hover .cloud-overlay-content {
+  transform: scale(1.03);
+  box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+}
+
+.cloud-overlay-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cloud-overlay-content p {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* Caption sotto preview */
+.cloud-preview-caption {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin: 0;
+}
+
+/* Banner di comparazione Offline vs Cloud */
+.cloud-compare-banner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: linear-gradient(135deg, rgba(24, 29, 42, 0.8), rgba(18, 21, 30, 0.8));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2.5rem;
+  margin-top: 0.5rem;
+}
+
+.cloud-compare-item {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.cloud-compare-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.cloud-compare-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.cloud-compare-text strong {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-main);
+  font-family: var(--font-sans);
+}
+.cloud-compare-text span {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.cloud-compare-vs {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--gold-400);
+  background: rgba(212, 175, 55, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 0.85rem;
+}
+
+/* Responsive cloud section */
+@media (max-width: 1100px) {
+  .cloud-layout {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .cloud-preview-wrap {
+    order: -1;
+  }
+  .cloud-iframe-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cloud-iframe-container {
+    height: 320px;
+  }
+  .cloud-compare-banner {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+  }
+  .cloud-compare-vs {
+    align-self: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .cloud-iframe-container {
+    height: 260px;
+  }
+  .cloud-layout {
+    gap: 2rem;
+  }
+}
+

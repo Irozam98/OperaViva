@@ -160,6 +160,27 @@ function handleMockFallback<T>(endpoint: string, options: RequestInit): T {
     } as T;
   }
 
+  if (endpoint.includes('/api/auth/forgot-password')) {
+    return { success: true, message: 'Se l\'email è registrata, riceverai le istruzioni a breve.' } as T;
+  }
+
+  if (endpoint.includes('/api/auth/reset-password')) {
+    // In mock: accetta qualsiasi codice TOTP di 6 cifre
+    const body = options.body ? JSON.parse(options.body as string) : {};
+    if (!body.totpCode || body.totpCode.length !== 6) {
+      throw new Error('Codice Authenticator non valido o scaduto. Riprova.');
+    }
+    return { success: true, message: 'Password aggiornata con successo.' } as T;
+  }
+
+  if (endpoint.includes('/api/auth/change-password')) {
+    const body = options.body ? JSON.parse(options.body as string) : {};
+    if (!body.totpCode || body.totpCode.length !== 6) {
+      throw new Error('Codice Authenticator non valido o scaduto. Riprova.');
+    }
+    return { success: true, message: 'Password cambiata con successo.' } as T;
+  }
+
   return { success: true } as T;
 }
 
@@ -254,6 +275,29 @@ export const api = {
     return request<{ success: boolean; url: string; key: string; sizeBytes: number }>('/api/upload', {
       method: 'POST',
       body: formData
+    });
+  },
+
+  // Password Reset (via email)
+  async forgotPassword(email: string) {
+    return request<{ success: boolean; message: string }>('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email })
+    });
+  },
+
+  async resetPassword(token: string, newPassword: string, totpCode: string) {
+    return request<{ success: boolean; message: string }>('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword, totpCode })
+    });
+  },
+
+  // Cambio Password (utente autenticato)
+  async changePassword(currentPassword: string, newPassword: string, totpCode: string) {
+    return request<{ success: boolean; message: string }>('/api/auth/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword, totpCode })
     });
   }
 };

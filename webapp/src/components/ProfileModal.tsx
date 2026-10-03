@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, Check, ShieldCheck, Building, User, Mail, Globe, Phone, MapPin, Tag } from 'lucide-react';
+import { X, Check, ShieldCheck, Building, User, Mail, Globe, Phone, MapPin, Tag, KeyRound } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
+import { ChangePasswordModal } from './ChangePasswordModal';
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [isChangePwdOpen, setIsChangePwdOpen] = useState(false);
 
   if (!isOpen) return null;
 
@@ -82,6 +84,15 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
               <strong>Account Protetto con Verifica Authenticator (2FA)</strong>
               <span>Ogni accesso da browser o dispositivi esterni richiede il codice a 6 cifre dall'app Authenticator.</span>
             </div>
+            <button
+              type="button"
+              className="btn-change-pwd"
+              onClick={() => setIsChangePwdOpen(true)}
+              title="Cambia la tua password"
+            >
+              <KeyRound size={15} />
+              <span>Cambia Password</span>
+            </button>
           </div>
 
           <div className="form-row">
@@ -163,6 +174,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) =
           </div>
         </form>
       </div>
+
+      {/* Modal Cambio Password */}
+      <ChangePasswordModal
+        isOpen={isChangePwdOpen}
+        onClose={() => setIsChangePwdOpen(false)}
+      />
     </div>
   );
 };

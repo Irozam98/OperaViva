@@ -55,6 +55,7 @@
         <a href="#catalogo" class="nav-link" data-i18n="navCatalogo">Catalogo PDF</a>
         <a href="#importatore" class="nav-link" data-i18n="navImportatore">Importatore</a>
         <a href="#piattaforme" class="nav-link" data-i18n="navPiattaforme">Piattaforme</a>
+        <a href="#cloud" class="nav-link nav-link-cloud" data-i18n="navCloud">☁ WebApp</a>
         <a href="#faq" class="nav-link" data-i18n="navFaq">FAQ</a>
         
         <div class="mobile-lang-row">
@@ -637,6 +638,140 @@
     </div>
   </section>
 
+  <!-- OperaViva Cloud — Versione Web -->
+  <section class="section-padding cloud-section" id="cloud">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag" data-i18n="cloudTag">Versione Web • Sempre Accessibile</span>
+        <h2 class="section-title">
+          <span data-i18n="cloudTitleLine1">OperaViva WebApp</span> <br>
+          <span class="gold-gradient" data-i18n="cloudTitleLine2">il tuo Atelier online.</span>
+        </h2>
+        <p class="section-subtitle" data-i18n="cloudSubtitle">
+          Accedi al tuo archivio d'arte direttamente dal browser. Nessun download richiesto: cataloga, gestisci certificati e statistiche da qualsiasi dispositivo.
+        </p>
+      </div>
+
+      <div class="cloud-layout">
+        <!-- Colonna sinistra: vantaggi + CTA -->
+        <div class="cloud-info">
+          <div class="cloud-badge-row">
+            <span class="cloud-badge cloud-badge-new" data-i18n="cloudBadgeNew">✦ Novità</span>
+            <span class="cloud-badge cloud-badge-beta" data-i18n="cloudBadgeBeta">Beta</span>
+          </div>
+
+          <ul class="cloud-features-list">
+            <li class="cloud-feat-item">
+              <div class="cloud-feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <div>
+                <strong data-i18n="cloudFeat1Title">Accesso da qualsiasi browser</strong>
+                <p data-i18n="cloudFeat1Desc">Chrome, Safari, Firefox — nessuna installazione necessaria.</p>
+              </div>
+            </li>
+            <li class="cloud-feat-item">
+              <div class="cloud-feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <strong data-i18n="cloudFeat2Title">Dati sicuri su Cloudflare</strong>
+                <p data-i18n="cloudFeat2Desc">Database D1 crittografato e immagini su R2 — zero compromessi.</p>
+              </div>
+            </li>
+            <li class="cloud-feat-item">
+              <div class="cloud-feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+              </div>
+              <div>
+                <strong data-i18n="cloudFeat3Title">Mobile-friendly</strong>
+                <p data-i18n="cloudFeat3Desc">Interfaccia reattiva ottimizzata per smartphone, tablet e desktop.</p>
+              </div>
+            </li>
+            <li class="cloud-feat-item">
+              <div class="cloud-feat-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              </div>
+              <div>
+                <strong data-i18n="cloudFeat4Title">Account personale</strong>
+                <p data-i18n="cloudFeat4Desc">Registrazione gratuita, il tuo archivio sempre sincronizzato e accessibile.</p>
+              </div>
+            </li>
+          </ul>
+
+          <div class="cloud-cta-group">
+            <a href="https://app.operaviva.pages.dev" target="_blank" rel="noopener" class="btn-gold btn-cloud-launch" id="btn-cloud-launch">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              <span data-i18n="cloudCtaLaunch">Apri OperaViva WebApp</span>
+            </a>
+            <p class="cloud-cta-note" data-i18n="cloudCtaNote">Accesso gratuito · Registrazione in 30 secondi</p>
+          </div>
+        </div>
+
+        <!-- Colonna destra: preview iframe -->
+        <div class="cloud-preview-wrap">
+          <div class="cloud-preview-frame">
+            <!-- Barra browser mockup -->
+            <div class="cloud-browser-bar">
+              <div class="cloud-browser-dots">
+                <span class="cloud-dot red"></span>
+                <span class="cloud-dot yellow"></span>
+                <span class="cloud-dot green"></span>
+              </div>
+              <div class="cloud-browser-url">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <span>app.operaviva.pages.dev</span>
+              </div>
+              <div class="cloud-browser-actions">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </div>
+            </div>
+            <!-- Iframe della webapp -->
+            <div class="cloud-iframe-container">
+              <iframe
+                id="cloudWebappIframe"
+                src="http://localhost:3031"
+                title="OperaViva Cloud — Anteprima webapp"
+                loading="lazy"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+              ></iframe>
+              <!-- Overlay cliccabile che apre la webapp in fullscreen -->
+              <div class="cloud-iframe-overlay" id="cloudIframeOverlay">
+                <div class="cloud-overlay-content">
+                  <div class="cloud-overlay-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#d4af37" stroke-width="1.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </div>
+                  <p data-i18n="cloudOverlayText">Apri in scheda dedicata</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Caption sotto il preview -->
+          <p class="cloud-preview-caption" data-i18n="cloudPreviewCaption">Anteprima live di OperaViva WebApp &bull; Clicca per aprire a schermo intero</p>
+        </div>
+      </div>
+
+      <!-- Banner informativo offline vs cloud -->
+      <div class="cloud-compare-banner">
+        <div class="cloud-compare-item">
+          <div class="cloud-compare-icon">💻</div>
+          <div class="cloud-compare-text">
+            <strong data-i18n="cloudCompOfflineTitle">Versione Desktop/Android</strong>
+            <span data-i18n="cloudCompOfflineDesc">100% locale, offline totale, massima privacy. Ideale per archiviazione a lungo termine.</span>
+          </div>
+        </div>
+        <div class="cloud-compare-vs">VS</div>
+        <div class="cloud-compare-item">
+          <div class="cloud-compare-icon">☁️</div>
+          <div class="cloud-compare-text">
+            <strong data-i18n="cloudCompCloudTitle">Versione Cloud (Web)</strong>
+            <span data-i18n="cloudCompCloudDesc">Accesso da qualsiasi dispositivo con browser. Ideale per gestire il catalogo in mobilità.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Domande Frequenti (FAQ) -->
   <section class="section-padding bg-alt" id="faq">
     <div class="container faq-container">
@@ -814,8 +949,8 @@
         <div class="f-col">
           <h4 data-i18n="footerColRes">Risorse</h4>
           <a href="#piattaforme" data-i18n="navPiattaforme">Piattaforme</a>
+          <a href="#cloud" data-i18n="navCloud">☁ Cloud</a>
           <a href="#faq" data-i18n="navFaq">Domande Frequenti</a>
-          <a href="#faq" data-i18n="footerGuideLink">Guida all'Atelier</a>
           <a href="https://github.com/Irozam98/OperaViva" target="_blank" rel="noopener">GitHub Repository</a>
         </div>
         <div class="f-col">
@@ -835,7 +970,18 @@
     </div>
   </footer>
 
-  <script src="translations.js?v=1.2"></script>
-  <script src="script.js?v=1.2"></script>
+  <script src="translations.js?v=1.5"></script>
+  <script src="script.js?v=1.5"></script>
+  <script>
+    // Cloud iframe overlay click → apri in nuova scheda
+    document.addEventListener('DOMContentLoaded', function() {
+      var overlay = document.getElementById('cloudIframeOverlay');
+      if (overlay) {
+        overlay.addEventListener('click', function() {
+          window.open('http://localhost:3031', '_blank', 'noopener,noreferrer');
+        });
+      }
+    });
+  </script>
 </body>
 </html>

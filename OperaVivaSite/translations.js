@@ -8,6 +8,7 @@ const siteTranslations = {
     navCatalogo: 'Catalogo PDF',
     navImportatore: 'Importatore',
     navPiattaforme: 'Piattaforme',
+    navCloud: '☁ WebApp',
     navFaq: 'FAQ',
     ctaStart: 'Scarica Ora',
     ctaDownloadNav: 'Scarica Applicazione',
@@ -201,7 +202,31 @@ const siteTranslations = {
     footerGuideLink: "Guida all'Atelier",
     headerSubtitle: "ARCHIVIO PERSONALE D'ARTE",
     footerRights: "© 2026 OperaViva • Ideato & Creato da <strong>Marzio Sparla</strong>. Tutti i diritti riservati.",
-    footerMotto: "\"L'Arte vive nella memoria di chi la custodisce.\""
+    footerMotto: "\"L'Arte vive nella memoria di chi la custodisce.\"",
+
+    // Sezione Cloud
+    cloudTag: 'Versione Web \u2022 Sempre Accessibile',
+    cloudTitleLine1: 'OperaViva WebApp',
+    cloudTitleLine2: 'il tuo Atelier online.',
+    cloudSubtitle: 'Accedi al tuo archivio d\'arte direttamente dal browser. Nessun download richiesto: cataloga, gestisci certificati e statistiche da qualsiasi dispositivo.',
+    cloudBadgeNew: '\u2726 Novit\u00e0',
+    cloudBadgeBeta: 'Beta',
+    cloudFeat1Title: 'Accesso da qualsiasi browser',
+    cloudFeat1Desc: 'Chrome, Safari, Firefox \u2014 nessuna installazione necessaria.',
+    cloudFeat2Title: 'Dati sicuri su Cloudflare',
+    cloudFeat2Desc: 'Database D1 crittografato e immagini su R2 \u2014 zero compromessi.',
+    cloudFeat3Title: 'Mobile-friendly',
+    cloudFeat3Desc: 'Interfaccia reattiva ottimizzata per smartphone, tablet e desktop.',
+    cloudFeat4Title: 'Account personale',
+    cloudFeat4Desc: 'Registrazione gratuita, il tuo archivio sempre sincronizzato e accessibile.',
+    cloudCtaLaunch: 'Apri OperaViva WebApp',
+    cloudCtaNote: 'Accesso gratuito \u00b7 Registrazione in 30 secondi',
+    cloudOverlayText: 'Apri in scheda dedicata',
+    cloudPreviewCaption: 'Anteprima live di OperaViva WebApp \u2022 Clicca per aprire a schermo intero',
+    cloudCompOfflineTitle: 'Versione Desktop/Android',
+    cloudCompOfflineDesc: '100% locale, offline totale, massima privacy. Ideale per archiviazione a lungo termine.',
+    cloudCompCloudTitle: 'Versione Cloud (Web)',
+    cloudCompCloudDesc: 'Accesso da qualsiasi dispositivo con browser. Ideale per gestire il catalogo in mobilit\u00e0.'
   },
 
   en: {
@@ -212,6 +237,7 @@ const siteTranslations = {
     navCatalogo: 'PDF Catalog',
     navImportatore: 'Importer',
     navPiattaforme: 'Platforms',
+    navCloud: '\u2601 WebApp',
     navFaq: 'FAQ',
     ctaStart: 'Download Now',
     ctaDownloadNav: 'Download App',
@@ -405,7 +431,31 @@ const siteTranslations = {
     footerGuideLink: 'Studio & Atelier Guide',
     headerSubtitle: 'PERSONAL FINE ART ARCHIVE',
     footerRights: '© 2026 OperaViva • Designed & Created by <strong>Marzio Sparla</strong>. All rights reserved.',
-    footerMotto: '"Art lives on in the memory of those who cherish it."'
+    footerMotto: '"Art lives on in the memory of those who cherish it."',
+
+    // Cloud Section
+    cloudTag: 'Web Version \u2022 Always Accessible',
+    cloudTitleLine1: 'OperaViva WebApp',
+    cloudTitleLine2: 'your Studio online.',
+    cloudSubtitle: 'Access your art archive directly from the browser. No download required: catalog, manage certificates and statistics from any device.',
+    cloudBadgeNew: '\u2726 New',
+    cloudBadgeBeta: 'Beta',
+    cloudFeat1Title: 'Access from any browser',
+    cloudFeat1Desc: 'Chrome, Safari, Firefox \u2014 no installation required.',
+    cloudFeat2Title: 'Secure data on Cloudflare',
+    cloudFeat2Desc: 'Encrypted D1 database and images on R2 \u2014 zero compromises.',
+    cloudFeat3Title: 'Mobile-friendly',
+    cloudFeat3Desc: 'Responsive interface optimized for smartphones, tablets, and desktops.',
+    cloudFeat4Title: 'Personal account',
+    cloudFeat4Desc: 'Free registration, your archive always synced and accessible.',
+    cloudCtaLaunch: 'Open OperaViva WebApp',
+    cloudCtaNote: 'Free access \u00b7 Register in 30 seconds',
+    cloudOverlayText: 'Open in dedicated tab',
+    cloudPreviewCaption: 'Live preview of OperaViva WebApp \u2022 Click to open fullscreen',
+    cloudCompOfflineTitle: 'Desktop/Android Version',
+    cloudCompOfflineDesc: '100% local, fully offline, maximum privacy. Ideal for long-term archiving.',
+    cloudCompCloudTitle: 'Cloud Version (Web)',
+    cloudCompCloudDesc: 'Access from any device with a browser. Ideal for managing your catalog on the go.'
   }
 };
 
